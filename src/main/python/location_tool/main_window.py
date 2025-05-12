@@ -94,7 +94,7 @@ class FloatDelegate(QStyledItemDelegate):
         elif index.column() == 2:  # Longitude
             editor.setRange(-180.0, 180.0)
         elif index.column() == 3:  # Altitude
-            editor.setRange(-5000.0, 29990.0)
+            editor.setRange(-500.0, 9200.0)
             editor.setDecimals(0)
         return editor
 
@@ -465,9 +465,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             fit_file_data_to_save = fit_handler.LocationsFitFileData(
                 header=None,  # Using hardcoded defaults in fit_handler
                 creator=None,  # Using hardcoded defaults in fit_handler
-                settings=fit_handler.FitLocationSettingData(
-                    waypoint_setting=selected_location_setting
-                ),
+                # settings=fit_handler.FitLocationSettingData(
+                #     waypoint_setting=selected_location_setting
+                # ),
                 waypoints=self.current_waypoints_data,
             )
 

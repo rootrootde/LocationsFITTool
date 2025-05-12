@@ -366,7 +366,7 @@ def write_fit_file(
     if fit_data.header:
         header = fit_data.header
         fid_msg.type = (
-            header.file_type if header.file_type is not None else FileType.LOCATION
+            header.file_type if header.file_type is not None else FileType.LOCATIONS
         )
         fid_msg.manufacturer = (
             header.manufacturer
@@ -397,7 +397,7 @@ def write_fit_file(
         fid_msg.product = 1  # Example product ID for Development
         fid_msg.serial_number = 0
         fid_msg.time_created = datetime.now(timezone.utc)
-        fid_msg.product_name = "LocationsTool"  # Optional default product name
+        # fid_msg.product_name = "LocationsTool"  # Optional default product name
     builder.add(fid_msg)
 
     # File Creator Message
