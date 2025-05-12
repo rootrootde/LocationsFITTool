@@ -11,7 +11,7 @@ except ImportError:
 
     USE_FBS = False
 
-from location_tool.gui import MainWindow
+from location_tool.main_window import MainWindow
 
 if __name__ == "__main__":
     if USE_FBS:
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     else:
         app = QApplication(sys.argv)
         appctxt = None
-        
+
     try:
         window = MainWindow(appctxt)
         window.show()

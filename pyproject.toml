@@ -8,8 +8,14 @@ dependencies = [
 ]
 
 [dependency-groups]
+fbs = [
+    "fbs",
+]
 genprofile = [
     "inflection>=0.5.1",
     "jinja2>=3.1.6",
     "openpyxl>=3.1.5",
 ]
+
+[tool.uv.sources]
+fbs = { path = "fbs/fbs-1.2.7.tar.gz" }
