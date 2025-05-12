@@ -341,7 +341,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 # Construct icon path from enum name
                 icon_file_name = f"{symbol_enum.name.lower()}.png"
-                icon_path = os.path.join(BASE_PATH, "icons", icon_file_name)
+                icon_path = os.path.join("icons", icon_file_name)
 
             except ValueError:
                 symbol_display_text = f"{wp_data.symbol} (Unknown)"
