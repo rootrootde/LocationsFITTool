@@ -182,8 +182,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(self.waypoint_table.columnCount()):
             header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
 
-        header.setSectionResizeMode(0, QHeaderView.Stretch)  # Name (was 1)
-        header.setSectionResizeMode(6, QHeaderView.Stretch)  # Description (was 7)
+        header.setSectionResizeMode(6, QHeaderView.Stretch)  # Description
 
         # To make the table take the full width initially and on resize:
         self.waypoint_table.horizontalHeader().setStretchLastSection(True)
