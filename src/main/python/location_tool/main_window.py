@@ -5,7 +5,7 @@ from fit_tool.profile.profile_type import LocationSettings as FitLocationSetting
 from fit_tool.profile.profile_type import MapSymbol
 from location_tool import fit_handler
 from location_tool.ui_main_window import Ui_MainWindow
-from PySide6.QtCore import QDateTime, Qt, Slot
+from PySide6.QtCore import QDateTime, QSettings, Qt, Slot
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -145,8 +145,101 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
 
+        self.settings = QSettings("LocationsFITTool", "LocationsFITTool")
+        self._load_fit_header_defaults()
+        self._load_fit_creator_defaults()
+
         self._setup_waypoints_table()
         self._clear_all_forms_and_tables()
+
+    def _load_fit_header_defaults(self):
+        self.fit_header_defaults = None
+        if self.settings.contains("fit_header_defaults"):
+            self.fit_header_defaults = self.settings.value("fit_header_defaults", None)
+            self.log_message(
+                f"Loaded FIT header defaults from QSettings: {self.fit_header_defaults}"
+            )
+        else:
+            self.log_message("No FIT header defaults found in QSettings.")
+
+    def _load_fit_creator_defaults(self):
+        self.fit_creator_defaults = None
+        if self.settings.contains("fit_creator_defaults"):
+            self.fit_creator_defaults = self.settings.value(
+                "fit_creator_defaults", None
+            )
+            self.log_message(
+                f"Loaded FIT creator defaults from QSettings: {self.fit_creator_defaults}"
+            )
+        else:
+            self.log_message("No FIT creator defaults found in QSettings.")
+
+    def _save_fit_header_defaults(self, header):
+        header_dict = {
+            "file_type": getattr(header, "file_type", None),
+            "manufacturer": getattr(header, "manufacturer", None),
+            "product": getattr(header, "product", None),
+            "serial_number": getattr(header, "serial_number", None),
+            "time_created": header.time_created.isoformat()
+            if getattr(header, "time_created", None)
+            else None,
+            "product_name": getattr(header, "product_name", None),
+        }
+        self.settings.setValue("fit_header_defaults", header_dict)
+        self.fit_header_defaults = header_dict
+        self.log_message(f"Saved FIT header defaults to QSettings: {header_dict}")
+
+    def _save_fit_creator_defaults(self, creator):
+        creator_dict = {
+            "hardware_version": getattr(creator, "hardware_version", None),
+            "software_version": getattr(creator, "software_version", None),
+        }
+        self.settings.setValue("fit_creator_defaults", creator_dict)
+        self.fit_creator_defaults = creator_dict
+        self.log_message(f"Saved FIT creator defaults to QSettings: {creator_dict}")
+
+    def _convert_dict_to_fit_header(self, d):
+        from datetime import datetime
+
+        from location_tool.fit_handler import (
+            FileType,
+            FitHeaderData,
+            GarminProduct,
+            Manufacturer,
+        )
+
+        if not d:
+            return None
+
+        return FitHeaderData(
+            file_type=FileType(d["file_type"]) if d.get("file_type") else None,
+            manufacturer=Manufacturer(d["manufacturer"])
+            if d.get("manufacturer")
+            else None,
+            product=GarminProduct(d["product"]) if d.get("product") else None,
+            serial_number=d.get("serial_number"),
+            time_created=datetime.fromisoformat(d["time_created"])
+            if d.get("time_created")
+            else None,
+            product_name=d.get("product_name"),
+        )
+
+    def _convert_dict_to_fit_creator(self, d):
+        from location_tool.fit_handler import FitCreatorData
+
+        if not d:
+            return None
+
+        return FitCreatorData(
+            hardware_version=d.get("hardware_version"),
+            software_version=d.get("software_version"),
+        )
+
+    def _get_fit_header_for_save(self):
+        return self._convert_dict_to_fit_header(self.fit_header_defaults)
+
+    def _get_fit_creator_for_save(self):
+        return self._convert_dict_to_fit_creator(self.fit_creator_defaults)
 
     def _setup_waypoints_table(self):
         self.waypoint_table.setColumnCount(7)  # Changed from 8 to 7
@@ -338,6 +431,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     else:  # Fallback
                         self.location_settings_combo.setCurrentIndex(0)
 
+            # Save header and creator defaults if present
+            if (
+                hasattr(fit_file_data_container, "header")
+                and fit_file_data_container.header
+            ):
+                self._save_fit_header_defaults(fit_file_data_container.header)
+            if (
+                hasattr(fit_file_data_container, "creator")
+                and fit_file_data_container.creator
+            ):
+                self._save_fit_creator_defaults(fit_file_data_container.creator)
+
             self._reindex_waypoints()  # Re-index after appending
             self._populate_waypoints_table()
             self.log_message(
@@ -463,11 +568,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             selected_location_setting = self.location_settings_combo.currentData()
 
             fit_file_data_to_save = fit_handler.LocationsFitFileData(
-                header=None,  # Using hardcoded defaults in fit_handler
-                creator=None,  # Using hardcoded defaults in fit_handler
-                # settings=fit_handler.FitLocationSettingData(
-                #     waypoint_setting=selected_location_setting
-                # ),
+                header=self._get_fit_header_for_save(),
+                creator=self._get_fit_creator_for_save(),
+                settings=fit_handler.FitLocationSettingData(
+                    waypoint_setting=selected_location_setting
+                ),
                 waypoints=self.current_waypoints_data,
             )
 
