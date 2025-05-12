@@ -1,9 +1,12 @@
 import os
-
 from datetime import datetime, timezone
 
-from PySide6.QtCore import QDateTime, Qt, Slot, QTimer
-from PySide6.QtGui import QIcon, QAction
+from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
+from fit_tool.profile.profile_type import MapSymbol
+from location_tool import fit_handler
+from location_tool.ui_main_window import Ui_MainWindow
+from PySide6.QtCore import QDateTime, Qt, QTimer, Slot
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QDateTimeEdit,
@@ -16,12 +19,14 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
 )
 
-from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
-from fit_tool.profile.profile_type import MapSymbol
-from location_tool import fit_handler
-from location_tool.ui_main_window import Ui_MainWindow
-
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+
+
+# Helper to resolve resource paths for both fbs and non-fbs usage
+def get_resource_path(appctxt, relative_path):
+    if appctxt:
+        return appctxt.get_resource(relative_path)
+    return os.path.join(BASE_PATH, "..", "resources", relative_path)
 
 
 class DateTimeDelegate(QStyledItemDelegate):
@@ -135,7 +140,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # keep action state in sync with the log_dock visibility
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
- 
+
         self._setup_waypoints_table()
         self._clear_all_forms_and_tables()
 
@@ -182,7 +187,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # To make the table take the full width initially and on resize:
         self.waypoint_table.horizontalHeader().setStretchLastSection(True)
-
 
     def _populate_waypoints_table(self):
         self.waypoint_table.setRowCount(0)
@@ -250,12 +254,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         symbol_item.setToolTip(symbol_display_tooltip)
 
         if icon_path:
-            icon = QIcon(self.appctxt.get_resource(icon_path))
+            resolved_icon_path = get_resource_path(self.appctxt, icon_path)
+            icon = QIcon(resolved_icon_path)
             if not icon.isNull():  # Check if icon was loaded successfully
                 symbol_item.setIcon(icon)
             else:
                 self.log_message(
-                    f"Warning: Icon not found for symbol {symbol_display_text} at {icon_path}"
+                    f"Warning: Icon not found for symbol {symbol_display_text} at {resolved_icon_path}"
                 )
 
         self.waypoint_table.setItem(row_idx, 5, symbol_item)  # Symbol column
