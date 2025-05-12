@@ -110,6 +110,10 @@ class FloatDelegate(QStyledItemDelegate):
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
+    def log_error(self, message: str):
+        self.log_message(message)
+        print(message)
+
     def __init__(self, appctxt, parent=None):
         super().__init__(parent)
         self.appctxt = appctxt
@@ -294,21 +298,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if file_path:
             self.log_message(f"Opening {file_path}...")
-            # Do not clear all forms and tables, append instead
-            fit_file_data_container = fit_handler.read_fit_file(file_path)
-
-            if fit_file_data_container.errors:
-                errors_str = "\n".join(fit_file_data_container.errors)
-                QMessageBox.warning(
-                    self,
-                    "Warning Reading FIT File",
-                    f"Encountered issues reading {file_path}:\n{errors_str}\n\nSome data may be incomplete or missing.",
-                )
-                self.log_message(
-                    f"Warning reading {file_path}. Some data may be missing."
-                )
-            else:
-                self.log_message(f"Successfully opened {file_path}.")
+            fit_file_data_container = fit_handler.read_fit_file(
+                file_path, logger=self.log_error
+            )
 
             # Append new waypoints to existing ones
             new_waypoints = fit_file_data_container.waypoints
@@ -360,7 +352,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if file_path:
             self.log_message(f"Importing GPX {file_path}...")
             try:
-                gpx_waypoints = fit_handler.read_gpx_file(file_path)
+                gpx_waypoints = fit_handler.read_gpx_file(
+                    file_path, logger=self.log_error
+                )
                 if not gpx_waypoints:
                     self.log_message(f"No waypoints found in {file_path}.")
                     return

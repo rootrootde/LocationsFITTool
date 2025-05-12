@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 import gpxpy
-from fit_tool.profile.profile_type import MapSymbol
 from fit_tool.data_message import DataMessage
 from fit_tool.fit_file import FitFile
 from fit_tool.fit_file_builder import FitFileBuilder
@@ -16,6 +15,7 @@ from fit_tool.profile.profile_type import (
     GarminProduct,
     LocationSettings,
     Manufacturer,
+    MapSymbol,
 )
 
 # Define conservative maximum character lengths for truncation
@@ -67,9 +67,7 @@ class LocationsFitFileData:
 
 
 # --- Helper Function for Timestamp Processing ---
-def _process_raw_timestamp(
-    raw_timestamp: any, field_description: str, errors_list: List[str]
-) -> Optional[datetime]:
+def _process_raw_timestamp(raw_timestamp: any, logger=None) -> Optional[datetime]:
     """
     Converts a raw timestamp value to a timezone-aware UTC datetime object.
     The raw_timestamp can be an int/float (assumed ms since Unix epoch)
@@ -81,35 +79,35 @@ def _process_raw_timestamp(
     processed_dt = None
     if isinstance(raw_timestamp, (int, float)):
         try:
-            # Assuming raw_timestamp is milliseconds since Unix epoch
             processed_dt = datetime.fromtimestamp(
                 raw_timestamp / 1000.0, tz=timezone.utc
             )
         except Exception as e:
-            errors_list.append(
-                f"Error converting {field_description} ({raw_timestamp}) to datetime: {e}"
-            )
+            if logger:
+                logger(f"Error converting timestamp ({raw_timestamp}) to datetime: {e}")
     elif isinstance(raw_timestamp, datetime):
         processed_dt = raw_timestamp
-        if processed_dt.tzinfo is None:  # Ensure it's timezone-aware
+        if processed_dt.tzinfo is None:
             processed_dt = processed_dt.replace(tzinfo=timezone.utc)
-        else:  # Convert to UTC if it's aware but not UTC
+        else:
             processed_dt = processed_dt.astimezone(timezone.utc)
     else:
-        errors_list.append(
-            f"Unexpected type for {field_description}: {type(raw_timestamp)}. Value: {raw_timestamp}"
-        )
+        if logger:
+            logger(
+                f"Unexpected type for timestamp: {type(raw_timestamp)}. Value: {raw_timestamp}"
+            )
     return processed_dt
 
 
 # --- Read Logic ---
-def read_fit_file(file_path: str) -> LocationsFitFileData:
+def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
     fit_data = LocationsFitFileData()
 
     try:
         fit_file = FitFile.from_file(file_path)
     except Exception as e:
-        fit_data.errors.append(f"Error opening or parsing FIT file: {e}")
+        if logger:
+            logger(f"Error opening or parsing FIT file: {e}")
         return fit_data
 
     for record_wrapper in fit_file.records:
@@ -122,6 +120,7 @@ def read_fit_file(file_path: str) -> LocationsFitFileData:
         global_id = definition_for_data.global_id
 
         try:
+            # process FileIdMessage
             if global_id == FileIdMessage.ID:
                 msg = actual_message
 
@@ -131,9 +130,10 @@ def read_fit_file(file_path: str) -> LocationsFitFileData:
                     try:
                         file_type_enum = FileType(file_type_val)
                     except ValueError:
-                        fit_data.errors.append(
-                            f"Invalid FileType value encountered: {file_type_val}"
-                        )
+                        if logger:
+                            logger(
+                                f"Invalid FileType value encountered: {file_type_val}"
+                            )
 
                 manufacturer_val = getattr(msg, "manufacturer", None)
                 manufacturer_enum = None
@@ -141,9 +141,10 @@ def read_fit_file(file_path: str) -> LocationsFitFileData:
                     try:
                         manufacturer_enum = Manufacturer(manufacturer_val)
                     except ValueError:
-                        fit_data.errors.append(
-                            f"Invalid Manufacturer value encountered: {manufacturer_val}"
-                        )
+                        if logger:
+                            logger(
+                                f"Invalid Manufacturer value encountered: {manufacturer_val}"
+                            )
 
                 product_id_val = getattr(msg, "product", None)
                 garmin_product_enum = None
@@ -154,9 +155,10 @@ def read_fit_file(file_path: str) -> LocationsFitFileData:
                     try:
                         garmin_product_enum = GarminProduct(product_id_val)
                     except ValueError:
-                        fit_data.errors.append(
-                            f"Invalid GarminProduct value for manufacturer GARMIN: {product_id_val}"
-                        )
+                        if logger:
+                            logger(
+                                f"Invalid GarminProduct value for manufacturer GARMIN: {product_id_val}"
+                            )
                 elif (
                     product_id_val is not None
                     and manufacturer_enum != Manufacturer.GARMIN
@@ -165,7 +167,7 @@ def read_fit_file(file_path: str) -> LocationsFitFileData:
 
                 time_created_val = getattr(msg, "time_created", None)
                 processed_time_created = _process_raw_timestamp(
-                    time_created_val, "FileIdMessage.time_created", fit_data.errors
+                    time_created_val, logger=logger
                 )
 
                 fit_data.header = FitHeaderData(
@@ -173,7 +175,7 @@ def read_fit_file(file_path: str) -> LocationsFitFileData:
                     manufacturer=manufacturer_enum,
                     product=garmin_product_enum,
                     serial_number=getattr(msg, "serial_number", None),
-                    time_created=processed_time_created,  # Store datetime object
+                    time_created=processed_time_created,
                     product_name=getattr(msg, "product_name", None),
                 )
             elif global_id == FileCreatorMessage.ID:
@@ -184,60 +186,55 @@ def read_fit_file(file_path: str) -> LocationsFitFileData:
                 )
             elif global_id == LocationSettingsMessage.ID:
                 msg = actual_message
-                setting_val = getattr(
-                    msg, "location_settings", None
-                )  # Changed to plural
+                setting_val = getattr(msg, "location_settings", None)
                 setting_enum = None
                 if setting_val is not None:
                     try:
                         setting_enum = LocationSettings(setting_val)
                     except ValueError:
-                        fit_data.errors.append(
-                            f"Invalid LocationSetting value encountered: {setting_val}"
-                        )
-                fit_data.settings = FitLocationSettingData(  # Updated instantiation
+                        if logger:
+                            logger(
+                                f"Invalid LocationSetting value encountered: {setting_val}"
+                            )
+                fit_data.settings = FitLocationSettingData(
                     waypoint_setting=setting_enum
                 )
             elif global_id == LocationMessage.ID:
                 msg = actual_message
-                # msg.position_lat and msg.position_long from LocationMessage already return degrees
                 lat_degrees = getattr(msg, "position_lat", None)
                 lon_degrees = getattr(msg, "position_long", None)
 
-                # Process timestamp from LocationMessage
                 raw_location_timestamp = getattr(msg, "timestamp", None)
                 location_datetime_object = _process_raw_timestamp(
-                    raw_location_timestamp, "LocationMessage.timestamp", fit_data.errors
+                    raw_location_timestamp, logger=logger
                 )
 
-                waypoint = FitLocationData(  # Updated instantiation
-                    name=getattr(
-                        msg, "location_name", None
-                    ),  # Corrected: use location_name
-                    description=getattr(
-                        msg, "description", None
-                    ),  # Corrected: use description
+                waypoint = FitLocationData(
+                    name=getattr(msg, "location_name", None),
+                    description=getattr(msg, "description", None),
                     latitude=lat_degrees,
                     longitude=lon_degrees,
                     altitude=getattr(msg, "altitude", None),
-                    timestamp=location_datetime_object,  # Store processed datetime
-                    symbol=getattr(msg, "symbol", None),  # Corrected: use symbol
+                    timestamp=location_datetime_object,
+                    symbol=getattr(msg, "symbol", None),
                     message_index=getattr(msg, "message_index", None),
                 )
                 fit_data.waypoints.append(waypoint)
         except AttributeError as e:
-            fit_data.errors.append(
-                f"Attribute error processing message {type(actual_message).__name__} (ID: {global_id}): {e}"
-            )
+            if logger:
+                logger(
+                    f"Attribute error processing message {type(actual_message).__name__} (ID: {global_id}): {e}"
+                )
         except Exception as e:
-            fit_data.errors.append(
-                f"Unexpected error processing message {type(actual_message).__name__} (ID: {global_id}): {e}"
-            )
+            if logger:
+                logger(
+                    f"Unexpected error processing message {type(actual_message).__name__} (ID: {global_id}): {e}"
+                )
 
     return fit_data
 
 
-def read_gpx_file(file_path: str) -> List[FitLocationData]:
+def read_gpx_file(file_path: str, logger=None) -> List[FitLocationData]:
     """
     Parses a GPX file and extracts waypoint data.
     """
@@ -268,7 +265,10 @@ def read_gpx_file(file_path: str) -> List[FitLocationData]:
                     if sym_str in MapSymbol.__members__:
                         symbol_val = MapSymbol[sym_str].value
                 except Exception:
-                    pass  # Keep default symbol_val
+                    if logger:
+                        logger(
+                            f"Could not map GPX symbol '{gpx_wp.symbol}' to FIT symbol."
+                        )
 
             # Altitude (elevation in GPX)
             altitude = gpx_wp.elevation
@@ -320,12 +320,16 @@ def read_gpx_file(file_path: str) -> List[FitLocationData]:
 
     except ImportError:
         # This error should ideally be caught by the GUI and inform the user
-        raise RuntimeError(
-            "GPX parsing requires the 'gpxpy' library. Please install it: pip install gpxpy"
-        )
+        if logger:
+            logger(
+                "GPX parsing requires the 'gpxpy' library. Please install it: pip install gpxpy"
+            )
+        return waypoints
     except Exception as e:
         # Log or raise a more specific error to be handled by the GUI
-        raise RuntimeError(f"Error parsing GPX file {file_path}: {e}")
+        if logger:
+            logger(f"Error parsing GPX file {file_path}: {e}")
+        return waypoints
 
     return waypoints
 
@@ -348,7 +352,7 @@ def degrees_to_semicircles(degrees: Optional[float]) -> Optional[int]:
 
 
 def write_fit_file(
-    file_path: str, fit_data: LocationsFitFileData
+    file_path: str, fit_data: LocationsFitFileData, logger=None
 ) -> tuple[List[str], List[str]]:
     """Writes the provided LocationsFitFileData to a .fit file.
     Returns a tuple of (warnings, critical_errors).
@@ -477,5 +481,7 @@ def write_fit_file(
         fit_file_built.to_file(file_path)
     except Exception as e:
         critical_errors.append(f"Error building or writing FIT file: {e}")
+        if logger:
+            logger(f"Error building or writing FIT file: {e}")
 
     return warnings, critical_errors
