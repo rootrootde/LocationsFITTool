@@ -1,0 +1,17 @@
+[project]
+name = "location-tool"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fbs",
+    "fbs-tutorial>=1.0.0",
+    "geopy>=2.4.1",
+    "gpxpy>=1.6.2",
+    "pyinstaller>=6.13.0",
+    "pyside6>=6.9.0",
+]
+
+[tool.uv.sources]
+fbs = { path = "fbs-1.2.7.tar.gz" }
