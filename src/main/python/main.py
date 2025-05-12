@@ -19,8 +19,8 @@ if __name__ == "__main__":
         app = appctxt.app
     else:
         app = QApplication(sys.argv)
-        appctxt = None  # Or some dummy object if MainWindow expects it
-
+        appctxt = None
+        
     try:
         window = MainWindow(appctxt)
         window.show()
