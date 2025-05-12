@@ -8,7 +8,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-fbs = [
+packaging = [
     "fbs",
 ]
 genprofile = [

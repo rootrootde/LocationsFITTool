@@ -90,13 +90,13 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
-fbs = [
-    { name = "fbs" },
-]
 genprofile = [
     { name = "inflection" },
     { name = "jinja2" },
     { name = "openpyxl" },
+]
+packaging = [
+    { name = "fbs" },
 ]
 
 [package.metadata]
@@ -106,12 +106,12 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-fbs = [{ name = "fbs", path = "fbs/fbs-1.2.7.tar.gz" }]
 genprofile = [
     { name = "inflection", specifier = ">=0.5.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "openpyxl", specifier = ">=3.1.5" },
 ]
+packaging = [{ name = "fbs", path = "fbs/fbs-1.2.7.tar.gz" }]
 
 [[package]]
 name = "macholib"
