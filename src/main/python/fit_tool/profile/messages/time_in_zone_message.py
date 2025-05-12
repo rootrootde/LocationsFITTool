@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class TimeInZoneMessage(DataMessage):
     ID = 216
-    NAME = "time_in_zone"
+    NAME = 'time_in_zone'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,141 +29,80 @@ class TimeInZoneMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=TimeInZoneMessage.NAME,
-            global_id=TimeInZoneMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneReferenceMesgField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneReferenceMesgField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneReferenceIndexField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneReferenceIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneTimeInHrZoneField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneTimeInHrZoneField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneTimeInSpeedZoneField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneTimeInSpeedZoneField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneTimeInCadenceZoneField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneTimeInCadenceZoneField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneTimeInPowerZoneField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneTimeInPowerZoneField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneHrZoneHighBoundaryField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneHrZoneHighBoundaryField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneSpeedZoneHighBoundaryField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneSpeedZoneHighBoundaryField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneCadenceZoneHighBondaryField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneCadenceZoneHighBondaryField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZonePowerZoneHighBoundaryField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZonePowerZoneHighBoundaryField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneHrCalcTypeField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneHrCalcTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneMaxHeartRateField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneMaxHeartRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneRestingHeartRateField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneRestingHeartRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneThresholdHeartRateField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneThresholdHeartRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZonePwrCalcTypeField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZonePwrCalcTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimeInZoneFunctionalThresholdPowerField(
-                    size=self.__get_field_size(
-                        definition_message, TimeInZoneFunctionalThresholdPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=TimeInZoneMessage.NAME,
+                         global_id=TimeInZoneMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        TimeInZoneReferenceMesgField(
+            size=self.__get_field_size(definition_message, TimeInZoneReferenceMesgField.ID),
+            growable=definition_message is None), 
+        TimeInZoneReferenceIndexField(
+            size=self.__get_field_size(definition_message, TimeInZoneReferenceIndexField.ID),
+            growable=definition_message is None), 
+        TimeInZoneTimeInHrZoneField(
+            size=self.__get_field_size(definition_message, TimeInZoneTimeInHrZoneField.ID),
+            growable=definition_message is None), 
+        TimeInZoneTimeInSpeedZoneField(
+            size=self.__get_field_size(definition_message, TimeInZoneTimeInSpeedZoneField.ID),
+            growable=definition_message is None), 
+        TimeInZoneTimeInCadenceZoneField(
+            size=self.__get_field_size(definition_message, TimeInZoneTimeInCadenceZoneField.ID),
+            growable=definition_message is None), 
+        TimeInZoneTimeInPowerZoneField(
+            size=self.__get_field_size(definition_message, TimeInZoneTimeInPowerZoneField.ID),
+            growable=definition_message is None), 
+        TimeInZoneHrZoneHighBoundaryField(
+            size=self.__get_field_size(definition_message, TimeInZoneHrZoneHighBoundaryField.ID),
+            growable=definition_message is None), 
+        TimeInZoneSpeedZoneHighBoundaryField(
+            size=self.__get_field_size(definition_message, TimeInZoneSpeedZoneHighBoundaryField.ID),
+            growable=definition_message is None), 
+        TimeInZoneCadenceZoneHighBondaryField(
+            size=self.__get_field_size(definition_message, TimeInZoneCadenceZoneHighBondaryField.ID),
+            growable=definition_message is None), 
+        TimeInZonePowerZoneHighBoundaryField(
+            size=self.__get_field_size(definition_message, TimeInZonePowerZoneHighBoundaryField.ID),
+            growable=definition_message is None), 
+        TimeInZoneHrCalcTypeField(
+            size=self.__get_field_size(definition_message, TimeInZoneHrCalcTypeField.ID),
+            growable=definition_message is None), 
+        TimeInZoneMaxHeartRateField(
+            size=self.__get_field_size(definition_message, TimeInZoneMaxHeartRateField.ID),
+            growable=definition_message is None), 
+        TimeInZoneRestingHeartRateField(
+            size=self.__get_field_size(definition_message, TimeInZoneRestingHeartRateField.ID),
+            growable=definition_message is None), 
+        TimeInZoneThresholdHeartRateField(
+            size=self.__get_field_size(definition_message, TimeInZoneThresholdHeartRateField.ID),
+            growable=definition_message is None), 
+        TimeInZonePwrCalcTypeField(
+            size=self.__get_field_size(definition_message, TimeInZonePwrCalcTypeField.ID),
+            growable=definition_message is None), 
+        TimeInZoneFunctionalThresholdPowerField(
+            size=self.__get_field_size(definition_message, TimeInZoneFunctionalThresholdPowerField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -171,6 +112,7 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -185,6 +127,8 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def reference_mesg(self) -> Optional[int]:
         field = self.get_field(TimeInZoneReferenceMesgField.ID)
@@ -193,6 +137,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @reference_mesg.setter
     def reference_mesg(self, value: int):
@@ -205,6 +151,8 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def reference_index(self) -> Optional[int]:
         field = self.get_field(TimeInZoneReferenceIndexField.ID)
@@ -213,6 +161,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @reference_index.setter
     def reference_index(self, value: int):
@@ -225,6 +175,8 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def time_in_hr_zone(self) -> Optional[list[float]]:
         field = self.get_field(TimeInZoneTimeInHrZoneField.ID)
@@ -232,6 +184,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time_in_hr_zone.setter
     def time_in_hr_zone(self, value: list[float]):
@@ -243,6 +197,8 @@ class TimeInZoneMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def time_in_speed_zone(self) -> Optional[list[float]]:
         field = self.get_field(TimeInZoneTimeInSpeedZoneField.ID)
@@ -250,6 +206,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time_in_speed_zone.setter
     def time_in_speed_zone(self, value: list[float]):
@@ -261,6 +219,8 @@ class TimeInZoneMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def time_in_cadence_zone(self) -> Optional[list[float]]:
         field = self.get_field(TimeInZoneTimeInCadenceZoneField.ID)
@@ -268,6 +228,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time_in_cadence_zone.setter
     def time_in_cadence_zone(self, value: list[float]):
@@ -279,6 +241,8 @@ class TimeInZoneMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def time_in_power_zone(self) -> Optional[list[float]]:
         field = self.get_field(TimeInZoneTimeInPowerZoneField.ID)
@@ -286,6 +250,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time_in_power_zone.setter
     def time_in_power_zone(self, value: list[float]):
@@ -297,6 +263,8 @@ class TimeInZoneMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def hr_zone_high_boundary(self) -> Optional[list[int]]:
         field = self.get_field(TimeInZoneHrZoneHighBoundaryField.ID)
@@ -304,6 +272,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @hr_zone_high_boundary.setter
     def hr_zone_high_boundary(self, value: list[int]):
@@ -315,6 +285,8 @@ class TimeInZoneMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def speed_zone_high_boundary(self) -> Optional[list[float]]:
         field = self.get_field(TimeInZoneSpeedZoneHighBoundaryField.ID)
@@ -322,6 +294,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @speed_zone_high_boundary.setter
     def speed_zone_high_boundary(self, value: list[float]):
@@ -333,6 +307,8 @@ class TimeInZoneMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def cadence_zone_high_bondary(self) -> Optional[list[int]]:
         field = self.get_field(TimeInZoneCadenceZoneHighBondaryField.ID)
@@ -340,6 +316,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @cadence_zone_high_bondary.setter
     def cadence_zone_high_bondary(self, value: list[int]):
@@ -351,6 +329,8 @@ class TimeInZoneMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def power_zone_high_boundary(self) -> Optional[list[int]]:
         field = self.get_field(TimeInZonePowerZoneHighBoundaryField.ID)
@@ -358,6 +338,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @power_zone_high_boundary.setter
     def power_zone_high_boundary(self, value: list[int]):
@@ -369,6 +351,8 @@ class TimeInZoneMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def hr_calc_type(self) -> Optional[HrZoneCalc]:
         field = self.get_field(TimeInZoneHrCalcTypeField.ID)
@@ -377,6 +361,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @hr_calc_type.setter
     def hr_calc_type(self, value: HrZoneCalc):
@@ -389,6 +375,8 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_heart_rate(self) -> Optional[int]:
         field = self.get_field(TimeInZoneMaxHeartRateField.ID)
@@ -397,6 +385,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_heart_rate.setter
     def max_heart_rate(self, value: int):
@@ -409,6 +399,8 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def resting_heart_rate(self) -> Optional[int]:
         field = self.get_field(TimeInZoneRestingHeartRateField.ID)
@@ -417,6 +409,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @resting_heart_rate.setter
     def resting_heart_rate(self, value: int):
@@ -429,6 +423,8 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def threshold_heart_rate(self) -> Optional[int]:
         field = self.get_field(TimeInZoneThresholdHeartRateField.ID)
@@ -437,6 +433,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @threshold_heart_rate.setter
     def threshold_heart_rate(self, value: int):
@@ -449,6 +447,8 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def pwr_calc_type(self) -> Optional[PwrZoneCalc]:
         field = self.get_field(TimeInZonePwrCalcTypeField.ID)
@@ -457,6 +457,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @pwr_calc_type.setter
     def pwr_calc_type(self, value: PwrZoneCalc):
@@ -469,6 +471,8 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def functional_threshold_power(self) -> Optional[int]:
         field = self.get_field(TimeInZoneFunctionalThresholdPowerField.ID)
@@ -477,6 +481,8 @@ class TimeInZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @functional_threshold_power.setter
     def functional_threshold_power(self, value: int):
@@ -489,22 +495,28 @@ class TimeInZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -513,14 +525,15 @@ class TimeInZoneReferenceMesgField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="reference_mesg",
+            name='reference_mesg',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -529,14 +542,15 @@ class TimeInZoneReferenceIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="reference_index",
+            name='reference_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -545,16 +559,17 @@ class TimeInZoneTimeInHrZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_in_hr_zone",
+            name='time_in_hr_zone',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -563,16 +578,17 @@ class TimeInZoneTimeInSpeedZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_in_speed_zone",
+            name='time_in_speed_zone',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -581,16 +597,17 @@ class TimeInZoneTimeInCadenceZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_in_cadence_zone",
+            name='time_in_cadence_zone',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -599,16 +616,17 @@ class TimeInZoneTimeInPowerZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_in_power_zone",
+            name='time_in_power_zone',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -617,16 +635,17 @@ class TimeInZoneHrZoneHighBoundaryField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="hr_zone_high_boundary",
+            name='hr_zone_high_boundary',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="bpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'bpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -635,16 +654,17 @@ class TimeInZoneSpeedZoneHighBoundaryField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="speed_zone_high_boundary",
+            name='speed_zone_high_boundary',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -653,16 +673,17 @@ class TimeInZoneCadenceZoneHighBondaryField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cadence_zone_high_bondary",
+            name='cadence_zone_high_bondary',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -671,16 +692,17 @@ class TimeInZonePowerZoneHighBoundaryField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="power_zone_high_boundary",
+            name='power_zone_high_boundary',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -689,14 +711,15 @@ class TimeInZoneHrCalcTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="hr_calc_type",
+            name='hr_calc_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -705,14 +728,15 @@ class TimeInZoneMaxHeartRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_heart_rate",
+            name='max_heart_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -721,14 +745,15 @@ class TimeInZoneRestingHeartRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="resting_heart_rate",
+            name='resting_heart_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -737,14 +762,15 @@ class TimeInZoneThresholdHeartRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="threshold_heart_rate",
+            name='threshold_heart_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -753,14 +779,15 @@ class TimeInZonePwrCalcTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="pwr_calc_type",
+            name='pwr_calc_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -769,12 +796,13 @@ class TimeInZoneFunctionalThresholdPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="functional_threshold_power",
+            name='functional_threshold_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

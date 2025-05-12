@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class CapabilitiesMessage(DataMessage):
     ID = 1
-    NAME = "capabilities"
+    NAME = 'capabilities'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,63 +29,40 @@ class CapabilitiesMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=CapabilitiesMessage.NAME,
-            global_id=CapabilitiesMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                CapabilitiesLanguagesField(
-                    size=self.__get_field_size(
-                        definition_message, CapabilitiesLanguagesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                CapabilitiesSportsField(
-                    size=self.__get_field_size(
-                        definition_message, CapabilitiesSportsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                CapabilitiesWorkoutsSupportedField(
-                    size=self.__get_field_size(
-                        definition_message, CapabilitiesWorkoutsSupportedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                CapabilitiesConnectivitySupportedField(
-                    size=self.__get_field_size(
-                        definition_message, CapabilitiesConnectivitySupportedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=CapabilitiesMessage.NAME,
+                         global_id=CapabilitiesMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        CapabilitiesLanguagesField(
+            size=self.__get_field_size(definition_message, CapabilitiesLanguagesField.ID),
+            growable=definition_message is None), 
+        CapabilitiesSportsField(
+            size=self.__get_field_size(definition_message, CapabilitiesSportsField.ID),
+            growable=definition_message is None), 
+        CapabilitiesWorkoutsSupportedField(
+            size=self.__get_field_size(definition_message, CapabilitiesWorkoutsSupportedField.ID),
+            growable=definition_message is None), 
+        CapabilitiesConnectivitySupportedField(
+            size=self.__get_field_size(definition_message, CapabilitiesConnectivitySupportedField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def languages(self) -> Optional[list[int]]:
@@ -92,6 +71,8 @@ class CapabilitiesMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @languages.setter
     def languages(self, value: list[int]):
@@ -103,6 +84,8 @@ class CapabilitiesMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def sports(self) -> Optional[list[int]]:
         field = self.get_field(CapabilitiesSportsField.ID)
@@ -110,6 +93,8 @@ class CapabilitiesMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @sports.setter
     def sports(self, value: list[int]):
@@ -121,6 +106,8 @@ class CapabilitiesMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def workouts_supported(self) -> Optional[int]:
         field = self.get_field(CapabilitiesWorkoutsSupportedField.ID)
@@ -129,6 +116,8 @@ class CapabilitiesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @workouts_supported.setter
     def workouts_supported(self, value: int):
@@ -141,6 +130,8 @@ class CapabilitiesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def connectivity_supported(self) -> Optional[int]:
         field = self.get_field(CapabilitiesConnectivitySupportedField.ID)
@@ -149,6 +140,8 @@ class CapabilitiesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @connectivity_supported.setter
     def connectivity_supported(self, value: int):
@@ -161,20 +154,26 @@ class CapabilitiesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class CapabilitiesLanguagesField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="languages",
+            name='languages',
             field_id=self.ID,
             base_type=BaseType.UINT8Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -183,14 +182,15 @@ class CapabilitiesSportsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sports",
+            name='sports',
             field_id=self.ID,
             base_type=BaseType.UINT8Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -199,14 +199,15 @@ class CapabilitiesWorkoutsSupportedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="workouts_supported",
+            name='workouts_supported',
             field_id=self.ID,
             base_type=BaseType.UINT32Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -215,12 +216,13 @@ class CapabilitiesConnectivitySupportedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="connectivity_supported",
+            name='connectivity_supported',
             field_id=self.ID,
             base_type=BaseType.UINT32Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class MemoGlobMessage(DataMessage):
     ID = 145
-    NAME = "memo_glob"
+    NAME = 'memo_glob'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,75 +29,46 @@ class MemoGlobMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=MemoGlobMessage.NAME,
-            global_id=MemoGlobMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MemoGlobPartIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MemoGlobPartIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MemoGlobMemoField(
-                    size=self.__get_field_size(
-                        definition_message, MemoGlobMemoField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MemoGlobMesgNumField(
-                    size=self.__get_field_size(
-                        definition_message, MemoGlobMesgNumField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MemoGlobParentIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MemoGlobParentIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MemoGlobFieldNumField(
-                    size=self.__get_field_size(
-                        definition_message, MemoGlobFieldNumField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MemoGlobDataField(
-                    size=self.__get_field_size(
-                        definition_message, MemoGlobDataField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=MemoGlobMessage.NAME,
+                         global_id=MemoGlobMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MemoGlobPartIndexField(
+            size=self.__get_field_size(definition_message, MemoGlobPartIndexField.ID),
+            growable=definition_message is None), 
+        MemoGlobMemoField(
+            size=self.__get_field_size(definition_message, MemoGlobMemoField.ID),
+            growable=definition_message is None), 
+        MemoGlobMesgNumField(
+            size=self.__get_field_size(definition_message, MemoGlobMesgNumField.ID),
+            growable=definition_message is None), 
+        MemoGlobParentIndexField(
+            size=self.__get_field_size(definition_message, MemoGlobParentIndexField.ID),
+            growable=definition_message is None), 
+        MemoGlobFieldNumField(
+            size=self.__get_field_size(definition_message, MemoGlobFieldNumField.ID),
+            growable=definition_message is None), 
+        MemoGlobDataField(
+            size=self.__get_field_size(definition_message, MemoGlobDataField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def part_index(self) -> Optional[int]:
@@ -105,6 +78,8 @@ class MemoGlobMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @part_index.setter
     def part_index(self, value: int):
@@ -117,6 +92,8 @@ class MemoGlobMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def memo(self) -> Optional[bytes]:
         field = self.get_field(MemoGlobMemoField.ID)
@@ -124,6 +101,8 @@ class MemoGlobMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @memo.setter
     def memo(self, value: bytes):
@@ -135,6 +114,8 @@ class MemoGlobMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def mesg_num(self) -> Optional[int]:
         field = self.get_field(MemoGlobMesgNumField.ID)
@@ -143,6 +124,8 @@ class MemoGlobMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @mesg_num.setter
     def mesg_num(self, value: int):
@@ -155,6 +138,8 @@ class MemoGlobMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def parent_index(self) -> Optional[int]:
         field = self.get_field(MemoGlobParentIndexField.ID)
@@ -163,6 +148,8 @@ class MemoGlobMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @parent_index.setter
     def parent_index(self, value: int):
@@ -175,6 +162,8 @@ class MemoGlobMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def field_num(self) -> Optional[int]:
         field = self.get_field(MemoGlobFieldNumField.ID)
@@ -183,6 +172,8 @@ class MemoGlobMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @field_num.setter
     def field_num(self, value: int):
@@ -195,6 +186,8 @@ class MemoGlobMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def data(self) -> Optional[list[int]]:
         field = self.get_field(MemoGlobDataField.ID)
@@ -202,6 +195,8 @@ class MemoGlobMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @data.setter
     def data(self, value: list[int]):
@@ -213,20 +208,26 @@ class MemoGlobMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
+
+
+
 
 class MemoGlobPartIndexField(Field):
     ID = 250
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="part_index",
+            name='part_index',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -235,14 +236,15 @@ class MemoGlobMemoField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="memo",
+            name='memo',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -251,14 +253,15 @@ class MemoGlobMesgNumField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="mesg_num",
+            name='mesg_num',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -267,14 +270,15 @@ class MemoGlobParentIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="parent_index",
+            name='parent_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -283,14 +287,15 @@ class MemoGlobFieldNumField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="field_num",
+            name='field_num',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -299,12 +304,13 @@ class MemoGlobDataField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="data",
+            name='data',
             field_id=self.ID,
             base_type=BaseType.UINT8Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

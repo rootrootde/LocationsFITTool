@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class Spo2DataMessage(DataMessage):
     ID = 269
-    NAME = "spo2_data"
+    NAME = 'spo2_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,63 +29,41 @@ class Spo2DataMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=Spo2DataMessage.NAME,
-            global_id=Spo2DataMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                Spo2DataReadingSpo2Field(
-                    size=self.__get_field_size(
-                        definition_message, Spo2DataReadingSpo2Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                Spo2DataReadingConfidenceField(
-                    size=self.__get_field_size(
-                        definition_message, Spo2DataReadingConfidenceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                Spo2DataModeField(
-                    size=self.__get_field_size(
-                        definition_message, Spo2DataModeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=Spo2DataMessage.NAME,
+                         global_id=Spo2DataMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        Spo2DataReadingSpo2Field(
+            size=self.__get_field_size(definition_message, Spo2DataReadingSpo2Field.ID),
+            growable=definition_message is None), 
+        Spo2DataReadingConfidenceField(
+            size=self.__get_field_size(definition_message, Spo2DataReadingConfidenceField.ID),
+            growable=definition_message is None), 
+        Spo2DataModeField(
+            size=self.__get_field_size(definition_message, Spo2DataModeField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -93,6 +73,7 @@ class Spo2DataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -107,6 +88,8 @@ class Spo2DataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def reading_spo2(self) -> Optional[int]:
         field = self.get_field(Spo2DataReadingSpo2Field.ID)
@@ -115,6 +98,8 @@ class Spo2DataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @reading_spo2.setter
     def reading_spo2(self, value: int):
@@ -127,6 +112,8 @@ class Spo2DataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def reading_confidence(self) -> Optional[int]:
         field = self.get_field(Spo2DataReadingConfidenceField.ID)
@@ -135,6 +122,8 @@ class Spo2DataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @reading_confidence.setter
     def reading_confidence(self, value: int):
@@ -147,6 +136,8 @@ class Spo2DataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def mode(self) -> Optional[Spo2MeasurementType]:
         field = self.get_field(Spo2DataModeField.ID)
@@ -155,6 +146,8 @@ class Spo2DataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @mode.setter
     def mode(self, value: Spo2MeasurementType):
@@ -167,22 +160,28 @@ class Spo2DataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -191,16 +190,17 @@ class Spo2DataReadingSpo2Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="reading_spo2",
+            name='reading_spo2',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -209,14 +209,15 @@ class Spo2DataReadingConfidenceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="reading_confidence",
+            name='reading_confidence',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -225,12 +226,13 @@ class Spo2DataModeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="mode",
+            name='mode',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

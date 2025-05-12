@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class FileCapabilitiesMessage(DataMessage):
     ID = 37
-    NAME = "file_capabilities"
+    NAME = 'file_capabilities'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,75 +29,46 @@ class FileCapabilitiesMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=FileCapabilitiesMessage.NAME,
-            global_id=FileCapabilitiesMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MessageIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MessageIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FileCapabilitiesTypeField(
-                    size=self.__get_field_size(
-                        definition_message, FileCapabilitiesTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FileCapabilitiesFlagsField(
-                    size=self.__get_field_size(
-                        definition_message, FileCapabilitiesFlagsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FileCapabilitiesDirectoryField(
-                    size=self.__get_field_size(
-                        definition_message, FileCapabilitiesDirectoryField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FileCapabilitiesMaxCountField(
-                    size=self.__get_field_size(
-                        definition_message, FileCapabilitiesMaxCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FileCapabilitiesMaxSizeField(
-                    size=self.__get_field_size(
-                        definition_message, FileCapabilitiesMaxSizeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=FileCapabilitiesMessage.NAME,
+                         global_id=FileCapabilitiesMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MessageIndexField(
+            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+            growable=definition_message is None), 
+        FileCapabilitiesTypeField(
+            size=self.__get_field_size(definition_message, FileCapabilitiesTypeField.ID),
+            growable=definition_message is None), 
+        FileCapabilitiesFlagsField(
+            size=self.__get_field_size(definition_message, FileCapabilitiesFlagsField.ID),
+            growable=definition_message is None), 
+        FileCapabilitiesDirectoryField(
+            size=self.__get_field_size(definition_message, FileCapabilitiesDirectoryField.ID),
+            growable=definition_message is None), 
+        FileCapabilitiesMaxCountField(
+            size=self.__get_field_size(definition_message, FileCapabilitiesMaxCountField.ID),
+            growable=definition_message is None), 
+        FileCapabilitiesMaxSizeField(
+            size=self.__get_field_size(definition_message, FileCapabilitiesMaxSizeField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def message_index(self) -> Optional[int]:
@@ -105,6 +78,8 @@ class FileCapabilitiesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @message_index.setter
     def message_index(self, value: int):
@@ -117,6 +92,8 @@ class FileCapabilitiesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def type(self) -> Optional[FileType]:
         field = self.get_field(FileCapabilitiesTypeField.ID)
@@ -125,6 +102,8 @@ class FileCapabilitiesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @type.setter
     def type(self, value: FileType):
@@ -137,6 +116,8 @@ class FileCapabilitiesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def flags(self) -> Optional[int]:
         field = self.get_field(FileCapabilitiesFlagsField.ID)
@@ -145,6 +126,8 @@ class FileCapabilitiesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @flags.setter
     def flags(self, value: int):
@@ -157,6 +140,8 @@ class FileCapabilitiesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def directory(self) -> Optional[str]:
         field = self.get_field(FileCapabilitiesDirectoryField.ID)
@@ -165,6 +150,8 @@ class FileCapabilitiesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @directory.setter
     def directory(self, value: str):
@@ -177,6 +164,8 @@ class FileCapabilitiesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_count(self) -> Optional[int]:
         field = self.get_field(FileCapabilitiesMaxCountField.ID)
@@ -185,6 +174,8 @@ class FileCapabilitiesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_count.setter
     def max_count(self, value: int):
@@ -197,6 +188,8 @@ class FileCapabilitiesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_size(self) -> Optional[int]:
         field = self.get_field(FileCapabilitiesMaxSizeField.ID)
@@ -205,6 +198,8 @@ class FileCapabilitiesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_size.setter
     def max_size(self, value: int):
@@ -217,20 +212,26 @@ class FileCapabilitiesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class MessageIndexField(Field):
     ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="message_index",
+            name='message_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -239,14 +240,15 @@ class FileCapabilitiesTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="type",
+            name='type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -255,14 +257,15 @@ class FileCapabilitiesFlagsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="flags",
+            name='flags',
             field_id=self.ID,
             base_type=BaseType.UINT8Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -271,14 +274,15 @@ class FileCapabilitiesDirectoryField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="directory",
+            name='directory',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -287,14 +291,15 @@ class FileCapabilitiesMaxCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_count",
+            name='max_count',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -303,14 +308,15 @@ class FileCapabilitiesMaxSizeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_size",
+            name='max_size',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="bytes",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'bytes',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

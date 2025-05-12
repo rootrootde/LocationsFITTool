@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class ChronoShotSessionMessage(DataMessage):
     ID = 387
-    NAME = "chrono_shot_session"
+    NAME = 'chrono_shot_session'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,87 +29,53 @@ class ChronoShotSessionMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=ChronoShotSessionMessage.NAME,
-            global_id=ChronoShotSessionMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                ChronoShotSessionMinSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, ChronoShotSessionMinSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ChronoShotSessionMaxSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, ChronoShotSessionMaxSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ChronoShotSessionAvgSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, ChronoShotSessionAvgSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ChronoShotSessionShotCountField(
-                    size=self.__get_field_size(
-                        definition_message, ChronoShotSessionShotCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ChronoShotSessionProjectileTypeField(
-                    size=self.__get_field_size(
-                        definition_message, ChronoShotSessionProjectileTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ChronoShotSessionGrainWeightField(
-                    size=self.__get_field_size(
-                        definition_message, ChronoShotSessionGrainWeightField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ChronoShotSessionStandardDeviationField(
-                    size=self.__get_field_size(
-                        definition_message, ChronoShotSessionStandardDeviationField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=ChronoShotSessionMessage.NAME,
+                         global_id=ChronoShotSessionMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        ChronoShotSessionMinSpeedField(
+            size=self.__get_field_size(definition_message, ChronoShotSessionMinSpeedField.ID),
+            growable=definition_message is None), 
+        ChronoShotSessionMaxSpeedField(
+            size=self.__get_field_size(definition_message, ChronoShotSessionMaxSpeedField.ID),
+            growable=definition_message is None), 
+        ChronoShotSessionAvgSpeedField(
+            size=self.__get_field_size(definition_message, ChronoShotSessionAvgSpeedField.ID),
+            growable=definition_message is None), 
+        ChronoShotSessionShotCountField(
+            size=self.__get_field_size(definition_message, ChronoShotSessionShotCountField.ID),
+            growable=definition_message is None), 
+        ChronoShotSessionProjectileTypeField(
+            size=self.__get_field_size(definition_message, ChronoShotSessionProjectileTypeField.ID),
+            growable=definition_message is None), 
+        ChronoShotSessionGrainWeightField(
+            size=self.__get_field_size(definition_message, ChronoShotSessionGrainWeightField.ID),
+            growable=definition_message is None), 
+        ChronoShotSessionStandardDeviationField(
+            size=self.__get_field_size(definition_message, ChronoShotSessionStandardDeviationField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -117,6 +85,7 @@ class ChronoShotSessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -131,6 +100,8 @@ class ChronoShotSessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def min_speed(self) -> Optional[float]:
         field = self.get_field(ChronoShotSessionMinSpeedField.ID)
@@ -139,6 +110,8 @@ class ChronoShotSessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @min_speed.setter
     def min_speed(self, value: float):
@@ -151,6 +124,8 @@ class ChronoShotSessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_speed(self) -> Optional[float]:
         field = self.get_field(ChronoShotSessionMaxSpeedField.ID)
@@ -159,6 +134,8 @@ class ChronoShotSessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_speed.setter
     def max_speed(self, value: float):
@@ -171,6 +148,8 @@ class ChronoShotSessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_speed(self) -> Optional[float]:
         field = self.get_field(ChronoShotSessionAvgSpeedField.ID)
@@ -179,6 +158,8 @@ class ChronoShotSessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_speed.setter
     def avg_speed(self, value: float):
@@ -191,6 +172,8 @@ class ChronoShotSessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def shot_count(self) -> Optional[int]:
         field = self.get_field(ChronoShotSessionShotCountField.ID)
@@ -199,6 +182,8 @@ class ChronoShotSessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @shot_count.setter
     def shot_count(self, value: int):
@@ -211,6 +196,8 @@ class ChronoShotSessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def projectile_type(self) -> Optional[ProjectileType]:
         field = self.get_field(ChronoShotSessionProjectileTypeField.ID)
@@ -219,6 +206,8 @@ class ChronoShotSessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @projectile_type.setter
     def projectile_type(self, value: ProjectileType):
@@ -231,6 +220,8 @@ class ChronoShotSessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def grain_weight(self) -> Optional[float]:
         field = self.get_field(ChronoShotSessionGrainWeightField.ID)
@@ -239,6 +230,8 @@ class ChronoShotSessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @grain_weight.setter
     def grain_weight(self, value: float):
@@ -251,6 +244,8 @@ class ChronoShotSessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def standard_deviation(self) -> Optional[float]:
         field = self.get_field(ChronoShotSessionStandardDeviationField.ID)
@@ -259,6 +254,8 @@ class ChronoShotSessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @standard_deviation.setter
     def standard_deviation(self, value: float):
@@ -271,22 +268,28 @@ class ChronoShotSessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -295,16 +298,17 @@ class ChronoShotSessionMinSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="min_speed",
+            name='min_speed',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -313,16 +317,17 @@ class ChronoShotSessionMaxSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_speed",
+            name='max_speed',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -331,16 +336,17 @@ class ChronoShotSessionAvgSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_speed",
+            name='avg_speed',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -349,14 +355,15 @@ class ChronoShotSessionShotCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="shot_count",
+            name='shot_count',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -365,14 +372,15 @@ class ChronoShotSessionProjectileTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="projectile_type",
+            name='projectile_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -381,16 +389,17 @@ class ChronoShotSessionGrainWeightField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="grain_weight",
+            name='grain_weight',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=10,
-            size=size,
-            units="gr",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'gr',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -399,14 +408,15 @@ class ChronoShotSessionStandardDeviationField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="standard_deviation",
+            name='standard_deviation',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

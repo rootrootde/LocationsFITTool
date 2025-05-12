@@ -12,11 +12,12 @@ from fit_tool.field import Field
 from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class EventMessage(DataMessage):
     ID = 21
-    NAME = "event"
+    NAME = 'event'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -28,145 +29,86 @@ class EventMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=EventMessage.NAME,
-            global_id=EventMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                EventEventField(
-                    size=self.__get_field_size(definition_message, EventEventField.ID),
-                    growable=definition_message is None,
-                ),
-                EventEventTypeField(
-                    size=self.__get_field_size(
-                        definition_message, EventEventTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventData16Field(
-                    size=self.__get_field_size(definition_message, EventData16Field.ID),
-                    growable=definition_message is None,
-                ),
-                EventDataField(
-                    size=self.__get_field_size(definition_message, EventDataField.ID),
-                    growable=definition_message is None,
-                ),
-                EventEventGroupField(
-                    size=self.__get_field_size(
-                        definition_message, EventEventGroupField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventScoreField(
-                    size=self.__get_field_size(definition_message, EventScoreField.ID),
-                    growable=definition_message is None,
-                ),
-                EventOpponentScoreField(
-                    size=self.__get_field_size(
-                        definition_message, EventOpponentScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventFrontGearNumField(
-                    size=self.__get_field_size(
-                        definition_message, EventFrontGearNumField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventFrontGearField(
-                    size=self.__get_field_size(
-                        definition_message, EventFrontGearField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventRearGearNumField(
-                    size=self.__get_field_size(
-                        definition_message, EventRearGearNumField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventRearGearField(
-                    size=self.__get_field_size(
-                        definition_message, EventRearGearField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventDeviceIndexField(
-                    size=self.__get_field_size(
-                        definition_message, EventDeviceIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventActivityTypeField(
-                    size=self.__get_field_size(
-                        definition_message, EventActivityTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventStartTimestampField(
-                    size=self.__get_field_size(
-                        definition_message, EventStartTimestampField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventRadarThreatLevelMaxField(
-                    size=self.__get_field_size(
-                        definition_message, EventRadarThreatLevelMaxField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventRadarThreatCountField(
-                    size=self.__get_field_size(
-                        definition_message, EventRadarThreatCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventRadarThreatAvgApproachSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, EventRadarThreatAvgApproachSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                EventRadarThreatMaxApproachSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, EventRadarThreatMaxApproachSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=EventMessage.NAME,
+                         global_id=EventMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        EventEventField(
+            size=self.__get_field_size(definition_message, EventEventField.ID),
+            growable=definition_message is None), 
+        EventEventTypeField(
+            size=self.__get_field_size(definition_message, EventEventTypeField.ID),
+            growable=definition_message is None), 
+        EventData16Field(
+            size=self.__get_field_size(definition_message, EventData16Field.ID),
+            growable=definition_message is None), 
+        EventDataField(
+            size=self.__get_field_size(definition_message, EventDataField.ID),
+            growable=definition_message is None), 
+        EventEventGroupField(
+            size=self.__get_field_size(definition_message, EventEventGroupField.ID),
+            growable=definition_message is None), 
+        EventScoreField(
+            size=self.__get_field_size(definition_message, EventScoreField.ID),
+            growable=definition_message is None), 
+        EventOpponentScoreField(
+            size=self.__get_field_size(definition_message, EventOpponentScoreField.ID),
+            growable=definition_message is None), 
+        EventFrontGearNumField(
+            size=self.__get_field_size(definition_message, EventFrontGearNumField.ID),
+            growable=definition_message is None), 
+        EventFrontGearField(
+            size=self.__get_field_size(definition_message, EventFrontGearField.ID),
+            growable=definition_message is None), 
+        EventRearGearNumField(
+            size=self.__get_field_size(definition_message, EventRearGearNumField.ID),
+            growable=definition_message is None), 
+        EventRearGearField(
+            size=self.__get_field_size(definition_message, EventRearGearField.ID),
+            growable=definition_message is None), 
+        EventDeviceIndexField(
+            size=self.__get_field_size(definition_message, EventDeviceIndexField.ID),
+            growable=definition_message is None), 
+        EventActivityTypeField(
+            size=self.__get_field_size(definition_message, EventActivityTypeField.ID),
+            growable=definition_message is None), 
+        EventStartTimestampField(
+            size=self.__get_field_size(definition_message, EventStartTimestampField.ID),
+            growable=definition_message is None), 
+        EventRadarThreatLevelMaxField(
+            size=self.__get_field_size(definition_message, EventRadarThreatLevelMaxField.ID),
+            growable=definition_message is None), 
+        EventRadarThreatCountField(
+            size=self.__get_field_size(definition_message, EventRadarThreatCountField.ID),
+            growable=definition_message is None), 
+        EventRadarThreatAvgApproachSpeedField(
+            size=self.__get_field_size(definition_message, EventRadarThreatAvgApproachSpeedField.ID),
+            growable=definition_message is None), 
+        EventRadarThreatMaxApproachSpeedField(
+            size=self.__get_field_size(definition_message, EventRadarThreatMaxApproachSpeedField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -176,6 +118,7 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -190,6 +133,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def event(self) -> Optional[Event]:
         field = self.get_field(EventEventField.ID)
@@ -198,6 +143,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @event.setter
     def event(self, value: Event):
@@ -210,6 +157,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def event_type(self) -> Optional[EventType]:
         field = self.get_field(EventEventTypeField.ID)
@@ -218,6 +167,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @event_type.setter
     def event_type(self, value: EventType):
@@ -230,6 +181,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def data16(self) -> Optional[int]:
         field = self.get_field(EventData16Field.ID)
@@ -238,6 +191,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @data16.setter
     def data16(self, value: int):
@@ -250,6 +205,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def data(self) -> Optional[int]:
         field = self.get_field(EventDataField.ID)
@@ -258,6 +215,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @data.setter
     def data(self, value: int):
@@ -269,6 +228,9 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def timer_trigger(self) -> Optional[TimerTrigger]:
@@ -292,6 +254,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def course_point_index(self) -> Optional[int]:
         field = self.get_field(EventDataField.ID)
@@ -313,6 +276,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def battery_level(self) -> Optional[float]:
@@ -336,6 +300,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def virtual_partner_speed(self) -> Optional[float]:
         field = self.get_field(EventDataField.ID)
@@ -357,6 +322,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def hr_high_alert(self) -> Optional[int]:
@@ -380,6 +346,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def hr_low_alert(self) -> Optional[int]:
         field = self.get_field(EventDataField.ID)
@@ -401,6 +368,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def speed_high_alert(self) -> Optional[float]:
@@ -424,6 +392,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def speed_low_alert(self) -> Optional[float]:
         field = self.get_field(EventDataField.ID)
@@ -445,6 +414,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def cad_high_alert(self) -> Optional[int]:
@@ -468,6 +438,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def cad_low_alert(self) -> Optional[int]:
         field = self.get_field(EventDataField.ID)
@@ -489,6 +460,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def power_high_alert(self) -> Optional[int]:
@@ -512,6 +484,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def power_low_alert(self) -> Optional[int]:
         field = self.get_field(EventDataField.ID)
@@ -533,6 +506,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def time_duration_alert(self) -> Optional[float]:
@@ -556,6 +530,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def distance_duration_alert(self) -> Optional[float]:
         field = self.get_field(EventDataField.ID)
@@ -577,6 +552,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def calorie_duration_alert(self) -> Optional[int]:
@@ -600,6 +576,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def fitness_equipment_state(self) -> Optional[FitnessEquipmentState]:
         field = self.get_field(EventDataField.ID)
@@ -621,6 +598,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def sport_point(self) -> Optional[int]:
@@ -644,6 +622,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def gear_change_data(self) -> Optional[int]:
         field = self.get_field(EventDataField.ID)
@@ -665,6 +644,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def rider_position(self) -> Optional[RiderPositionType]:
@@ -688,6 +668,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def comm_timeout(self) -> Optional[int]:
         field = self.get_field(EventDataField.ID)
@@ -709,6 +690,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def dive_alert(self) -> Optional[DiveAlert]:
@@ -732,6 +714,7 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def auto_activity_detect_duration(self) -> Optional[int]:
         field = self.get_field(EventDataField.ID)
@@ -753,6 +736,7 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def radar_threat_alert(self) -> Optional[int]:
@@ -785,6 +769,8 @@ class EventMessage(DataMessage):
         else:
             return None
 
+
+
     @event_group.setter
     def event_group(self, value: int):
         field = self.get_field(EventEventGroupField.ID)
@@ -796,6 +782,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def score(self) -> Optional[int]:
         field = self.get_field(EventScoreField.ID)
@@ -804,6 +792,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @score.setter
     def score(self, value: int):
@@ -816,6 +806,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def opponent_score(self) -> Optional[int]:
         field = self.get_field(EventOpponentScoreField.ID)
@@ -824,6 +816,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @opponent_score.setter
     def opponent_score(self, value: int):
@@ -836,6 +830,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def front_gear_num(self) -> Optional[int]:
         field = self.get_field(EventFrontGearNumField.ID)
@@ -844,6 +840,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @front_gear_num.setter
     def front_gear_num(self, value: int):
@@ -856,6 +854,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def front_gear(self) -> Optional[int]:
         field = self.get_field(EventFrontGearField.ID)
@@ -864,6 +864,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @front_gear.setter
     def front_gear(self, value: int):
@@ -876,6 +878,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def rear_gear_num(self) -> Optional[int]:
         field = self.get_field(EventRearGearNumField.ID)
@@ -884,6 +888,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @rear_gear_num.setter
     def rear_gear_num(self, value: int):
@@ -896,6 +902,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def rear_gear(self) -> Optional[int]:
         field = self.get_field(EventRearGearField.ID)
@@ -904,6 +912,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @rear_gear.setter
     def rear_gear(self, value: int):
@@ -916,6 +926,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def device_index(self) -> Optional[int]:
         field = self.get_field(EventDeviceIndexField.ID)
@@ -924,6 +936,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @device_index.setter
     def device_index(self, value: int):
@@ -936,6 +950,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def activity_type(self) -> Optional[ActivityType]:
         field = self.get_field(EventActivityTypeField.ID)
@@ -944,6 +960,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @activity_type.setter
     def activity_type(self, value: ActivityType):
@@ -956,7 +974,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def start_timestamp(self) -> Optional[int]:
@@ -966,6 +985,7 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -979,6 +999,9 @@ class EventMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def auto_activity_detect_start_timestamp(self) -> Optional[int]:
@@ -1011,6 +1034,8 @@ class EventMessage(DataMessage):
         else:
             return None
 
+
+
     @radar_threat_level_max.setter
     def radar_threat_level_max(self, value: RadarThreatLevelType):
         field = self.get_field(EventRadarThreatLevelMaxField.ID)
@@ -1022,6 +1047,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def radar_threat_count(self) -> Optional[int]:
         field = self.get_field(EventRadarThreatCountField.ID)
@@ -1030,6 +1057,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @radar_threat_count.setter
     def radar_threat_count(self, value: int):
@@ -1042,6 +1071,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def radar_threat_avg_approach_speed(self) -> Optional[float]:
         field = self.get_field(EventRadarThreatAvgApproachSpeedField.ID)
@@ -1050,6 +1081,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @radar_threat_avg_approach_speed.setter
     def radar_threat_avg_approach_speed(self, value: float):
@@ -1062,6 +1095,8 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def radar_threat_max_approach_speed(self) -> Optional[float]:
         field = self.get_field(EventRadarThreatMaxApproachSpeedField.ID)
@@ -1070,6 +1105,8 @@ class EventMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @radar_threat_max_approach_speed.setter
     def radar_threat_max_approach_speed(self, value: float):
@@ -1082,22 +1119,28 @@ class EventMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1106,14 +1149,15 @@ class EventEventField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="event",
+            name='event',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1122,14 +1166,15 @@ class EventEventTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="event_type",
+            name='event_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1138,14 +1183,15 @@ class EventData16Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="data16",
+            name='data16',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1154,190 +1200,213 @@ class EventDataField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="data",
+            name='data',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="timer_trigger",
-                    base_type=BaseType.ENUM,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [0]},
-                ),
-                SubField(
-                    name="course_point_index",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [10]},
-                ),
-                SubField(
-                    name="battery_level",
-                    base_type=BaseType.UINT16,
-                    scale=1000,
-                    offset=0,
-                    units="V",
-                    reference_map={EventEventField.ID: [11]},
-                ),
-                SubField(
-                    name="virtual_partner_speed",
-                    base_type=BaseType.UINT16,
-                    scale=1000,
-                    offset=0,
-                    units="m/s",
-                    reference_map={EventEventField.ID: [12]},
-                ),
-                SubField(
-                    name="hr_high_alert",
-                    base_type=BaseType.UINT8,
-                    scale=1,
-                    offset=0,
-                    units="bpm",
-                    reference_map={EventEventField.ID: [13]},
-                ),
-                SubField(
-                    name="hr_low_alert",
-                    base_type=BaseType.UINT8,
-                    scale=1,
-                    offset=0,
-                    units="bpm",
-                    reference_map={EventEventField.ID: [14]},
-                ),
-                SubField(
-                    name="speed_high_alert",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="m/s",
-                    reference_map={EventEventField.ID: [15]},
-                ),
-                SubField(
-                    name="speed_low_alert",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="m/s",
-                    reference_map={EventEventField.ID: [16]},
-                ),
-                SubField(
-                    name="cad_high_alert",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    units="rpm",
-                    reference_map={EventEventField.ID: [17]},
-                ),
-                SubField(
-                    name="cad_low_alert",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    units="rpm",
-                    reference_map={EventEventField.ID: [18]},
-                ),
-                SubField(
-                    name="power_high_alert",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    units="watts",
-                    reference_map={EventEventField.ID: [19]},
-                ),
-                SubField(
-                    name="power_low_alert",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    units="watts",
-                    reference_map={EventEventField.ID: [20]},
-                ),
-                SubField(
-                    name="time_duration_alert",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="s",
-                    reference_map={EventEventField.ID: [23]},
-                ),
-                SubField(
-                    name="distance_duration_alert",
-                    base_type=BaseType.UINT32,
-                    scale=100,
-                    offset=0,
-                    units="m",
-                    reference_map={EventEventField.ID: [24]},
-                ),
-                SubField(
-                    name="calorie_duration_alert",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="calories",
-                    reference_map={EventEventField.ID: [25]},
-                ),
-                SubField(
-                    name="fitness_equipment_state",
-                    base_type=BaseType.ENUM,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [27]},
-                ),
-                SubField(
-                    name="sport_point",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [33]},
-                ),
-                SubField(
-                    name="gear_change_data",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [42, 43]},
-                ),
-                SubField(
-                    name="rider_position",
-                    base_type=BaseType.ENUM,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [44]},
-                ),
-                SubField(
-                    name="comm_timeout",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [47]},
-                ),
-                SubField(
-                    name="dive_alert",
-                    base_type=BaseType.ENUM,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [56]},
-                ),
-                SubField(
-                    name="auto_activity_detect_duration",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    units="min",
-                    reference_map={EventEventField.ID: [54]},
-                ),
-                SubField(
-                    name="radar_threat_alert",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={EventEventField.ID: [75]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='timer_trigger',
+            base_type=BaseType.ENUM,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [0]
+        }), 
+        SubField(
+            name='course_point_index',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [10]
+        }), 
+        SubField(
+            name='battery_level',
+            base_type=BaseType.UINT16,
+        scale = 1000,
+                offset = 0,
+        units = 'V',
+        reference_map = {
+        EventEventField.ID: [11]
+        }), 
+        SubField(
+            name='virtual_partner_speed',
+            base_type=BaseType.UINT16,
+        scale = 1000,
+                offset = 0,
+        units = 'm/s',
+        reference_map = {
+        EventEventField.ID: [12]
+        }), 
+        SubField(
+            name='hr_high_alert',
+            base_type=BaseType.UINT8,
+        scale = 1,
+                offset = 0,
+        units = 'bpm',
+        reference_map = {
+        EventEventField.ID: [13]
+        }), 
+        SubField(
+            name='hr_low_alert',
+            base_type=BaseType.UINT8,
+        scale = 1,
+                offset = 0,
+        units = 'bpm',
+        reference_map = {
+        EventEventField.ID: [14]
+        }), 
+        SubField(
+            name='speed_high_alert',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 'm/s',
+        reference_map = {
+        EventEventField.ID: [15]
+        }), 
+        SubField(
+            name='speed_low_alert',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 'm/s',
+        reference_map = {
+        EventEventField.ID: [16]
+        }), 
+        SubField(
+            name='cad_high_alert',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        units = 'rpm',
+        reference_map = {
+        EventEventField.ID: [17]
+        }), 
+        SubField(
+            name='cad_low_alert',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        units = 'rpm',
+        reference_map = {
+        EventEventField.ID: [18]
+        }), 
+        SubField(
+            name='power_high_alert',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        units = 'watts',
+        reference_map = {
+        EventEventField.ID: [19]
+        }), 
+        SubField(
+            name='power_low_alert',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        units = 'watts',
+        reference_map = {
+        EventEventField.ID: [20]
+        }), 
+        SubField(
+            name='time_duration_alert',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 's',
+        reference_map = {
+        EventEventField.ID: [23]
+        }), 
+        SubField(
+            name='distance_duration_alert',
+            base_type=BaseType.UINT32,
+        scale = 100,
+                offset = 0,
+        units = 'm',
+        reference_map = {
+        EventEventField.ID: [24]
+        }), 
+        SubField(
+            name='calorie_duration_alert',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'calories',
+        reference_map = {
+        EventEventField.ID: [25]
+        }), 
+        SubField(
+            name='fitness_equipment_state',
+            base_type=BaseType.ENUM,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [27]
+        }), 
+        SubField(
+            name='sport_point',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [33]
+        }), 
+        SubField(
+            name='gear_change_data',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [42, 43]
+        }), 
+        SubField(
+            name='rider_position',
+            base_type=BaseType.ENUM,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [44]
+        }), 
+        SubField(
+            name='comm_timeout',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [47]
+        }), 
+        SubField(
+            name='dive_alert',
+            base_type=BaseType.ENUM,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [56]
+        }), 
+        SubField(
+            name='auto_activity_detect_duration',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        units = 'min',
+        reference_map = {
+        EventEventField.ID: [54]
+        }), 
+        SubField(
+            name='radar_threat_alert',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        EventEventField.ID: [75]
+        })
+        ]
         )
 
 
@@ -1346,14 +1415,15 @@ class EventEventGroupField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="event_group",
+            name='event_group',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1362,14 +1432,15 @@ class EventScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="score",
+            name='score',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1378,14 +1449,15 @@ class EventOpponentScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="opponent_score",
+            name='opponent_score',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1394,14 +1466,15 @@ class EventFrontGearNumField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="front_gear_num",
+            name='front_gear_num',
             field_id=self.ID,
             base_type=BaseType.UINT8Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1410,14 +1483,15 @@ class EventFrontGearField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="front_gear",
+            name='front_gear',
             field_id=self.ID,
             base_type=BaseType.UINT8Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1426,14 +1500,15 @@ class EventRearGearNumField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="rear_gear_num",
+            name='rear_gear_num',
             field_id=self.ID,
             base_type=BaseType.UINT8Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1442,14 +1517,15 @@ class EventRearGearField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="rear_gear",
+            name='rear_gear',
             field_id=self.ID,
             base_type=BaseType.UINT8Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1458,14 +1534,15 @@ class EventDeviceIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="device_index",
+            name='device_index',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1474,14 +1551,15 @@ class EventActivityTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="activity_type",
+            name='activity_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1490,25 +1568,26 @@ class EventStartTimestampField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_timestamp",
+            name='start_timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="auto_activity_detect_start_timestamp",
-                    base_type=BaseType.UINT32,
-                    scale=0.001,
-                    offset=-631065600000,
-                    units="ms",
-                    reference_map={EventEventField.ID: [54]},
-                )
-            ],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='auto_activity_detect_start_timestamp',
+            base_type=BaseType.UINT32,
+        scale = 0.001,
+                offset = -631065600000,
+        units = 'ms',
+        reference_map = {
+        EventEventField.ID: [54]
+        })
+        ]
         )
 
 
@@ -1517,14 +1596,15 @@ class EventRadarThreatLevelMaxField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="radar_threat_level_max",
+            name='radar_threat_level_max',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1533,14 +1613,15 @@ class EventRadarThreatCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="radar_threat_count",
+            name='radar_threat_count',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1549,16 +1630,17 @@ class EventRadarThreatAvgApproachSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="radar_threat_avg_approach_speed",
+            name='radar_threat_avg_approach_speed',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=10,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1567,14 +1649,15 @@ class EventRadarThreatMaxApproachSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="radar_threat_max_approach_speed",
+            name='radar_threat_max_approach_speed',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=10,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

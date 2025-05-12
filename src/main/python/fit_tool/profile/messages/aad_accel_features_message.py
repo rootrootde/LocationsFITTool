@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class AadAccelFeaturesMessage(DataMessage):
     ID = 289
-    NAME = "aad_accel_features"
+    NAME = 'aad_accel_features'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,75 +29,47 @@ class AadAccelFeaturesMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=AadAccelFeaturesMessage.NAME,
-            global_id=AadAccelFeaturesMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                AadAccelFeaturesTimeField(
-                    size=self.__get_field_size(
-                        definition_message, AadAccelFeaturesTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                AadAccelFeaturesEnergyTotalField(
-                    size=self.__get_field_size(
-                        definition_message, AadAccelFeaturesEnergyTotalField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                AadAccelFeaturesZeroCrossCntField(
-                    size=self.__get_field_size(
-                        definition_message, AadAccelFeaturesZeroCrossCntField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                AadAccelFeaturesInstanceField(
-                    size=self.__get_field_size(
-                        definition_message, AadAccelFeaturesInstanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                AadAccelFeaturesTimeAboveThresholdField(
-                    size=self.__get_field_size(
-                        definition_message, AadAccelFeaturesTimeAboveThresholdField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=AadAccelFeaturesMessage.NAME,
+                         global_id=AadAccelFeaturesMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        AadAccelFeaturesTimeField(
+            size=self.__get_field_size(definition_message, AadAccelFeaturesTimeField.ID),
+            growable=definition_message is None), 
+        AadAccelFeaturesEnergyTotalField(
+            size=self.__get_field_size(definition_message, AadAccelFeaturesEnergyTotalField.ID),
+            growable=definition_message is None), 
+        AadAccelFeaturesZeroCrossCntField(
+            size=self.__get_field_size(definition_message, AadAccelFeaturesZeroCrossCntField.ID),
+            growable=definition_message is None), 
+        AadAccelFeaturesInstanceField(
+            size=self.__get_field_size(definition_message, AadAccelFeaturesInstanceField.ID),
+            growable=definition_message is None), 
+        AadAccelFeaturesTimeAboveThresholdField(
+            size=self.__get_field_size(definition_message, AadAccelFeaturesTimeAboveThresholdField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -105,6 +79,7 @@ class AadAccelFeaturesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -119,6 +94,8 @@ class AadAccelFeaturesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def time(self) -> Optional[int]:
         field = self.get_field(AadAccelFeaturesTimeField.ID)
@@ -127,6 +104,8 @@ class AadAccelFeaturesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @time.setter
     def time(self, value: int):
@@ -139,6 +118,8 @@ class AadAccelFeaturesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def energy_total(self) -> Optional[int]:
         field = self.get_field(AadAccelFeaturesEnergyTotalField.ID)
@@ -147,6 +128,8 @@ class AadAccelFeaturesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @energy_total.setter
     def energy_total(self, value: int):
@@ -159,6 +142,8 @@ class AadAccelFeaturesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def zero_cross_cnt(self) -> Optional[int]:
         field = self.get_field(AadAccelFeaturesZeroCrossCntField.ID)
@@ -167,6 +152,8 @@ class AadAccelFeaturesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @zero_cross_cnt.setter
     def zero_cross_cnt(self, value: int):
@@ -179,6 +166,8 @@ class AadAccelFeaturesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def instance(self) -> Optional[int]:
         field = self.get_field(AadAccelFeaturesInstanceField.ID)
@@ -187,6 +176,8 @@ class AadAccelFeaturesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @instance.setter
     def instance(self, value: int):
@@ -199,6 +190,8 @@ class AadAccelFeaturesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def time_above_threshold(self) -> Optional[float]:
         field = self.get_field(AadAccelFeaturesTimeAboveThresholdField.ID)
@@ -207,6 +200,8 @@ class AadAccelFeaturesMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @time_above_threshold.setter
     def time_above_threshold(self, value: float):
@@ -219,22 +214,28 @@ class AadAccelFeaturesMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -243,16 +244,17 @@ class AadAccelFeaturesTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time",
+            name='time',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -261,14 +263,15 @@ class AadAccelFeaturesEnergyTotalField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="energy_total",
+            name='energy_total',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -277,14 +280,15 @@ class AadAccelFeaturesZeroCrossCntField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="zero_cross_cnt",
+            name='zero_cross_cnt',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -293,14 +297,15 @@ class AadAccelFeaturesInstanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="instance",
+            name='instance',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -309,14 +314,15 @@ class AadAccelFeaturesTimeAboveThresholdField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_above_threshold",
+            name='time_above_threshold',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=25,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 25,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

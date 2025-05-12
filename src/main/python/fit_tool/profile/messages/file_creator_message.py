@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class FileCreatorMessage(DataMessage):
     ID = 49
-    NAME = "file_creator"
+    NAME = 'file_creator'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,51 +29,34 @@ class FileCreatorMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=FileCreatorMessage.NAME,
-            global_id=FileCreatorMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                FileCreatorSoftwareVersionField(
-                    size=self.__get_field_size(
-                        definition_message, FileCreatorSoftwareVersionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FileCreatorHardwareVersionField(
-                    size=self.__get_field_size(
-                        definition_message, FileCreatorHardwareVersionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=FileCreatorMessage.NAME,
+                         global_id=FileCreatorMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        FileCreatorSoftwareVersionField(
+            size=self.__get_field_size(definition_message, FileCreatorSoftwareVersionField.ID),
+            growable=definition_message is None), 
+        FileCreatorHardwareVersionField(
+            size=self.__get_field_size(definition_message, FileCreatorHardwareVersionField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def software_version(self) -> Optional[int]:
@@ -81,6 +66,8 @@ class FileCreatorMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @software_version.setter
     def software_version(self, value: int):
@@ -93,6 +80,8 @@ class FileCreatorMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def hardware_version(self) -> Optional[int]:
         field = self.get_field(FileCreatorHardwareVersionField.ID)
@@ -101,6 +90,8 @@ class FileCreatorMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @hardware_version.setter
     def hardware_version(self, value: int):
@@ -113,20 +104,26 @@ class FileCreatorMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class FileCreatorSoftwareVersionField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="software_version",
+            name='software_version',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -135,12 +132,13 @@ class FileCreatorHardwareVersionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="hardware_version",
+            name='hardware_version',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

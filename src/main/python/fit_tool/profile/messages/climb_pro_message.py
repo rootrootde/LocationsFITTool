@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class ClimbProMessage(DataMessage):
     ID = 317
-    NAME = "climb_pro"
+    NAME = 'climb_pro'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,81 +29,50 @@ class ClimbProMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=ClimbProMessage.NAME,
-            global_id=ClimbProMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                ClimbProPositionLatField(
-                    size=self.__get_field_size(
-                        definition_message, ClimbProPositionLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ClimbProPositionLongField(
-                    size=self.__get_field_size(
-                        definition_message, ClimbProPositionLongField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ClimbProClimbProEventField(
-                    size=self.__get_field_size(
-                        definition_message, ClimbProClimbProEventField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ClimbProClimbNumberField(
-                    size=self.__get_field_size(
-                        definition_message, ClimbProClimbNumberField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ClimbProClimbCategoryField(
-                    size=self.__get_field_size(
-                        definition_message, ClimbProClimbCategoryField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ClimbProCurrentDistField(
-                    size=self.__get_field_size(
-                        definition_message, ClimbProCurrentDistField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=ClimbProMessage.NAME,
+                         global_id=ClimbProMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        ClimbProPositionLatField(
+            size=self.__get_field_size(definition_message, ClimbProPositionLatField.ID),
+            growable=definition_message is None), 
+        ClimbProPositionLongField(
+            size=self.__get_field_size(definition_message, ClimbProPositionLongField.ID),
+            growable=definition_message is None), 
+        ClimbProClimbProEventField(
+            size=self.__get_field_size(definition_message, ClimbProClimbProEventField.ID),
+            growable=definition_message is None), 
+        ClimbProClimbNumberField(
+            size=self.__get_field_size(definition_message, ClimbProClimbNumberField.ID),
+            growable=definition_message is None), 
+        ClimbProClimbCategoryField(
+            size=self.__get_field_size(definition_message, ClimbProClimbCategoryField.ID),
+            growable=definition_message is None), 
+        ClimbProCurrentDistField(
+            size=self.__get_field_size(definition_message, ClimbProCurrentDistField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -111,6 +82,7 @@ class ClimbProMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -125,6 +97,8 @@ class ClimbProMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def position_lat(self) -> Optional[float]:
         field = self.get_field(ClimbProPositionLatField.ID)
@@ -133,6 +107,8 @@ class ClimbProMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @position_lat.setter
     def position_lat(self, value: float):
@@ -145,6 +121,8 @@ class ClimbProMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def position_long(self) -> Optional[float]:
         field = self.get_field(ClimbProPositionLongField.ID)
@@ -153,6 +131,8 @@ class ClimbProMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @position_long.setter
     def position_long(self, value: float):
@@ -165,6 +145,8 @@ class ClimbProMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def climb_pro_event(self) -> Optional[ClimbProEvent]:
         field = self.get_field(ClimbProClimbProEventField.ID)
@@ -173,6 +155,8 @@ class ClimbProMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @climb_pro_event.setter
     def climb_pro_event(self, value: ClimbProEvent):
@@ -185,6 +169,8 @@ class ClimbProMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def climb_number(self) -> Optional[int]:
         field = self.get_field(ClimbProClimbNumberField.ID)
@@ -193,6 +179,8 @@ class ClimbProMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @climb_number.setter
     def climb_number(self, value: int):
@@ -205,6 +193,8 @@ class ClimbProMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def climb_category(self) -> Optional[int]:
         field = self.get_field(ClimbProClimbCategoryField.ID)
@@ -213,6 +203,8 @@ class ClimbProMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @climb_category.setter
     def climb_category(self, value: int):
@@ -225,6 +217,8 @@ class ClimbProMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def current_dist(self) -> Optional[float]:
         field = self.get_field(ClimbProCurrentDistField.ID)
@@ -233,6 +227,8 @@ class ClimbProMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @current_dist.setter
     def current_dist(self, value: float):
@@ -245,22 +241,28 @@ class ClimbProMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -269,16 +271,17 @@ class ClimbProPositionLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="position_lat",
+            name='position_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -287,16 +290,17 @@ class ClimbProPositionLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="position_long",
+            name='position_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -305,14 +309,15 @@ class ClimbProClimbProEventField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="climb_pro_event",
+            name='climb_pro_event',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -321,14 +326,15 @@ class ClimbProClimbNumberField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="climb_number",
+            name='climb_number',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -337,14 +343,15 @@ class ClimbProClimbCategoryField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="climb_category",
+            name='climb_category',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -353,14 +360,15 @@ class ClimbProCurrentDistField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="current_dist",
+            name='current_dist',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

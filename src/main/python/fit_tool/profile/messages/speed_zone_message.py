@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class SpeedZoneMessage(DataMessage):
     ID = 53
-    NAME = "speed_zone"
+    NAME = 'speed_zone'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,57 +29,37 @@ class SpeedZoneMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=SpeedZoneMessage.NAME,
-            global_id=SpeedZoneMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MessageIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MessageIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SpeedZoneHighValueField(
-                    size=self.__get_field_size(
-                        definition_message, SpeedZoneHighValueField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SpeedZoneNameField(
-                    size=self.__get_field_size(
-                        definition_message, SpeedZoneNameField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=SpeedZoneMessage.NAME,
+                         global_id=SpeedZoneMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MessageIndexField(
+            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+            growable=definition_message is None), 
+        SpeedZoneHighValueField(
+            size=self.__get_field_size(definition_message, SpeedZoneHighValueField.ID),
+            growable=definition_message is None), 
+        SpeedZoneNameField(
+            size=self.__get_field_size(definition_message, SpeedZoneNameField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def message_index(self) -> Optional[int]:
@@ -87,6 +69,8 @@ class SpeedZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @message_index.setter
     def message_index(self, value: int):
@@ -99,6 +83,8 @@ class SpeedZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def high_value(self) -> Optional[float]:
         field = self.get_field(SpeedZoneHighValueField.ID)
@@ -107,6 +93,8 @@ class SpeedZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @high_value.setter
     def high_value(self, value: float):
@@ -119,6 +107,8 @@ class SpeedZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def speed_zone_name(self) -> Optional[str]:
         field = self.get_field(SpeedZoneNameField.ID)
@@ -127,6 +117,8 @@ class SpeedZoneMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @speed_zone_name.setter
     def speed_zone_name(self, value: str):
@@ -139,20 +131,26 @@ class SpeedZoneMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class MessageIndexField(Field):
     ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="message_index",
+            name='message_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -161,16 +159,17 @@ class SpeedZoneHighValueField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="high_value",
+            name='high_value',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -179,12 +178,13 @@ class SpeedZoneNameField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="name",
+            name='name',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class DeviceAuxBatteryInfoMessage(DataMessage):
     ID = 375
-    NAME = "device_aux_battery_info"
+    NAME = 'device_aux_battery_info'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,70 +29,44 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=DeviceAuxBatteryInfoMessage.NAME,
-            global_id=DeviceAuxBatteryInfoMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                DeviceAuxBatteryInfoDeviceIndexField(
-                    size=self.__get_field_size(
-                        definition_message, DeviceAuxBatteryInfoDeviceIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DeviceAuxBatteryInfoBatteryVoltageField(
-                    size=self.__get_field_size(
-                        definition_message, DeviceAuxBatteryInfoBatteryVoltageField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DeviceAuxBatteryInfoBatteryStatusField(
-                    size=self.__get_field_size(
-                        definition_message, DeviceAuxBatteryInfoBatteryStatusField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DeviceAuxBatteryInfoBatteryIdentifierField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        DeviceAuxBatteryInfoBatteryIdentifierField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=DeviceAuxBatteryInfoMessage.NAME,
+                         global_id=DeviceAuxBatteryInfoMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        DeviceAuxBatteryInfoDeviceIndexField(
+            size=self.__get_field_size(definition_message, DeviceAuxBatteryInfoDeviceIndexField.ID),
+            growable=definition_message is None), 
+        DeviceAuxBatteryInfoBatteryVoltageField(
+            size=self.__get_field_size(definition_message, DeviceAuxBatteryInfoBatteryVoltageField.ID),
+            growable=definition_message is None), 
+        DeviceAuxBatteryInfoBatteryStatusField(
+            size=self.__get_field_size(definition_message, DeviceAuxBatteryInfoBatteryStatusField.ID),
+            growable=definition_message is None), 
+        DeviceAuxBatteryInfoBatteryIdentifierField(
+            size=self.__get_field_size(definition_message, DeviceAuxBatteryInfoBatteryIdentifierField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -100,6 +76,7 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -114,6 +91,8 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def device_index(self) -> Optional[int]:
         field = self.get_field(DeviceAuxBatteryInfoDeviceIndexField.ID)
@@ -122,6 +101,8 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @device_index.setter
     def device_index(self, value: int):
@@ -134,6 +115,8 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def battery_voltage(self) -> Optional[float]:
         field = self.get_field(DeviceAuxBatteryInfoBatteryVoltageField.ID)
@@ -142,6 +125,8 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @battery_voltage.setter
     def battery_voltage(self, value: float):
@@ -154,6 +139,8 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def battery_status(self) -> Optional[int]:
         field = self.get_field(DeviceAuxBatteryInfoBatteryStatusField.ID)
@@ -162,6 +149,8 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @battery_status.setter
     def battery_status(self, value: int):
@@ -174,6 +163,8 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def battery_identifier(self) -> Optional[int]:
         field = self.get_field(DeviceAuxBatteryInfoBatteryIdentifierField.ID)
@@ -182,6 +173,8 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @battery_identifier.setter
     def battery_identifier(self, value: int):
@@ -194,22 +187,28 @@ class DeviceAuxBatteryInfoMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -218,14 +217,15 @@ class DeviceAuxBatteryInfoDeviceIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="device_index",
+            name='device_index',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -234,16 +234,17 @@ class DeviceAuxBatteryInfoBatteryVoltageField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="battery_voltage",
+            name='battery_voltage',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=256,
-            size=size,
-            units="V",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 256,
+                         size = size,
+        units = 'V',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -252,14 +253,15 @@ class DeviceAuxBatteryInfoBatteryStatusField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="battery_status",
+            name='battery_status',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -268,12 +270,13 @@ class DeviceAuxBatteryInfoBatteryIdentifierField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="battery_identifier",
+            name='battery_identifier',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

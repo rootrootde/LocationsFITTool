@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class SkinTempOvernightMessage(DataMessage):
     ID = 398
-    NAME = "skin_temp_overnight"
+    NAME = 'skin_temp_overnight'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,70 +29,44 @@ class SkinTempOvernightMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=SkinTempOvernightMessage.NAME,
-            global_id=SkinTempOvernightMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                SkinTempOvernightLocalTimestampField(
-                    size=self.__get_field_size(
-                        definition_message, SkinTempOvernightLocalTimestampField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SkinTempOvernightAverageDeviationField(
-                    size=self.__get_field_size(
-                        definition_message, SkinTempOvernightAverageDeviationField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SkinTempOvernightAverage7DayDeviationField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        SkinTempOvernightAverage7DayDeviationField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                SkinTempOvernightNightlyValueField(
-                    size=self.__get_field_size(
-                        definition_message, SkinTempOvernightNightlyValueField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=SkinTempOvernightMessage.NAME,
+                         global_id=SkinTempOvernightMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        SkinTempOvernightLocalTimestampField(
+            size=self.__get_field_size(definition_message, SkinTempOvernightLocalTimestampField.ID),
+            growable=definition_message is None), 
+        SkinTempOvernightAverageDeviationField(
+            size=self.__get_field_size(definition_message, SkinTempOvernightAverageDeviationField.ID),
+            growable=definition_message is None), 
+        SkinTempOvernightAverage7DayDeviationField(
+            size=self.__get_field_size(definition_message, SkinTempOvernightAverage7DayDeviationField.ID),
+            growable=definition_message is None), 
+        SkinTempOvernightNightlyValueField(
+            size=self.__get_field_size(definition_message, SkinTempOvernightNightlyValueField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -100,6 +76,7 @@ class SkinTempOvernightMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -114,6 +91,8 @@ class SkinTempOvernightMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def local_timestamp(self) -> Optional[int]:
         field = self.get_field(SkinTempOvernightLocalTimestampField.ID)
@@ -122,6 +101,8 @@ class SkinTempOvernightMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @local_timestamp.setter
     def local_timestamp(self, value: int):
@@ -134,6 +115,8 @@ class SkinTempOvernightMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def average_deviation(self) -> Optional[float]:
         field = self.get_field(SkinTempOvernightAverageDeviationField.ID)
@@ -142,6 +125,8 @@ class SkinTempOvernightMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @average_deviation.setter
     def average_deviation(self, value: float):
@@ -154,6 +139,8 @@ class SkinTempOvernightMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def average_7_day_deviation(self) -> Optional[float]:
         field = self.get_field(SkinTempOvernightAverage7DayDeviationField.ID)
@@ -162,6 +149,8 @@ class SkinTempOvernightMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @average_7_day_deviation.setter
     def average_7_day_deviation(self, value: float):
@@ -174,6 +163,8 @@ class SkinTempOvernightMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def nightly_value(self) -> Optional[float]:
         field = self.get_field(SkinTempOvernightNightlyValueField.ID)
@@ -182,6 +173,8 @@ class SkinTempOvernightMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @nightly_value.setter
     def nightly_value(self, value: float):
@@ -194,22 +187,28 @@ class SkinTempOvernightMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -218,14 +217,15 @@ class SkinTempOvernightLocalTimestampField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="local_timestamp",
+            name='local_timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -234,14 +234,15 @@ class SkinTempOvernightAverageDeviationField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="average_deviation",
+            name='average_deviation',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -250,14 +251,15 @@ class SkinTempOvernightAverage7DayDeviationField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="average_7_day_deviation",
+            name='average_7_day_deviation',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -266,12 +268,13 @@ class SkinTempOvernightNightlyValueField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="nightly_value",
+            name='nightly_value',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

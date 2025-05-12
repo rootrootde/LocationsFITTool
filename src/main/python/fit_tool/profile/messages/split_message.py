@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class SplitMessage(DataMessage):
     ID = 312
-    NAME = "split"
+    NAME = 'split'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,153 +29,85 @@ class SplitMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=SplitMessage.NAME,
-            global_id=SplitMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MessageIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MessageIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitSplitTypeField(
-                    size=self.__get_field_size(
-                        definition_message, SplitSplitTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitTotalElapsedTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SplitTotalElapsedTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitTotalTimerTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SplitTotalTimerTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitTotalDistanceField(
-                    size=self.__get_field_size(
-                        definition_message, SplitTotalDistanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitAvgSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SplitAvgSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitStartTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SplitStartTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitTotalAscentField(
-                    size=self.__get_field_size(
-                        definition_message, SplitTotalAscentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitTotalDescentField(
-                    size=self.__get_field_size(
-                        definition_message, SplitTotalDescentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitStartPositionLatField(
-                    size=self.__get_field_size(
-                        definition_message, SplitStartPositionLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitStartPositionLongField(
-                    size=self.__get_field_size(
-                        definition_message, SplitStartPositionLongField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitEndPositionLatField(
-                    size=self.__get_field_size(
-                        definition_message, SplitEndPositionLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitEndPositionLongField(
-                    size=self.__get_field_size(
-                        definition_message, SplitEndPositionLongField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitMaxSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SplitMaxSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitAvgVertSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SplitAvgVertSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitEndTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SplitEndTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitTotalCaloriesField(
-                    size=self.__get_field_size(
-                        definition_message, SplitTotalCaloriesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitStartElevationField(
-                    size=self.__get_field_size(
-                        definition_message, SplitStartElevationField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SplitTotalMovingTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SplitTotalMovingTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=SplitMessage.NAME,
+                         global_id=SplitMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MessageIndexField(
+            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+            growable=definition_message is None), 
+        SplitSplitTypeField(
+            size=self.__get_field_size(definition_message, SplitSplitTypeField.ID),
+            growable=definition_message is None), 
+        SplitTotalElapsedTimeField(
+            size=self.__get_field_size(definition_message, SplitTotalElapsedTimeField.ID),
+            growable=definition_message is None), 
+        SplitTotalTimerTimeField(
+            size=self.__get_field_size(definition_message, SplitTotalTimerTimeField.ID),
+            growable=definition_message is None), 
+        SplitTotalDistanceField(
+            size=self.__get_field_size(definition_message, SplitTotalDistanceField.ID),
+            growable=definition_message is None), 
+        SplitAvgSpeedField(
+            size=self.__get_field_size(definition_message, SplitAvgSpeedField.ID),
+            growable=definition_message is None), 
+        SplitStartTimeField(
+            size=self.__get_field_size(definition_message, SplitStartTimeField.ID),
+            growable=definition_message is None), 
+        SplitTotalAscentField(
+            size=self.__get_field_size(definition_message, SplitTotalAscentField.ID),
+            growable=definition_message is None), 
+        SplitTotalDescentField(
+            size=self.__get_field_size(definition_message, SplitTotalDescentField.ID),
+            growable=definition_message is None), 
+        SplitStartPositionLatField(
+            size=self.__get_field_size(definition_message, SplitStartPositionLatField.ID),
+            growable=definition_message is None), 
+        SplitStartPositionLongField(
+            size=self.__get_field_size(definition_message, SplitStartPositionLongField.ID),
+            growable=definition_message is None), 
+        SplitEndPositionLatField(
+            size=self.__get_field_size(definition_message, SplitEndPositionLatField.ID),
+            growable=definition_message is None), 
+        SplitEndPositionLongField(
+            size=self.__get_field_size(definition_message, SplitEndPositionLongField.ID),
+            growable=definition_message is None), 
+        SplitMaxSpeedField(
+            size=self.__get_field_size(definition_message, SplitMaxSpeedField.ID),
+            growable=definition_message is None), 
+        SplitAvgVertSpeedField(
+            size=self.__get_field_size(definition_message, SplitAvgVertSpeedField.ID),
+            growable=definition_message is None), 
+        SplitEndTimeField(
+            size=self.__get_field_size(definition_message, SplitEndTimeField.ID),
+            growable=definition_message is None), 
+        SplitTotalCaloriesField(
+            size=self.__get_field_size(definition_message, SplitTotalCaloriesField.ID),
+            growable=definition_message is None), 
+        SplitStartElevationField(
+            size=self.__get_field_size(definition_message, SplitStartElevationField.ID),
+            growable=definition_message is None), 
+        SplitTotalMovingTimeField(
+            size=self.__get_field_size(definition_message, SplitTotalMovingTimeField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def message_index(self) -> Optional[int]:
@@ -183,6 +117,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @message_index.setter
     def message_index(self, value: int):
@@ -195,6 +131,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def split_type(self) -> Optional[SplitType]:
         field = self.get_field(SplitSplitTypeField.ID)
@@ -203,6 +141,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @split_type.setter
     def split_type(self, value: SplitType):
@@ -215,6 +155,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_elapsed_time(self) -> Optional[float]:
         field = self.get_field(SplitTotalElapsedTimeField.ID)
@@ -223,6 +165,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_elapsed_time.setter
     def total_elapsed_time(self, value: float):
@@ -235,6 +179,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_timer_time(self) -> Optional[float]:
         field = self.get_field(SplitTotalTimerTimeField.ID)
@@ -243,6 +189,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_timer_time.setter
     def total_timer_time(self, value: float):
@@ -255,6 +203,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_distance(self) -> Optional[float]:
         field = self.get_field(SplitTotalDistanceField.ID)
@@ -263,6 +213,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_distance.setter
     def total_distance(self, value: float):
@@ -275,6 +227,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_speed(self) -> Optional[float]:
         field = self.get_field(SplitAvgSpeedField.ID)
@@ -283,6 +237,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_speed.setter
     def avg_speed(self, value: float):
@@ -295,7 +251,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def start_time(self) -> Optional[int]:
@@ -305,6 +262,7 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -319,6 +277,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_ascent(self) -> Optional[int]:
         field = self.get_field(SplitTotalAscentField.ID)
@@ -327,6 +287,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_ascent.setter
     def total_ascent(self, value: int):
@@ -339,6 +301,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_descent(self) -> Optional[int]:
         field = self.get_field(SplitTotalDescentField.ID)
@@ -347,6 +311,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_descent.setter
     def total_descent(self, value: int):
@@ -359,6 +325,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_position_lat(self) -> Optional[float]:
         field = self.get_field(SplitStartPositionLatField.ID)
@@ -367,6 +335,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_position_lat.setter
     def start_position_lat(self, value: float):
@@ -379,6 +349,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_position_long(self) -> Optional[float]:
         field = self.get_field(SplitStartPositionLongField.ID)
@@ -387,6 +359,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_position_long.setter
     def start_position_long(self, value: float):
@@ -399,6 +373,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_position_lat(self) -> Optional[float]:
         field = self.get_field(SplitEndPositionLatField.ID)
@@ -407,6 +383,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_position_lat.setter
     def end_position_lat(self, value: float):
@@ -419,6 +397,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_position_long(self) -> Optional[float]:
         field = self.get_field(SplitEndPositionLongField.ID)
@@ -427,6 +407,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_position_long.setter
     def end_position_long(self, value: float):
@@ -439,6 +421,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_speed(self) -> Optional[float]:
         field = self.get_field(SplitMaxSpeedField.ID)
@@ -447,6 +431,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_speed.setter
     def max_speed(self, value: float):
@@ -459,6 +445,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_vert_speed(self) -> Optional[float]:
         field = self.get_field(SplitAvgVertSpeedField.ID)
@@ -467,6 +455,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_vert_speed.setter
     def avg_vert_speed(self, value: float):
@@ -479,7 +469,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def end_time(self) -> Optional[int]:
@@ -489,6 +480,7 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -503,6 +495,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_calories(self) -> Optional[int]:
         field = self.get_field(SplitTotalCaloriesField.ID)
@@ -511,6 +505,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_calories.setter
     def total_calories(self, value: int):
@@ -523,6 +519,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_elevation(self) -> Optional[float]:
         field = self.get_field(SplitStartElevationField.ID)
@@ -531,6 +529,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_elevation.setter
     def start_elevation(self, value: float):
@@ -543,6 +543,8 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_moving_time(self) -> Optional[float]:
         field = self.get_field(SplitTotalMovingTimeField.ID)
@@ -551,6 +553,8 @@ class SplitMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_moving_time.setter
     def total_moving_time(self, value: float):
@@ -563,20 +567,26 @@ class SplitMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class MessageIndexField(Field):
     ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="message_index",
+            name='message_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -585,14 +595,15 @@ class SplitSplitTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="split_type",
+            name='split_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -601,16 +612,17 @@ class SplitTotalElapsedTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_elapsed_time",
+            name='total_elapsed_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -619,16 +631,17 @@ class SplitTotalTimerTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_timer_time",
+            name='total_timer_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -637,16 +650,17 @@ class SplitTotalDistanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_distance",
+            name='total_distance',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -655,16 +669,17 @@ class SplitAvgSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_speed",
+            name='avg_speed',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -673,16 +688,17 @@ class SplitStartTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_time",
+            name='start_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -691,16 +707,17 @@ class SplitTotalAscentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_ascent",
+            name='total_ascent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -709,16 +726,17 @@ class SplitTotalDescentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_descent",
+            name='total_descent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -727,16 +745,17 @@ class SplitStartPositionLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_position_lat",
+            name='start_position_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -745,16 +764,17 @@ class SplitStartPositionLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_position_long",
+            name='start_position_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -763,16 +783,17 @@ class SplitEndPositionLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_position_lat",
+            name='end_position_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -781,16 +802,17 @@ class SplitEndPositionLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_position_long",
+            name='end_position_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -799,16 +821,17 @@ class SplitMaxSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_speed",
+            name='max_speed',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -817,16 +840,17 @@ class SplitAvgVertSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_vert_speed",
+            name='avg_vert_speed',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -835,16 +859,17 @@ class SplitEndTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_time",
+            name='end_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -853,16 +878,17 @@ class SplitTotalCaloriesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_calories",
+            name='total_calories',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kcal",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kcal',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -871,16 +897,17 @@ class SplitStartElevationField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_elevation",
+            name='start_elevation',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -889,14 +916,15 @@ class SplitTotalMovingTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_moving_time",
+            name='total_moving_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class HsaBodyBatteryDataMessage(DataMessage):
     ID = 314
-    NAME = "hsa_body_battery_data"
+    NAME = 'hsa_body_battery_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,69 +29,44 @@ class HsaBodyBatteryDataMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=HsaBodyBatteryDataMessage.NAME,
-            global_id=HsaBodyBatteryDataMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                HsaBodyBatteryDataProcessingIntervalField(
-                    size=self.__get_field_size(
-                        definition_message, HsaBodyBatteryDataProcessingIntervalField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaBodyBatteryDataLevelField(
-                    size=self.__get_field_size(
-                        definition_message, HsaBodyBatteryDataLevelField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaBodyBatteryDataChargedField(
-                    size=self.__get_field_size(
-                        definition_message, HsaBodyBatteryDataChargedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaBodyBatteryDataUnchargedField(
-                    size=self.__get_field_size(
-                        definition_message, HsaBodyBatteryDataUnchargedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=HsaBodyBatteryDataMessage.NAME,
+                         global_id=HsaBodyBatteryDataMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        HsaBodyBatteryDataProcessingIntervalField(
+            size=self.__get_field_size(definition_message, HsaBodyBatteryDataProcessingIntervalField.ID),
+            growable=definition_message is None), 
+        HsaBodyBatteryDataLevelField(
+            size=self.__get_field_size(definition_message, HsaBodyBatteryDataLevelField.ID),
+            growable=definition_message is None), 
+        HsaBodyBatteryDataChargedField(
+            size=self.__get_field_size(definition_message, HsaBodyBatteryDataChargedField.ID),
+            growable=definition_message is None), 
+        HsaBodyBatteryDataUnchargedField(
+            size=self.__get_field_size(definition_message, HsaBodyBatteryDataUnchargedField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -99,6 +76,7 @@ class HsaBodyBatteryDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -113,6 +91,8 @@ class HsaBodyBatteryDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def processing_interval(self) -> Optional[int]:
         field = self.get_field(HsaBodyBatteryDataProcessingIntervalField.ID)
@@ -121,6 +101,8 @@ class HsaBodyBatteryDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @processing_interval.setter
     def processing_interval(self, value: int):
@@ -133,6 +115,8 @@ class HsaBodyBatteryDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def level(self) -> Optional[list[int]]:
         field = self.get_field(HsaBodyBatteryDataLevelField.ID)
@@ -140,6 +124,8 @@ class HsaBodyBatteryDataMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @level.setter
     def level(self, value: list[int]):
@@ -151,6 +137,8 @@ class HsaBodyBatteryDataMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def charged(self) -> Optional[list[int]]:
         field = self.get_field(HsaBodyBatteryDataChargedField.ID)
@@ -158,6 +146,8 @@ class HsaBodyBatteryDataMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @charged.setter
     def charged(self, value: list[int]):
@@ -169,6 +159,8 @@ class HsaBodyBatteryDataMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def uncharged(self) -> Optional[list[int]]:
         field = self.get_field(HsaBodyBatteryDataUnchargedField.ID)
@@ -176,6 +168,8 @@ class HsaBodyBatteryDataMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @uncharged.setter
     def uncharged(self, value: list[int]):
@@ -187,22 +181,28 @@ class HsaBodyBatteryDataMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -211,16 +211,17 @@ class HsaBodyBatteryDataProcessingIntervalField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="processing_interval",
+            name='processing_interval',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -229,16 +230,17 @@ class HsaBodyBatteryDataLevelField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="level",
+            name='level',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -247,14 +249,15 @@ class HsaBodyBatteryDataChargedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="charged",
+            name='charged',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -263,12 +266,13 @@ class HsaBodyBatteryDataUnchargedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="uncharged",
+            name='uncharged',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

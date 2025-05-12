@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class WeatherConditionsMessage(DataMessage):
     ID = 128
-    NAME = "weather_conditions"
+    NAME = 'weather_conditions'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,138 +29,77 @@ class WeatherConditionsMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=WeatherConditionsMessage.NAME,
-            global_id=WeatherConditionsMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsWeatherReportField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsWeatherReportField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsConditionField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsConditionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsWindDirectionField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsWindDirectionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsWindSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsWindSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsPrecipitationProbabilityField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        WeatherConditionsPrecipitationProbabilityField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsTemperatureFeelsLikeField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        WeatherConditionsTemperatureFeelsLikeField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsRelativeHumidityField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsRelativeHumidityField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsLocationField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsLocationField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsObservedAtTimeField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsObservedAtTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsObservedLocationLatField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsObservedLocationLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsObservedLocationLongField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        WeatherConditionsObservedLocationLongField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsDayOfWeekField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsDayOfWeekField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsHighTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsHighTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WeatherConditionsLowTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, WeatherConditionsLowTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=WeatherConditionsMessage.NAME,
+                         global_id=WeatherConditionsMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsWeatherReportField(
+            size=self.__get_field_size(definition_message, WeatherConditionsWeatherReportField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsTemperatureField(
+            size=self.__get_field_size(definition_message, WeatherConditionsTemperatureField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsConditionField(
+            size=self.__get_field_size(definition_message, WeatherConditionsConditionField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsWindDirectionField(
+            size=self.__get_field_size(definition_message, WeatherConditionsWindDirectionField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsWindSpeedField(
+            size=self.__get_field_size(definition_message, WeatherConditionsWindSpeedField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsPrecipitationProbabilityField(
+            size=self.__get_field_size(definition_message, WeatherConditionsPrecipitationProbabilityField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsTemperatureFeelsLikeField(
+            size=self.__get_field_size(definition_message, WeatherConditionsTemperatureFeelsLikeField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsRelativeHumidityField(
+            size=self.__get_field_size(definition_message, WeatherConditionsRelativeHumidityField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsLocationField(
+            size=self.__get_field_size(definition_message, WeatherConditionsLocationField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsObservedAtTimeField(
+            size=self.__get_field_size(definition_message, WeatherConditionsObservedAtTimeField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsObservedLocationLatField(
+            size=self.__get_field_size(definition_message, WeatherConditionsObservedLocationLatField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsObservedLocationLongField(
+            size=self.__get_field_size(definition_message, WeatherConditionsObservedLocationLongField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsDayOfWeekField(
+            size=self.__get_field_size(definition_message, WeatherConditionsDayOfWeekField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsHighTemperatureField(
+            size=self.__get_field_size(definition_message, WeatherConditionsHighTemperatureField.ID),
+            growable=definition_message is None), 
+        WeatherConditionsLowTemperatureField(
+            size=self.__get_field_size(definition_message, WeatherConditionsLowTemperatureField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -168,6 +109,7 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -182,6 +124,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def weather_report(self) -> Optional[WeatherReport]:
         field = self.get_field(WeatherConditionsWeatherReportField.ID)
@@ -190,6 +134,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @weather_report.setter
     def weather_report(self, value: WeatherReport):
@@ -202,6 +148,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def temperature(self) -> Optional[int]:
         field = self.get_field(WeatherConditionsTemperatureField.ID)
@@ -210,6 +158,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @temperature.setter
     def temperature(self, value: int):
@@ -222,6 +172,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def condition(self) -> Optional[WeatherStatus]:
         field = self.get_field(WeatherConditionsConditionField.ID)
@@ -230,6 +182,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @condition.setter
     def condition(self, value: WeatherStatus):
@@ -242,6 +196,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def wind_direction(self) -> Optional[int]:
         field = self.get_field(WeatherConditionsWindDirectionField.ID)
@@ -250,6 +206,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @wind_direction.setter
     def wind_direction(self, value: int):
@@ -262,6 +220,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def wind_speed(self) -> Optional[float]:
         field = self.get_field(WeatherConditionsWindSpeedField.ID)
@@ -270,6 +230,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @wind_speed.setter
     def wind_speed(self, value: float):
@@ -282,6 +244,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def precipitation_probability(self) -> Optional[int]:
         field = self.get_field(WeatherConditionsPrecipitationProbabilityField.ID)
@@ -290,6 +254,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @precipitation_probability.setter
     def precipitation_probability(self, value: int):
@@ -302,6 +268,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def temperature_feels_like(self) -> Optional[int]:
         field = self.get_field(WeatherConditionsTemperatureFeelsLikeField.ID)
@@ -310,6 +278,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @temperature_feels_like.setter
     def temperature_feels_like(self, value: int):
@@ -322,6 +292,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def relative_humidity(self) -> Optional[int]:
         field = self.get_field(WeatherConditionsRelativeHumidityField.ID)
@@ -330,6 +302,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @relative_humidity.setter
     def relative_humidity(self, value: int):
@@ -342,6 +316,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def location(self) -> Optional[str]:
         field = self.get_field(WeatherConditionsLocationField.ID)
@@ -350,6 +326,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @location.setter
     def location(self, value: str):
@@ -362,7 +340,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def observed_at_time(self) -> Optional[int]:
@@ -372,6 +351,7 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -386,6 +366,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def observed_location_lat(self) -> Optional[float]:
         field = self.get_field(WeatherConditionsObservedLocationLatField.ID)
@@ -394,6 +376,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @observed_location_lat.setter
     def observed_location_lat(self, value: float):
@@ -406,6 +390,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def observed_location_long(self) -> Optional[float]:
         field = self.get_field(WeatherConditionsObservedLocationLongField.ID)
@@ -414,6 +400,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @observed_location_long.setter
     def observed_location_long(self, value: float):
@@ -426,6 +414,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def day_of_week(self) -> Optional[DayOfWeek]:
         field = self.get_field(WeatherConditionsDayOfWeekField.ID)
@@ -434,6 +424,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @day_of_week.setter
     def day_of_week(self, value: DayOfWeek):
@@ -446,6 +438,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def high_temperature(self) -> Optional[int]:
         field = self.get_field(WeatherConditionsHighTemperatureField.ID)
@@ -454,6 +448,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @high_temperature.setter
     def high_temperature(self, value: int):
@@ -466,6 +462,8 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def low_temperature(self) -> Optional[int]:
         field = self.get_field(WeatherConditionsLowTemperatureField.ID)
@@ -474,6 +472,8 @@ class WeatherConditionsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @low_temperature.setter
     def low_temperature(self, value: int):
@@ -486,22 +486,28 @@ class WeatherConditionsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -510,14 +516,15 @@ class WeatherConditionsWeatherReportField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="weather_report",
+            name='weather_report',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -526,16 +533,17 @@ class WeatherConditionsTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="temperature",
+            name='temperature',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -544,14 +552,15 @@ class WeatherConditionsConditionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="condition",
+            name='condition',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -560,16 +569,17 @@ class WeatherConditionsWindDirectionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="wind_direction",
+            name='wind_direction',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -578,16 +588,17 @@ class WeatherConditionsWindSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="wind_speed",
+            name='wind_speed',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -596,14 +607,15 @@ class WeatherConditionsPrecipitationProbabilityField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="precipitation_probability",
+            name='precipitation_probability',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -612,16 +624,17 @@ class WeatherConditionsTemperatureFeelsLikeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="temperature_feels_like",
+            name='temperature_feels_like',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -630,14 +643,15 @@ class WeatherConditionsRelativeHumidityField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="relative_humidity",
+            name='relative_humidity',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -646,14 +660,15 @@ class WeatherConditionsLocationField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="location",
+            name='location',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -662,16 +677,17 @@ class WeatherConditionsObservedAtTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="observed_at_time",
+            name='observed_at_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -680,16 +696,17 @@ class WeatherConditionsObservedLocationLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="observed_location_lat",
+            name='observed_location_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -698,16 +715,17 @@ class WeatherConditionsObservedLocationLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="observed_location_long",
+            name='observed_location_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -716,14 +734,15 @@ class WeatherConditionsDayOfWeekField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="day_of_week",
+            name='day_of_week',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -732,16 +751,17 @@ class WeatherConditionsHighTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="high_temperature",
+            name='high_temperature',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -750,14 +770,15 @@ class WeatherConditionsLowTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="low_temperature",
+            name='low_temperature',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

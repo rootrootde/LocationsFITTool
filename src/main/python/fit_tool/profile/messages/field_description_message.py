@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class FieldDescriptionMessage(DataMessage):
     ID = 206
-    NAME = "field_description"
+    NAME = 'field_description'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,124 +29,70 @@ class FieldDescriptionMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=FieldDescriptionMessage.NAME,
-            global_id=FieldDescriptionMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                FieldDescriptionDeveloperDataIndexField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionDeveloperDataIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionFieldDefinitionNumberField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        FieldDescriptionFieldDefinitionNumberField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionFitBaseTypeIdField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionFitBaseTypeIdField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionFieldNameField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionFieldNameField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionArrayField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionArrayField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionComponentsField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionComponentsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionScaleField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionScaleField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionOffsetField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionOffsetField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionUnitsField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionUnitsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionBitsField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionBitsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionAccumulateField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionAccumulateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionFitBaseUnitIdField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionFitBaseUnitIdField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionNativeMesgNumField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionNativeMesgNumField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                FieldDescriptionNativeFieldNumField(
-                    size=self.__get_field_size(
-                        definition_message, FieldDescriptionNativeFieldNumField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=FieldDescriptionMessage.NAME,
+                         global_id=FieldDescriptionMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        FieldDescriptionDeveloperDataIndexField(
+            size=self.__get_field_size(definition_message, FieldDescriptionDeveloperDataIndexField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionFieldDefinitionNumberField(
+            size=self.__get_field_size(definition_message, FieldDescriptionFieldDefinitionNumberField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionFitBaseTypeIdField(
+            size=self.__get_field_size(definition_message, FieldDescriptionFitBaseTypeIdField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionFieldNameField(
+            size=self.__get_field_size(definition_message, FieldDescriptionFieldNameField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionArrayField(
+            size=self.__get_field_size(definition_message, FieldDescriptionArrayField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionComponentsField(
+            size=self.__get_field_size(definition_message, FieldDescriptionComponentsField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionScaleField(
+            size=self.__get_field_size(definition_message, FieldDescriptionScaleField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionOffsetField(
+            size=self.__get_field_size(definition_message, FieldDescriptionOffsetField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionUnitsField(
+            size=self.__get_field_size(definition_message, FieldDescriptionUnitsField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionBitsField(
+            size=self.__get_field_size(definition_message, FieldDescriptionBitsField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionAccumulateField(
+            size=self.__get_field_size(definition_message, FieldDescriptionAccumulateField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionFitBaseUnitIdField(
+            size=self.__get_field_size(definition_message, FieldDescriptionFitBaseUnitIdField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionNativeMesgNumField(
+            size=self.__get_field_size(definition_message, FieldDescriptionNativeMesgNumField.ID),
+            growable=definition_message is None), 
+        FieldDescriptionNativeFieldNumField(
+            size=self.__get_field_size(definition_message, FieldDescriptionNativeFieldNumField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def developer_data_index(self) -> Optional[int]:
@@ -154,6 +102,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @developer_data_index.setter
     def developer_data_index(self, value: int):
@@ -166,6 +116,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def field_definition_number(self) -> Optional[int]:
         field = self.get_field(FieldDescriptionFieldDefinitionNumberField.ID)
@@ -174,6 +126,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @field_definition_number.setter
     def field_definition_number(self, value: int):
@@ -186,6 +140,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def fit_base_type_id(self) -> Optional[int]:
         field = self.get_field(FieldDescriptionFitBaseTypeIdField.ID)
@@ -194,6 +150,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @fit_base_type_id.setter
     def fit_base_type_id(self, value: int):
@@ -206,6 +164,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def field_name(self) -> Optional[str]:
         field = self.get_field(FieldDescriptionFieldNameField.ID)
@@ -214,6 +174,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @field_name.setter
     def field_name(self, value: str):
@@ -226,6 +188,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def array(self) -> Optional[int]:
         field = self.get_field(FieldDescriptionArrayField.ID)
@@ -234,6 +198,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @array.setter
     def array(self, value: int):
@@ -246,6 +212,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def components(self) -> Optional[str]:
         field = self.get_field(FieldDescriptionComponentsField.ID)
@@ -254,6 +222,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @components.setter
     def components(self, value: str):
@@ -266,6 +236,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def scale(self) -> Optional[int]:
         field = self.get_field(FieldDescriptionScaleField.ID)
@@ -274,6 +246,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @scale.setter
     def scale(self, value: int):
@@ -286,6 +260,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def offset(self) -> Optional[int]:
         field = self.get_field(FieldDescriptionOffsetField.ID)
@@ -294,6 +270,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @offset.setter
     def offset(self, value: int):
@@ -306,6 +284,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def units(self) -> Optional[str]:
         field = self.get_field(FieldDescriptionUnitsField.ID)
@@ -314,6 +294,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @units.setter
     def units(self, value: str):
@@ -326,6 +308,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def bits(self) -> Optional[str]:
         field = self.get_field(FieldDescriptionBitsField.ID)
@@ -334,6 +318,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @bits.setter
     def bits(self, value: str):
@@ -346,6 +332,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def accumulate(self) -> Optional[str]:
         field = self.get_field(FieldDescriptionAccumulateField.ID)
@@ -354,6 +342,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @accumulate.setter
     def accumulate(self, value: str):
@@ -366,6 +356,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def fit_base_unit_id(self) -> Optional[int]:
         field = self.get_field(FieldDescriptionFitBaseUnitIdField.ID)
@@ -374,6 +366,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @fit_base_unit_id.setter
     def fit_base_unit_id(self, value: int):
@@ -386,6 +380,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def native_mesg_num(self) -> Optional[int]:
         field = self.get_field(FieldDescriptionNativeMesgNumField.ID)
@@ -394,6 +390,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @native_mesg_num.setter
     def native_mesg_num(self, value: int):
@@ -406,6 +404,8 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def native_field_num(self) -> Optional[int]:
         field = self.get_field(FieldDescriptionNativeFieldNumField.ID)
@@ -414,6 +414,8 @@ class FieldDescriptionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @native_field_num.setter
     def native_field_num(self, value: int):
@@ -426,20 +428,26 @@ class FieldDescriptionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class FieldDescriptionDeveloperDataIndexField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="developer_data_index",
+            name='developer_data_index',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -448,14 +456,15 @@ class FieldDescriptionFieldDefinitionNumberField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="field_definition_number",
+            name='field_definition_number',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -464,14 +473,15 @@ class FieldDescriptionFitBaseTypeIdField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="fit_base_type_id",
+            name='fit_base_type_id',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -480,14 +490,15 @@ class FieldDescriptionFieldNameField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="field_name",
+            name='field_name',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -496,14 +507,15 @@ class FieldDescriptionArrayField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="array",
+            name='array',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -512,14 +524,15 @@ class FieldDescriptionComponentsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="components",
+            name='components',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -528,14 +541,15 @@ class FieldDescriptionScaleField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="scale",
+            name='scale',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -544,14 +558,15 @@ class FieldDescriptionOffsetField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="offset",
+            name='offset',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -560,14 +575,15 @@ class FieldDescriptionUnitsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="units",
+            name='units',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -576,14 +592,15 @@ class FieldDescriptionBitsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="bits",
+            name='bits',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -592,14 +609,15 @@ class FieldDescriptionAccumulateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="accumulate",
+            name='accumulate',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -608,14 +626,15 @@ class FieldDescriptionFitBaseUnitIdField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="fit_base_unit_id",
+            name='fit_base_unit_id',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -624,14 +643,15 @@ class FieldDescriptionNativeMesgNumField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="native_mesg_num",
+            name='native_mesg_num',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -640,12 +660,13 @@ class FieldDescriptionNativeFieldNumField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="native_field_num",
+            name='native_field_num',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

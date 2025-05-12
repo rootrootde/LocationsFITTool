@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class DeveloperDataIdMessage(DataMessage):
     ID = 207
-    NAME = "developer_data_id"
+    NAME = 'developer_data_id'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,69 +29,43 @@ class DeveloperDataIdMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=DeveloperDataIdMessage.NAME,
-            global_id=DeveloperDataIdMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                DeveloperDataIdDeveloperIdField(
-                    size=self.__get_field_size(
-                        definition_message, DeveloperDataIdDeveloperIdField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DeveloperDataIdApplicationIdField(
-                    size=self.__get_field_size(
-                        definition_message, DeveloperDataIdApplicationIdField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DeveloperDataIdManufacturerIdField(
-                    size=self.__get_field_size(
-                        definition_message, DeveloperDataIdManufacturerIdField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DeveloperDataIdDeveloperDataIndexField(
-                    size=self.__get_field_size(
-                        definition_message, DeveloperDataIdDeveloperDataIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DeveloperDataIdApplicationVersionField(
-                    size=self.__get_field_size(
-                        definition_message, DeveloperDataIdApplicationVersionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=DeveloperDataIdMessage.NAME,
+                         global_id=DeveloperDataIdMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        DeveloperDataIdDeveloperIdField(
+            size=self.__get_field_size(definition_message, DeveloperDataIdDeveloperIdField.ID),
+            growable=definition_message is None), 
+        DeveloperDataIdApplicationIdField(
+            size=self.__get_field_size(definition_message, DeveloperDataIdApplicationIdField.ID),
+            growable=definition_message is None), 
+        DeveloperDataIdManufacturerIdField(
+            size=self.__get_field_size(definition_message, DeveloperDataIdManufacturerIdField.ID),
+            growable=definition_message is None), 
+        DeveloperDataIdDeveloperDataIndexField(
+            size=self.__get_field_size(definition_message, DeveloperDataIdDeveloperDataIndexField.ID),
+            growable=definition_message is None), 
+        DeveloperDataIdApplicationVersionField(
+            size=self.__get_field_size(definition_message, DeveloperDataIdApplicationVersionField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def developer_id(self) -> Optional[bytes]:
@@ -98,6 +74,8 @@ class DeveloperDataIdMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @developer_id.setter
     def developer_id(self, value: bytes):
@@ -109,6 +87,8 @@ class DeveloperDataIdMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def application_id(self) -> Optional[bytes]:
         field = self.get_field(DeveloperDataIdApplicationIdField.ID)
@@ -116,6 +96,8 @@ class DeveloperDataIdMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @application_id.setter
     def application_id(self, value: bytes):
@@ -127,6 +109,8 @@ class DeveloperDataIdMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def manufacturer_id(self) -> Optional[int]:
         field = self.get_field(DeveloperDataIdManufacturerIdField.ID)
@@ -135,6 +119,8 @@ class DeveloperDataIdMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @manufacturer_id.setter
     def manufacturer_id(self, value: int):
@@ -147,6 +133,8 @@ class DeveloperDataIdMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def developer_data_index(self) -> Optional[int]:
         field = self.get_field(DeveloperDataIdDeveloperDataIndexField.ID)
@@ -155,6 +143,8 @@ class DeveloperDataIdMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @developer_data_index.setter
     def developer_data_index(self, value: int):
@@ -167,6 +157,8 @@ class DeveloperDataIdMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def application_version(self) -> Optional[int]:
         field = self.get_field(DeveloperDataIdApplicationVersionField.ID)
@@ -175,6 +167,8 @@ class DeveloperDataIdMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @application_version.setter
     def application_version(self, value: int):
@@ -187,20 +181,26 @@ class DeveloperDataIdMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class DeveloperDataIdDeveloperIdField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="developer_id",
+            name='developer_id',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -209,14 +209,15 @@ class DeveloperDataIdApplicationIdField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="application_id",
+            name='application_id',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -225,14 +226,15 @@ class DeveloperDataIdManufacturerIdField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="manufacturer_id",
+            name='manufacturer_id',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -241,14 +243,15 @@ class DeveloperDataIdDeveloperDataIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="developer_data_index",
+            name='developer_data_index',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -257,12 +260,13 @@ class DeveloperDataIdApplicationVersionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="application_version",
+            name='application_version',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class TankSummaryMessage(DataMessage):
     ID = 323
-    NAME = "tank_summary"
+    NAME = 'tank_summary'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,69 +29,44 @@ class TankSummaryMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=TankSummaryMessage.NAME,
-            global_id=TankSummaryMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                TankSummarySensorField(
-                    size=self.__get_field_size(
-                        definition_message, TankSummarySensorField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TankSummaryStartPressureField(
-                    size=self.__get_field_size(
-                        definition_message, TankSummaryStartPressureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TankSummaryEndPressureField(
-                    size=self.__get_field_size(
-                        definition_message, TankSummaryEndPressureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TankSummaryVolumeUsedField(
-                    size=self.__get_field_size(
-                        definition_message, TankSummaryVolumeUsedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=TankSummaryMessage.NAME,
+                         global_id=TankSummaryMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        TankSummarySensorField(
+            size=self.__get_field_size(definition_message, TankSummarySensorField.ID),
+            growable=definition_message is None), 
+        TankSummaryStartPressureField(
+            size=self.__get_field_size(definition_message, TankSummaryStartPressureField.ID),
+            growable=definition_message is None), 
+        TankSummaryEndPressureField(
+            size=self.__get_field_size(definition_message, TankSummaryEndPressureField.ID),
+            growable=definition_message is None), 
+        TankSummaryVolumeUsedField(
+            size=self.__get_field_size(definition_message, TankSummaryVolumeUsedField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -99,6 +76,7 @@ class TankSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -113,6 +91,8 @@ class TankSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sensor(self) -> Optional[int]:
         field = self.get_field(TankSummarySensorField.ID)
@@ -121,6 +101,8 @@ class TankSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sensor.setter
     def sensor(self, value: int):
@@ -133,6 +115,8 @@ class TankSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_pressure(self) -> Optional[float]:
         field = self.get_field(TankSummaryStartPressureField.ID)
@@ -141,6 +125,8 @@ class TankSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_pressure.setter
     def start_pressure(self, value: float):
@@ -153,6 +139,8 @@ class TankSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_pressure(self) -> Optional[float]:
         field = self.get_field(TankSummaryEndPressureField.ID)
@@ -161,6 +149,8 @@ class TankSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_pressure.setter
     def end_pressure(self, value: float):
@@ -173,6 +163,8 @@ class TankSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def volume_used(self) -> Optional[float]:
         field = self.get_field(TankSummaryVolumeUsedField.ID)
@@ -181,6 +173,8 @@ class TankSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @volume_used.setter
     def volume_used(self, value: float):
@@ -193,22 +187,28 @@ class TankSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -217,14 +217,15 @@ class TankSummarySensorField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sensor",
+            name='sensor',
             field_id=self.ID,
             base_type=BaseType.UINT32Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -233,16 +234,17 @@ class TankSummaryStartPressureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_pressure",
+            name='start_pressure',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="bar",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'bar',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -251,16 +253,17 @@ class TankSummaryEndPressureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_pressure",
+            name='end_pressure',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="bar",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'bar',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -269,14 +272,15 @@ class TankSummaryVolumeUsedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="volume_used",
+            name='volume_used',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=100,
-            size=size,
-            units="L",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'L',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

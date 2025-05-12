@@ -12,11 +12,12 @@ from fit_tool.field import Field
 from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class TrainingFileMessage(DataMessage):
     ID = 72
-    NAME = "training_file"
+    NAME = 'training_file'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -28,75 +29,47 @@ class TrainingFileMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=TrainingFileMessage.NAME,
-            global_id=TrainingFileMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                TrainingFileTypeField(
-                    size=self.__get_field_size(
-                        definition_message, TrainingFileTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TrainingFileManufacturerField(
-                    size=self.__get_field_size(
-                        definition_message, TrainingFileManufacturerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TrainingFileProductField(
-                    size=self.__get_field_size(
-                        definition_message, TrainingFileProductField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TrainingFileSerialNumberField(
-                    size=self.__get_field_size(
-                        definition_message, TrainingFileSerialNumberField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TrainingFileTimeCreatedField(
-                    size=self.__get_field_size(
-                        definition_message, TrainingFileTimeCreatedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=TrainingFileMessage.NAME,
+                         global_id=TrainingFileMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        TrainingFileTypeField(
+            size=self.__get_field_size(definition_message, TrainingFileTypeField.ID),
+            growable=definition_message is None), 
+        TrainingFileManufacturerField(
+            size=self.__get_field_size(definition_message, TrainingFileManufacturerField.ID),
+            growable=definition_message is None), 
+        TrainingFileProductField(
+            size=self.__get_field_size(definition_message, TrainingFileProductField.ID),
+            growable=definition_message is None), 
+        TrainingFileSerialNumberField(
+            size=self.__get_field_size(definition_message, TrainingFileSerialNumberField.ID),
+            growable=definition_message is None), 
+        TrainingFileTimeCreatedField(
+            size=self.__get_field_size(definition_message, TrainingFileTimeCreatedField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -106,6 +79,7 @@ class TrainingFileMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -120,6 +94,8 @@ class TrainingFileMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def type(self) -> Optional[FileType]:
         field = self.get_field(TrainingFileTypeField.ID)
@@ -128,6 +104,8 @@ class TrainingFileMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @type.setter
     def type(self, value: FileType):
@@ -140,6 +118,8 @@ class TrainingFileMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def manufacturer(self) -> Optional[int]:
         field = self.get_field(TrainingFileManufacturerField.ID)
@@ -148,6 +128,8 @@ class TrainingFileMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @manufacturer.setter
     def manufacturer(self, value: int):
@@ -160,6 +142,8 @@ class TrainingFileMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def product(self) -> Optional[int]:
         field = self.get_field(TrainingFileProductField.ID)
@@ -168,6 +152,8 @@ class TrainingFileMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @product.setter
     def product(self, value: int):
@@ -179,6 +165,9 @@ class TrainingFileMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def favero_product(self) -> Optional[int]:
@@ -201,6 +190,7 @@ class TrainingFileMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def garmin_product(self) -> Optional[int]:
@@ -233,6 +223,8 @@ class TrainingFileMessage(DataMessage):
         else:
             return None
 
+
+
     @serial_number.setter
     def serial_number(self, value: int):
         field = self.get_field(TrainingFileSerialNumberField.ID)
@@ -244,7 +236,8 @@ class TrainingFileMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def time_created(self) -> Optional[int]:
@@ -254,6 +247,7 @@ class TrainingFileMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -268,22 +262,28 @@ class TrainingFileMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -292,14 +292,15 @@ class TrainingFileTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="type",
+            name='type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -308,14 +309,15 @@ class TrainingFileManufacturerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="manufacturer",
+            name='manufacturer',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -324,29 +326,31 @@ class TrainingFileProductField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="product",
+            name='product',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="favero_product",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    reference_map={TrainingFileManufacturerField.ID: [263]},
-                ),
-                SubField(
-                    name="garmin_product",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    reference_map={TrainingFileManufacturerField.ID: [1, 15, 13, 89]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='favero_product',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        TrainingFileManufacturerField.ID: [263]
+        }), 
+        SubField(
+            name='garmin_product',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        TrainingFileManufacturerField.ID: [1, 15, 13, 89]
+        })
+        ]
         )
 
 
@@ -355,14 +359,15 @@ class TrainingFileSerialNumberField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="serial_number",
+            name='serial_number',
             field_id=self.ID,
             base_type=BaseType.UINT32Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -371,14 +376,15 @@ class TrainingFileTimeCreatedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_created",
+            name='time_created',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

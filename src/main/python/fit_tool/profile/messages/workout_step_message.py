@@ -12,11 +12,12 @@ from fit_tool.field import Field
 from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class WorkoutStepMessage(DataMessage):
     ID = 27
-    NAME = "workout_step"
+    NAME = 'workout_step'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -28,155 +29,85 @@ class WorkoutStepMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=WorkoutStepMessage.NAME,
-            global_id=WorkoutStepMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MessageIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MessageIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepWorkoutStepNameField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepWorkoutStepNameField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepDurationTypeField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepDurationTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepDurationValueField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepDurationValueField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepTargetTypeField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepTargetTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepTargetValueField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepTargetValueField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepCustomTargetValueLowField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepCustomTargetValueLowField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepCustomTargetValueHighField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepCustomTargetValueHighField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepIntensityField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepIntensityField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepNotesField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepNotesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepEquipmentField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepEquipmentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepExerciseCategoryField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepExerciseCategoryField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepExerciseNameField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepExerciseNameField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepExerciseWeightField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepExerciseWeightField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepWeightDisplayUnitField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepWeightDisplayUnitField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepSecondaryTargetTypeField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepSecondaryTargetTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepSecondaryTargetValueField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutStepSecondaryTargetValueField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepSecondaryCustomTargetValueLowField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        WorkoutStepSecondaryCustomTargetValueLowField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutStepSecondaryCustomTargetValueHighField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        WorkoutStepSecondaryCustomTargetValueHighField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=WorkoutStepMessage.NAME,
+                         global_id=WorkoutStepMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MessageIndexField(
+            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+            growable=definition_message is None), 
+        WorkoutStepWorkoutStepNameField(
+            size=self.__get_field_size(definition_message, WorkoutStepWorkoutStepNameField.ID),
+            growable=definition_message is None), 
+        WorkoutStepDurationTypeField(
+            size=self.__get_field_size(definition_message, WorkoutStepDurationTypeField.ID),
+            growable=definition_message is None), 
+        WorkoutStepDurationValueField(
+            size=self.__get_field_size(definition_message, WorkoutStepDurationValueField.ID),
+            growable=definition_message is None), 
+        WorkoutStepTargetTypeField(
+            size=self.__get_field_size(definition_message, WorkoutStepTargetTypeField.ID),
+            growable=definition_message is None), 
+        WorkoutStepTargetValueField(
+            size=self.__get_field_size(definition_message, WorkoutStepTargetValueField.ID),
+            growable=definition_message is None), 
+        WorkoutStepCustomTargetValueLowField(
+            size=self.__get_field_size(definition_message, WorkoutStepCustomTargetValueLowField.ID),
+            growable=definition_message is None), 
+        WorkoutStepCustomTargetValueHighField(
+            size=self.__get_field_size(definition_message, WorkoutStepCustomTargetValueHighField.ID),
+            growable=definition_message is None), 
+        WorkoutStepIntensityField(
+            size=self.__get_field_size(definition_message, WorkoutStepIntensityField.ID),
+            growable=definition_message is None), 
+        WorkoutStepNotesField(
+            size=self.__get_field_size(definition_message, WorkoutStepNotesField.ID),
+            growable=definition_message is None), 
+        WorkoutStepEquipmentField(
+            size=self.__get_field_size(definition_message, WorkoutStepEquipmentField.ID),
+            growable=definition_message is None), 
+        WorkoutStepExerciseCategoryField(
+            size=self.__get_field_size(definition_message, WorkoutStepExerciseCategoryField.ID),
+            growable=definition_message is None), 
+        WorkoutStepExerciseNameField(
+            size=self.__get_field_size(definition_message, WorkoutStepExerciseNameField.ID),
+            growable=definition_message is None), 
+        WorkoutStepExerciseWeightField(
+            size=self.__get_field_size(definition_message, WorkoutStepExerciseWeightField.ID),
+            growable=definition_message is None), 
+        WorkoutStepWeightDisplayUnitField(
+            size=self.__get_field_size(definition_message, WorkoutStepWeightDisplayUnitField.ID),
+            growable=definition_message is None), 
+        WorkoutStepSecondaryTargetTypeField(
+            size=self.__get_field_size(definition_message, WorkoutStepSecondaryTargetTypeField.ID),
+            growable=definition_message is None), 
+        WorkoutStepSecondaryTargetValueField(
+            size=self.__get_field_size(definition_message, WorkoutStepSecondaryTargetValueField.ID),
+            growable=definition_message is None), 
+        WorkoutStepSecondaryCustomTargetValueLowField(
+            size=self.__get_field_size(definition_message, WorkoutStepSecondaryCustomTargetValueLowField.ID),
+            growable=definition_message is None), 
+        WorkoutStepSecondaryCustomTargetValueHighField(
+            size=self.__get_field_size(definition_message, WorkoutStepSecondaryCustomTargetValueHighField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def message_index(self) -> Optional[int]:
@@ -186,6 +117,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @message_index.setter
     def message_index(self, value: int):
@@ -198,6 +131,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def workout_step_name(self) -> Optional[str]:
         field = self.get_field(WorkoutStepWorkoutStepNameField.ID)
@@ -206,6 +141,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @workout_step_name.setter
     def workout_step_name(self, value: str):
@@ -218,6 +155,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def duration_type(self) -> Optional[WorkoutStepDuration]:
         field = self.get_field(WorkoutStepDurationTypeField.ID)
@@ -226,6 +165,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @duration_type.setter
     def duration_type(self, value: WorkoutStepDuration):
@@ -238,6 +179,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def duration_value(self) -> Optional[int]:
         field = self.get_field(WorkoutStepDurationValueField.ID)
@@ -246,6 +189,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @duration_value.setter
     def duration_value(self, value: int):
@@ -257,6 +202,9 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def duration_time(self) -> Optional[float]:
@@ -280,6 +228,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def duration_distance(self) -> Optional[float]:
         field = self.get_field(WorkoutStepDurationValueField.ID)
@@ -301,6 +250,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def duration_hr(self) -> Optional[int]:
@@ -324,6 +274,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def duration_calories(self) -> Optional[int]:
         field = self.get_field(WorkoutStepDurationValueField.ID)
@@ -346,21 +297,13 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def duration_step(self) -> Optional[int]:
         field = self.get_field(WorkoutStepDurationValueField.ID)
         type_field = self.get_field(WorkoutStepDurationTypeField.ID)
 
-        is_sub_field_valid = type_field and type_field.get_value() in [
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-        ]
+        is_sub_field_valid = type_field and type_field.get_value() in [6, 7, 8, 9, 10, 11, 12, 13]
         if field and field.is_valid() and is_sub_field_valid:
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -376,6 +319,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def duration_power(self) -> Optional[int]:
@@ -398,6 +342,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def duration_reps(self) -> Optional[int]:
@@ -430,6 +375,8 @@ class WorkoutStepMessage(DataMessage):
         else:
             return None
 
+
+
     @target_type.setter
     def target_type(self, value: WorkoutStepTarget):
         field = self.get_field(WorkoutStepTargetTypeField.ID)
@@ -441,6 +388,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def target_value(self) -> Optional[int]:
         field = self.get_field(WorkoutStepTargetValueField.ID)
@@ -449,6 +398,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @target_value.setter
     def target_value(self, value: int):
@@ -460,6 +411,9 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def target_speed_zone(self) -> Optional[int]:
@@ -483,6 +437,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def target_hr_zone(self) -> Optional[int]:
         field = self.get_field(WorkoutStepTargetValueField.ID)
@@ -504,6 +459,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def target_cadence_zone(self) -> Optional[int]:
@@ -527,6 +483,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def target_power_zone(self) -> Optional[int]:
         field = self.get_field(WorkoutStepTargetValueField.ID)
@@ -548,6 +505,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def target_repeat_steps(self) -> Optional[int]:
@@ -571,6 +529,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def target_repeat_time(self) -> Optional[float]:
         field = self.get_field(WorkoutStepTargetValueField.ID)
@@ -592,6 +551,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def target_repeat_distance(self) -> Optional[float]:
@@ -615,6 +575,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def target_repeat_calories(self) -> Optional[int]:
         field = self.get_field(WorkoutStepTargetValueField.ID)
@@ -636,6 +597,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def target_repeat_hr(self) -> Optional[int]:
@@ -659,6 +621,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def target_repeat_power(self) -> Optional[int]:
         field = self.get_field(WorkoutStepTargetValueField.ID)
@@ -680,6 +643,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def target_stroke_type(self) -> Optional[SwimStroke]:
@@ -712,6 +676,8 @@ class WorkoutStepMessage(DataMessage):
         else:
             return None
 
+
+
     @custom_target_value_low.setter
     def custom_target_value_low(self, value: int):
         field = self.get_field(WorkoutStepCustomTargetValueLowField.ID)
@@ -722,6 +688,9 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def custom_target_speed_low(self) -> Optional[float]:
@@ -745,6 +714,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def custom_target_heart_rate_low(self) -> Optional[int]:
         field = self.get_field(WorkoutStepCustomTargetValueLowField.ID)
@@ -767,6 +737,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def custom_target_cadence_low(self) -> Optional[int]:
         field = self.get_field(WorkoutStepCustomTargetValueLowField.ID)
@@ -788,6 +759,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def custom_target_power_low(self) -> Optional[int]:
@@ -820,6 +792,8 @@ class WorkoutStepMessage(DataMessage):
         else:
             return None
 
+
+
     @custom_target_value_high.setter
     def custom_target_value_high(self, value: int):
         field = self.get_field(WorkoutStepCustomTargetValueHighField.ID)
@@ -830,6 +804,9 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def custom_target_speed_high(self) -> Optional[float]:
@@ -853,6 +830,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def custom_target_heart_rate_high(self) -> Optional[int]:
         field = self.get_field(WorkoutStepCustomTargetValueHighField.ID)
@@ -875,6 +853,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def custom_target_cadence_high(self) -> Optional[int]:
         field = self.get_field(WorkoutStepCustomTargetValueHighField.ID)
@@ -896,6 +875,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def custom_target_power_high(self) -> Optional[int]:
@@ -928,6 +908,8 @@ class WorkoutStepMessage(DataMessage):
         else:
             return None
 
+
+
     @intensity.setter
     def intensity(self, value: Intensity):
         field = self.get_field(WorkoutStepIntensityField.ID)
@@ -939,6 +921,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def notes(self) -> Optional[str]:
         field = self.get_field(WorkoutStepNotesField.ID)
@@ -947,6 +931,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @notes.setter
     def notes(self, value: str):
@@ -959,6 +945,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def equipment(self) -> Optional[WorkoutEquipment]:
         field = self.get_field(WorkoutStepEquipmentField.ID)
@@ -967,6 +955,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @equipment.setter
     def equipment(self, value: WorkoutEquipment):
@@ -979,6 +969,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def exercise_category(self) -> Optional[int]:
         field = self.get_field(WorkoutStepExerciseCategoryField.ID)
@@ -987,6 +979,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @exercise_category.setter
     def exercise_category(self, value: int):
@@ -999,6 +993,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def exercise_name(self) -> Optional[int]:
         field = self.get_field(WorkoutStepExerciseNameField.ID)
@@ -1007,6 +1003,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @exercise_name.setter
     def exercise_name(self, value: int):
@@ -1019,6 +1017,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def exercise_weight(self) -> Optional[float]:
         field = self.get_field(WorkoutStepExerciseWeightField.ID)
@@ -1027,6 +1027,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @exercise_weight.setter
     def exercise_weight(self, value: float):
@@ -1039,6 +1041,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def weight_display_unit(self) -> Optional[int]:
         field = self.get_field(WorkoutStepWeightDisplayUnitField.ID)
@@ -1047,6 +1051,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @weight_display_unit.setter
     def weight_display_unit(self, value: int):
@@ -1059,6 +1065,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def secondary_target_type(self) -> Optional[WorkoutStepTarget]:
         field = self.get_field(WorkoutStepSecondaryTargetTypeField.ID)
@@ -1067,6 +1075,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @secondary_target_type.setter
     def secondary_target_type(self, value: WorkoutStepTarget):
@@ -1079,6 +1089,8 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def secondary_target_value(self) -> Optional[int]:
         field = self.get_field(WorkoutStepSecondaryTargetValueField.ID)
@@ -1087,6 +1099,8 @@ class WorkoutStepMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @secondary_target_value.setter
     def secondary_target_value(self, value: int):
@@ -1098,6 +1112,9 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def secondary_target_speed_zone(self) -> Optional[int]:
@@ -1121,6 +1138,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def secondary_target_hr_zone(self) -> Optional[int]:
         field = self.get_field(WorkoutStepSecondaryTargetValueField.ID)
@@ -1142,6 +1160,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def secondary_target_cadence_zone(self) -> Optional[int]:
@@ -1165,6 +1184,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def secondary_target_power_zone(self) -> Optional[int]:
         field = self.get_field(WorkoutStepSecondaryTargetValueField.ID)
@@ -1186,6 +1206,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def secondary_target_stroke_type(self) -> Optional[SwimStroke]:
@@ -1218,6 +1239,8 @@ class WorkoutStepMessage(DataMessage):
         else:
             return None
 
+
+
     @secondary_custom_target_value_low.setter
     def secondary_custom_target_value_low(self, value: int):
         field = self.get_field(WorkoutStepSecondaryCustomTargetValueLowField.ID)
@@ -1228,6 +1251,9 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def secondary_custom_target_speed_low(self) -> Optional[float]:
@@ -1251,6 +1277,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def secondary_custom_target_heart_rate_low(self) -> Optional[int]:
         field = self.get_field(WorkoutStepSecondaryCustomTargetValueLowField.ID)
@@ -1273,6 +1300,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def secondary_custom_target_cadence_low(self) -> Optional[int]:
         field = self.get_field(WorkoutStepSecondaryCustomTargetValueLowField.ID)
@@ -1294,6 +1322,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def secondary_custom_target_power_low(self) -> Optional[int]:
@@ -1326,6 +1355,8 @@ class WorkoutStepMessage(DataMessage):
         else:
             return None
 
+
+
     @secondary_custom_target_value_high.setter
     def secondary_custom_target_value_high(self, value: int):
         field = self.get_field(WorkoutStepSecondaryCustomTargetValueHighField.ID)
@@ -1336,6 +1367,9 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def secondary_custom_target_speed_high(self) -> Optional[float]:
@@ -1359,6 +1393,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def secondary_custom_target_heart_rate_high(self) -> Optional[int]:
         field = self.get_field(WorkoutStepSecondaryCustomTargetValueHighField.ID)
@@ -1381,6 +1416,7 @@ class WorkoutStepMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+
     @property
     def secondary_custom_target_cadence_high(self) -> Optional[int]:
         field = self.get_field(WorkoutStepSecondaryCustomTargetValueHighField.ID)
@@ -1402,6 +1438,7 @@ class WorkoutStepMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def secondary_custom_target_power_high(self) -> Optional[int]:
@@ -1426,19 +1463,23 @@ class WorkoutStepMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
 
+
+
+
 class MessageIndexField(Field):
     ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="message_index",
+            name='message_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1447,14 +1488,15 @@ class WorkoutStepWorkoutStepNameField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="wkt_step_name",
+            name='wkt_step_name',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1463,14 +1505,15 @@ class WorkoutStepDurationTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="duration_type",
+            name='duration_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1479,71 +1522,76 @@ class WorkoutStepDurationValueField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="duration_value",
+            name='duration_value',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="duration_time",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="s",
-                    reference_map={WorkoutStepDurationTypeField.ID: [0, 28]},
-                ),
-                SubField(
-                    name="duration_distance",
-                    base_type=BaseType.UINT32,
-                    scale=100,
-                    offset=0,
-                    units="m",
-                    reference_map={WorkoutStepDurationTypeField.ID: [1]},
-                ),
-                SubField(
-                    name="duration_hr",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or bpm",
-                    reference_map={WorkoutStepDurationTypeField.ID: [2, 3]},
-                ),
-                SubField(
-                    name="duration_calories",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="calories",
-                    reference_map={WorkoutStepDurationTypeField.ID: [4]},
-                ),
-                SubField(
-                    name="duration_step",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={
-                        WorkoutStepDurationTypeField.ID: [6, 7, 8, 9, 10, 11, 12, 13]
-                    },
-                ),
-                SubField(
-                    name="duration_power",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or watts",
-                    reference_map={WorkoutStepDurationTypeField.ID: [14, 15]},
-                ),
-                SubField(
-                    name="duration_reps",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepDurationTypeField.ID: [29]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='duration_time',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 's',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [0, 28]
+        }), 
+        SubField(
+            name='duration_distance',
+            base_type=BaseType.UINT32,
+        scale = 100,
+                offset = 0,
+        units = 'm',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [1]
+        }), 
+        SubField(
+            name='duration_hr',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or bpm',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [2, 3]
+        }), 
+        SubField(
+            name='duration_calories',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'calories',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [4]
+        }), 
+        SubField(
+            name='duration_step',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [6, 7, 8, 9, 10, 11, 12, 13]
+        }), 
+        SubField(
+            name='duration_power',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or watts',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [14, 15]
+        }), 
+        SubField(
+            name='duration_reps',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [29]
+        })
+        ]
         )
 
 
@@ -1552,14 +1600,15 @@ class WorkoutStepTargetTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="target_type",
+            name='target_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1568,97 +1617,108 @@ class WorkoutStepTargetValueField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="target_value",
+            name='target_value',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="target_speed_zone",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepTargetTypeField.ID: [0]},
-                ),
-                SubField(
-                    name="target_hr_zone",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepTargetTypeField.ID: [1]},
-                ),
-                SubField(
-                    name="target_cadence_zone",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepTargetTypeField.ID: [3]},
-                ),
-                SubField(
-                    name="target_power_zone",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepTargetTypeField.ID: [4]},
-                ),
-                SubField(
-                    name="repeat_steps",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepDurationTypeField.ID: [6]},
-                ),
-                SubField(
-                    name="repeat_time",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="s",
-                    reference_map={WorkoutStepDurationTypeField.ID: [7]},
-                ),
-                SubField(
-                    name="repeat_distance",
-                    base_type=BaseType.UINT32,
-                    scale=100,
-                    offset=0,
-                    units="m",
-                    reference_map={WorkoutStepDurationTypeField.ID: [8]},
-                ),
-                SubField(
-                    name="repeat_calories",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="calories",
-                    reference_map={WorkoutStepDurationTypeField.ID: [9]},
-                ),
-                SubField(
-                    name="repeat_hr",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or bpm",
-                    reference_map={WorkoutStepDurationTypeField.ID: [10, 11]},
-                ),
-                SubField(
-                    name="repeat_power",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or watts",
-                    reference_map={WorkoutStepDurationTypeField.ID: [12, 13]},
-                ),
-                SubField(
-                    name="target_stroke_type",
-                    base_type=BaseType.ENUM,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepTargetTypeField.ID: [11]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='target_speed_zone',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [0]
+        }), 
+        SubField(
+            name='target_hr_zone',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [1]
+        }), 
+        SubField(
+            name='target_cadence_zone',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [3]
+        }), 
+        SubField(
+            name='target_power_zone',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [4]
+        }), 
+        SubField(
+            name='repeat_steps',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [6]
+        }), 
+        SubField(
+            name='repeat_time',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 's',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [7]
+        }), 
+        SubField(
+            name='repeat_distance',
+            base_type=BaseType.UINT32,
+        scale = 100,
+                offset = 0,
+        units = 'm',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [8]
+        }), 
+        SubField(
+            name='repeat_calories',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'calories',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [9]
+        }), 
+        SubField(
+            name='repeat_hr',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or bpm',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [10, 11]
+        }), 
+        SubField(
+            name='repeat_power',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or watts',
+        reference_map = {
+        WorkoutStepDurationTypeField.ID: [12, 13]
+        }), 
+        SubField(
+            name='target_stroke_type',
+            base_type=BaseType.ENUM,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [11]
+        })
+        ]
         )
 
 
@@ -1667,47 +1727,51 @@ class WorkoutStepCustomTargetValueLowField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="custom_target_value_low",
+            name='custom_target_value_low',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="custom_target_speed_low",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="m/s",
-                    reference_map={WorkoutStepTargetTypeField.ID: [0, 12]},
-                ),
-                SubField(
-                    name="custom_target_heart_rate_low",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or bpm",
-                    reference_map={WorkoutStepTargetTypeField.ID: [1, 13]},
-                ),
-                SubField(
-                    name="custom_target_cadence_low",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="rpm",
-                    reference_map={WorkoutStepTargetTypeField.ID: [3]},
-                ),
-                SubField(
-                    name="custom_target_power_low",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or watts",
-                    reference_map={WorkoutStepTargetTypeField.ID: [4, 7, 8, 9, 10]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='custom_target_speed_low',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 'm/s',
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [0, 12]
+        }), 
+        SubField(
+            name='custom_target_heart_rate_low',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or bpm',
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [1, 13]
+        }), 
+        SubField(
+            name='custom_target_cadence_low',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'rpm',
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [3]
+        }), 
+        SubField(
+            name='custom_target_power_low',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or watts',
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [4, 7, 8, 9, 10]
+        })
+        ]
         )
 
 
@@ -1716,47 +1780,51 @@ class WorkoutStepCustomTargetValueHighField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="custom_target_value_high",
+            name='custom_target_value_high',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="custom_target_speed_high",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="m/s",
-                    reference_map={WorkoutStepTargetTypeField.ID: [0, 12]},
-                ),
-                SubField(
-                    name="custom_target_heart_rate_high",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or bpm",
-                    reference_map={WorkoutStepTargetTypeField.ID: [1, 13]},
-                ),
-                SubField(
-                    name="custom_target_cadence_high",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="rpm",
-                    reference_map={WorkoutStepTargetTypeField.ID: [3]},
-                ),
-                SubField(
-                    name="custom_target_power_high",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or watts",
-                    reference_map={WorkoutStepTargetTypeField.ID: [4, 7, 8, 9, 10]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='custom_target_speed_high',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 'm/s',
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [0, 12]
+        }), 
+        SubField(
+            name='custom_target_heart_rate_high',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or bpm',
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [1, 13]
+        }), 
+        SubField(
+            name='custom_target_cadence_high',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'rpm',
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [3]
+        }), 
+        SubField(
+            name='custom_target_power_high',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or watts',
+        reference_map = {
+        WorkoutStepTargetTypeField.ID: [4, 7, 8, 9, 10]
+        })
+        ]
         )
 
 
@@ -1765,14 +1833,15 @@ class WorkoutStepIntensityField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="intensity",
+            name='intensity',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1781,14 +1850,15 @@ class WorkoutStepNotesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="notes",
+            name='notes',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1797,14 +1867,15 @@ class WorkoutStepEquipmentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="equipment",
+            name='equipment',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1813,14 +1884,15 @@ class WorkoutStepExerciseCategoryField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="exercise_category",
+            name='exercise_category',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1829,14 +1901,15 @@ class WorkoutStepExerciseNameField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="exercise_name",
+            name='exercise_name',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1845,16 +1918,17 @@ class WorkoutStepExerciseWeightField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="exercise_weight",
+            name='exercise_weight',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="kg",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'kg',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1863,14 +1937,15 @@ class WorkoutStepWeightDisplayUnitField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="weight_display_unit",
+            name='weight_display_unit',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1879,14 +1954,15 @@ class WorkoutStepSecondaryTargetTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="secondary_target_type",
+            name='secondary_target_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1895,50 +1971,55 @@ class WorkoutStepSecondaryTargetValueField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="secondary_target_value",
+            name='secondary_target_value',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="secondary_target_speed_zone",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [0]},
-                ),
-                SubField(
-                    name="secondary_target_hr_zone",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [1]},
-                ),
-                SubField(
-                    name="secondary_target_cadence_zone",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [3]},
-                ),
-                SubField(
-                    name="secondary_target_power_zone",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [4]},
-                ),
-                SubField(
-                    name="secondary_target_stroke_type",
-                    base_type=BaseType.ENUM,
-                    scale=1,
-                    offset=0,
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [11]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='secondary_target_speed_zone',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [0]
+        }), 
+        SubField(
+            name='secondary_target_hr_zone',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [1]
+        }), 
+        SubField(
+            name='secondary_target_cadence_zone',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [3]
+        }), 
+        SubField(
+            name='secondary_target_power_zone',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [4]
+        }), 
+        SubField(
+            name='secondary_target_stroke_type',
+            base_type=BaseType.ENUM,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [11]
+        })
+        ]
         )
 
 
@@ -1947,47 +2028,51 @@ class WorkoutStepSecondaryCustomTargetValueLowField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="secondary_custom_target_value_low",
+            name='secondary_custom_target_value_low',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="secondary_custom_target_speed_low",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="m/s",
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [0]},
-                ),
-                SubField(
-                    name="secondary_custom_target_heart_rate_low",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or bpm",
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [1]},
-                ),
-                SubField(
-                    name="secondary_custom_target_cadence_low",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="rpm",
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [3]},
-                ),
-                SubField(
-                    name="secondary_custom_target_power_low",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or watts",
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [4]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='secondary_custom_target_speed_low',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 'm/s',
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [0]
+        }), 
+        SubField(
+            name='secondary_custom_target_heart_rate_low',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or bpm',
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [1]
+        }), 
+        SubField(
+            name='secondary_custom_target_cadence_low',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'rpm',
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [3]
+        }), 
+        SubField(
+            name='secondary_custom_target_power_low',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or watts',
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [4]
+        })
+        ]
         )
 
 
@@ -1996,45 +2081,49 @@ class WorkoutStepSecondaryCustomTargetValueHighField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="secondary_custom_target_value_high",
+            name='secondary_custom_target_value_high',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="secondary_custom_target_speed_high",
-                    base_type=BaseType.UINT32,
-                    scale=1000,
-                    offset=0,
-                    units="m/s",
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [0]},
-                ),
-                SubField(
-                    name="secondary_custom_target_heart_rate_high",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or bpm",
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [1]},
-                ),
-                SubField(
-                    name="secondary_custom_target_cadence_high",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="rpm",
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [3]},
-                ),
-                SubField(
-                    name="secondary_custom_target_power_high",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="% or watts",
-                    reference_map={WorkoutStepSecondaryTargetTypeField.ID: [4]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='secondary_custom_target_speed_high',
+            base_type=BaseType.UINT32,
+        scale = 1000,
+                offset = 0,
+        units = 'm/s',
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [0]
+        }), 
+        SubField(
+            name='secondary_custom_target_heart_rate_high',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or bpm',
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [1]
+        }), 
+        SubField(
+            name='secondary_custom_target_cadence_high',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'rpm',
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [3]
+        }), 
+        SubField(
+            name='secondary_custom_target_power_high',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = '% or watts',
+        reference_map = {
+        WorkoutStepSecondaryTargetTypeField.ID: [4]
+        })
+        ]
         )

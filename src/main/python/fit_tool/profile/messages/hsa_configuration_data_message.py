@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class HsaConfigurationDataMessage(DataMessage):
     ID = 389
-    NAME = "hsa_configuration_data"
+    NAME = 'hsa_configuration_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,57 +29,38 @@ class HsaConfigurationDataMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=HsaConfigurationDataMessage.NAME,
-            global_id=HsaConfigurationDataMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                HsaConfigurationDataDataField(
-                    size=self.__get_field_size(
-                        definition_message, HsaConfigurationDataDataField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaConfigurationDataDataSizeField(
-                    size=self.__get_field_size(
-                        definition_message, HsaConfigurationDataDataSizeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=HsaConfigurationDataMessage.NAME,
+                         global_id=HsaConfigurationDataMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        HsaConfigurationDataDataField(
+            size=self.__get_field_size(definition_message, HsaConfigurationDataDataField.ID),
+            growable=definition_message is None), 
+        HsaConfigurationDataDataSizeField(
+            size=self.__get_field_size(definition_message, HsaConfigurationDataDataSizeField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -87,6 +70,7 @@ class HsaConfigurationDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -101,6 +85,8 @@ class HsaConfigurationDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def data(self) -> Optional[bytes]:
         field = self.get_field(HsaConfigurationDataDataField.ID)
@@ -108,6 +94,8 @@ class HsaConfigurationDataMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @data.setter
     def data(self, value: bytes):
@@ -119,6 +107,8 @@ class HsaConfigurationDataMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def data_size(self) -> Optional[int]:
         field = self.get_field(HsaConfigurationDataDataSizeField.ID)
@@ -127,6 +117,8 @@ class HsaConfigurationDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @data_size.setter
     def data_size(self, value: int):
@@ -139,22 +131,28 @@ class HsaConfigurationDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -163,14 +161,15 @@ class HsaConfigurationDataDataField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="data",
+            name='data',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -179,12 +178,13 @@ class HsaConfigurationDataDataSizeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="data_size",
+            name='data_size',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class AntRxMessage(DataMessage):
     ID = 80
-    NAME = "ant_rx"
+    NAME = 'ant_rx'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,71 +29,47 @@ class AntRxMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=AntRxMessage.NAME,
-            global_id=AntRxMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                AntRxFractionalTimestampField(
-                    size=self.__get_field_size(
-                        definition_message, AntRxFractionalTimestampField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                AntRxMesgIdField(
-                    size=self.__get_field_size(definition_message, AntRxMesgIdField.ID),
-                    growable=definition_message is None,
-                ),
-                AntRxMesgDataField(
-                    size=self.__get_field_size(
-                        definition_message, AntRxMesgDataField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                AntRxChannelNumberField(
-                    size=self.__get_field_size(
-                        definition_message, AntRxChannelNumberField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                AntRxDataField(
-                    size=self.__get_field_size(definition_message, AntRxDataField.ID),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=AntRxMessage.NAME,
+                         global_id=AntRxMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        AntRxFractionalTimestampField(
+            size=self.__get_field_size(definition_message, AntRxFractionalTimestampField.ID),
+            growable=definition_message is None), 
+        AntRxMesgIdField(
+            size=self.__get_field_size(definition_message, AntRxMesgIdField.ID),
+            growable=definition_message is None), 
+        AntRxMesgDataField(
+            size=self.__get_field_size(definition_message, AntRxMesgDataField.ID),
+            growable=definition_message is None), 
+        AntRxChannelNumberField(
+            size=self.__get_field_size(definition_message, AntRxChannelNumberField.ID),
+            growable=definition_message is None), 
+        AntRxDataField(
+            size=self.__get_field_size(definition_message, AntRxDataField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -101,6 +79,7 @@ class AntRxMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -115,6 +94,8 @@ class AntRxMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def fractional_timestamp(self) -> Optional[float]:
         field = self.get_field(AntRxFractionalTimestampField.ID)
@@ -123,6 +104,8 @@ class AntRxMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @fractional_timestamp.setter
     def fractional_timestamp(self, value: float):
@@ -135,6 +118,8 @@ class AntRxMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def mesg_id(self) -> Optional[int]:
         field = self.get_field(AntRxMesgIdField.ID)
@@ -143,6 +128,8 @@ class AntRxMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @mesg_id.setter
     def mesg_id(self, value: int):
@@ -155,6 +142,8 @@ class AntRxMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def mesg_data(self) -> Optional[bytes]:
         field = self.get_field(AntRxMesgDataField.ID)
@@ -162,6 +151,8 @@ class AntRxMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @mesg_data.setter
     def mesg_data(self, value: bytes):
@@ -173,6 +164,8 @@ class AntRxMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def channel_number(self) -> Optional[int]:
         field = self.get_field(AntRxChannelNumberField.ID)
@@ -181,6 +174,8 @@ class AntRxMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @channel_number.setter
     def channel_number(self, value: int):
@@ -193,6 +188,8 @@ class AntRxMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def data(self) -> Optional[bytes]:
         field = self.get_field(AntRxDataField.ID)
@@ -200,6 +197,8 @@ class AntRxMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @data.setter
     def data(self, value: bytes):
@@ -211,22 +210,28 @@ class AntRxMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -235,16 +240,17 @@ class AntRxFractionalTimestampField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="fractional_timestamp",
+            name='fractional_timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=32768,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 32768,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -253,14 +259,15 @@ class AntRxMesgIdField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="mesg_id",
+            name='mesg_id',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -269,14 +276,15 @@ class AntRxMesgDataField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="mesg_data",
+            name='mesg_data',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -285,14 +293,15 @@ class AntRxChannelNumberField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="channel_number",
+            name='channel_number',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -301,12 +310,13 @@ class AntRxDataField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="data",
+            name='data',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

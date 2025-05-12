@@ -187,6 +187,7 @@ class ProfileType(Enum):
     WORKOUT_STEP_TARGET = 179
 
 
+
 class FileType(Enum):
     DEVICE = 1
     SETTINGS = 2
@@ -2238,6 +2239,8 @@ class WeatherSevereType(Enum):
     LOW_WATER = 82
     HYDROLOGICAL = 83
     SPECIAL_WEATHER = 84
+
+
 
 
 class StrokeType(Enum):

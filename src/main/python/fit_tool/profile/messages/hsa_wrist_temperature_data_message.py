@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class HsaWristTemperatureDataMessage(DataMessage):
     ID = 409
-    NAME = "hsa_wrist_temperature_data"
+    NAME = 'hsa_wrist_temperature_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,58 +29,38 @@ class HsaWristTemperatureDataMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=HsaWristTemperatureDataMessage.NAME,
-            global_id=HsaWristTemperatureDataMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                HsaWristTemperatureDataProcessingIntervalField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        HsaWristTemperatureDataProcessingIntervalField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaWristTemperatureDataValueField(
-                    size=self.__get_field_size(
-                        definition_message, HsaWristTemperatureDataValueField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=HsaWristTemperatureDataMessage.NAME,
+                         global_id=HsaWristTemperatureDataMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        HsaWristTemperatureDataProcessingIntervalField(
+            size=self.__get_field_size(definition_message, HsaWristTemperatureDataProcessingIntervalField.ID),
+            growable=definition_message is None), 
+        HsaWristTemperatureDataValueField(
+            size=self.__get_field_size(definition_message, HsaWristTemperatureDataValueField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -88,6 +70,7 @@ class HsaWristTemperatureDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -102,6 +85,8 @@ class HsaWristTemperatureDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def processing_interval(self) -> Optional[int]:
         field = self.get_field(HsaWristTemperatureDataProcessingIntervalField.ID)
@@ -110,6 +95,8 @@ class HsaWristTemperatureDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @processing_interval.setter
     def processing_interval(self, value: int):
@@ -122,6 +109,8 @@ class HsaWristTemperatureDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def value(self) -> Optional[list[float]]:
         field = self.get_field(HsaWristTemperatureDataValueField.ID)
@@ -129,6 +118,8 @@ class HsaWristTemperatureDataMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @value.setter
     def value(self, value: list[float]):
@@ -140,22 +131,28 @@ class HsaWristTemperatureDataMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -164,16 +161,17 @@ class HsaWristTemperatureDataProcessingIntervalField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="processing_interval",
+            name='processing_interval',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -182,14 +180,15 @@ class HsaWristTemperatureDataValueField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="value",
+            name='value',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="degC",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'degC',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

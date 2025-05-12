@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class MaxMetDataMessage(DataMessage):
     ID = 229
-    NAME = "max_met_data"
+    NAME = 'max_met_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,89 +29,53 @@ class MaxMetDataMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=MaxMetDataMessage.NAME,
-            global_id=MaxMetDataMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MaxMetDataUpdateTimeField(
-                    size=self.__get_field_size(
-                        definition_message, MaxMetDataUpdateTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MaxMetDataVo2MaxField(
-                    size=self.__get_field_size(
-                        definition_message, MaxMetDataVo2MaxField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MaxMetDataSportField(
-                    size=self.__get_field_size(
-                        definition_message, MaxMetDataSportField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MaxMetDataSubSportField(
-                    size=self.__get_field_size(
-                        definition_message, MaxMetDataSubSportField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MaxMetDataMaxMetCategoryField(
-                    size=self.__get_field_size(
-                        definition_message, MaxMetDataMaxMetCategoryField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MaxMetDataCalibratedDataField(
-                    size=self.__get_field_size(
-                        definition_message, MaxMetDataCalibratedDataField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MaxMetDataHrSourceField(
-                    size=self.__get_field_size(
-                        definition_message, MaxMetDataHrSourceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MaxMetDataSpeedSourceField(
-                    size=self.__get_field_size(
-                        definition_message, MaxMetDataSpeedSourceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=MaxMetDataMessage.NAME,
+                         global_id=MaxMetDataMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MaxMetDataUpdateTimeField(
+            size=self.__get_field_size(definition_message, MaxMetDataUpdateTimeField.ID),
+            growable=definition_message is None), 
+        MaxMetDataVo2MaxField(
+            size=self.__get_field_size(definition_message, MaxMetDataVo2MaxField.ID),
+            growable=definition_message is None), 
+        MaxMetDataSportField(
+            size=self.__get_field_size(definition_message, MaxMetDataSportField.ID),
+            growable=definition_message is None), 
+        MaxMetDataSubSportField(
+            size=self.__get_field_size(definition_message, MaxMetDataSubSportField.ID),
+            growable=definition_message is None), 
+        MaxMetDataMaxMetCategoryField(
+            size=self.__get_field_size(definition_message, MaxMetDataMaxMetCategoryField.ID),
+            growable=definition_message is None), 
+        MaxMetDataCalibratedDataField(
+            size=self.__get_field_size(definition_message, MaxMetDataCalibratedDataField.ID),
+            growable=definition_message is None), 
+        MaxMetDataHrSourceField(
+            size=self.__get_field_size(definition_message, MaxMetDataHrSourceField.ID),
+            growable=definition_message is None), 
+        MaxMetDataSpeedSourceField(
+            size=self.__get_field_size(definition_message, MaxMetDataSpeedSourceField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def update_time(self) -> Optional[int]:
@@ -119,6 +85,7 @@ class MaxMetDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -133,6 +100,8 @@ class MaxMetDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def vo2_max(self) -> Optional[float]:
         field = self.get_field(MaxMetDataVo2MaxField.ID)
@@ -141,6 +110,8 @@ class MaxMetDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @vo2_max.setter
     def vo2_max(self, value: float):
@@ -153,6 +124,8 @@ class MaxMetDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sport(self) -> Optional[Sport]:
         field = self.get_field(MaxMetDataSportField.ID)
@@ -161,6 +134,8 @@ class MaxMetDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sport.setter
     def sport(self, value: Sport):
@@ -173,6 +148,8 @@ class MaxMetDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sub_sport(self) -> Optional[SubSport]:
         field = self.get_field(MaxMetDataSubSportField.ID)
@@ -181,6 +158,8 @@ class MaxMetDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sub_sport.setter
     def sub_sport(self, value: SubSport):
@@ -193,6 +172,8 @@ class MaxMetDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_met_category(self) -> Optional[MaxMetCategory]:
         field = self.get_field(MaxMetDataMaxMetCategoryField.ID)
@@ -201,6 +182,8 @@ class MaxMetDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_met_category.setter
     def max_met_category(self, value: MaxMetCategory):
@@ -213,6 +196,8 @@ class MaxMetDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def calibrated_data(self) -> Optional[bool]:
         field = self.get_field(MaxMetDataCalibratedDataField.ID)
@@ -221,6 +206,8 @@ class MaxMetDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @calibrated_data.setter
     def calibrated_data(self, value: bool):
@@ -233,6 +220,8 @@ class MaxMetDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def hr_source(self) -> Optional[MaxMetHeartRateSource]:
         field = self.get_field(MaxMetDataHrSourceField.ID)
@@ -241,6 +230,8 @@ class MaxMetDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @hr_source.setter
     def hr_source(self, value: MaxMetHeartRateSource):
@@ -253,6 +244,8 @@ class MaxMetDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def speed_source(self) -> Optional[MaxMetSpeedSource]:
         field = self.get_field(MaxMetDataSpeedSourceField.ID)
@@ -261,6 +254,8 @@ class MaxMetDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @speed_source.setter
     def speed_source(self, value: MaxMetSpeedSource):
@@ -273,22 +268,28 @@ class MaxMetDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class MaxMetDataUpdateTimeField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="update_time",
+            name='update_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -297,16 +298,17 @@ class MaxMetDataVo2MaxField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="vo2_max",
+            name='vo2_max',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="mL/kg/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'mL/kg/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -315,14 +317,15 @@ class MaxMetDataSportField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sport",
+            name='sport',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -331,14 +334,15 @@ class MaxMetDataSubSportField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sub_sport",
+            name='sub_sport',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -347,14 +351,15 @@ class MaxMetDataMaxMetCategoryField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_met_category",
+            name='max_met_category',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -363,14 +368,15 @@ class MaxMetDataCalibratedDataField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="calibrated_data",
+            name='calibrated_data',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -379,14 +385,15 @@ class MaxMetDataHrSourceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="hr_source",
+            name='hr_source',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -395,12 +402,13 @@ class MaxMetDataSpeedSourceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="speed_source",
+            name='speed_source',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

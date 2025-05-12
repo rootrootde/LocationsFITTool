@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class RecordMessage(DataMessage):
     ID = 20
-    NAME = "record"
+    NAME = 'record'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,525 +29,281 @@ class RecordMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=RecordMessage.NAME,
-            global_id=RecordMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordPositionLatField(
-                    size=self.__get_field_size(
-                        definition_message, RecordPositionLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordPositionLongField(
-                    size=self.__get_field_size(
-                        definition_message, RecordPositionLongField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordAltitudeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordAltitudeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordHeartRateField(
-                    size=self.__get_field_size(
-                        definition_message, RecordHeartRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCadenceField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCadenceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordDistanceField(
-                    size=self.__get_field_size(
-                        definition_message, RecordDistanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordSpeedField(
-                    size=self.__get_field_size(definition_message, RecordSpeedField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordPowerField(
-                    size=self.__get_field_size(definition_message, RecordPowerField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordCompressedSpeedDistanceField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCompressedSpeedDistanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordGradeField(
-                    size=self.__get_field_size(definition_message, RecordGradeField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordResistanceField(
-                    size=self.__get_field_size(
-                        definition_message, RecordResistanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordTimeFromCourseField(
-                    size=self.__get_field_size(
-                        definition_message, RecordTimeFromCourseField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCycleLengthField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCycleLengthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, RecordTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordSpeed1sField(
-                    size=self.__get_field_size(
-                        definition_message, RecordSpeed1sField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCyclesField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCyclesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordTotalCyclesField(
-                    size=self.__get_field_size(
-                        definition_message, RecordTotalCyclesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCompressedAccumulatedPowerField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCompressedAccumulatedPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordAccumulatedPowerField(
-                    size=self.__get_field_size(
-                        definition_message, RecordAccumulatedPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordLeftRightBalanceField(
-                    size=self.__get_field_size(
-                        definition_message, RecordLeftRightBalanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordGpsAccuracyField(
-                    size=self.__get_field_size(
-                        definition_message, RecordGpsAccuracyField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordVerticalSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, RecordVerticalSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCaloriesField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCaloriesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordVerticalOscillationField(
-                    size=self.__get_field_size(
-                        definition_message, RecordVerticalOscillationField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordStanceTimePercentField(
-                    size=self.__get_field_size(
-                        definition_message, RecordStanceTimePercentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordStanceTimeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordStanceTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordActivityTypeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordActivityTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordLeftTorqueEffectivenessField(
-                    size=self.__get_field_size(
-                        definition_message, RecordLeftTorqueEffectivenessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordRightTorqueEffectivenessField(
-                    size=self.__get_field_size(
-                        definition_message, RecordRightTorqueEffectivenessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordLeftPedalSmoothnessField(
-                    size=self.__get_field_size(
-                        definition_message, RecordLeftPedalSmoothnessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordRightPedalSmoothnessField(
-                    size=self.__get_field_size(
-                        definition_message, RecordRightPedalSmoothnessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCombinedPedalSmoothnessField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCombinedPedalSmoothnessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordTime128Field(
-                    size=self.__get_field_size(
-                        definition_message, RecordTime128Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordStrokeTypeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordStrokeTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordZoneField(
-                    size=self.__get_field_size(definition_message, RecordZoneField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordBallSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, RecordBallSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCadence256Field(
-                    size=self.__get_field_size(
-                        definition_message, RecordCadence256Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordFractionalCadenceField(
-                    size=self.__get_field_size(
-                        definition_message, RecordFractionalCadenceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordTotalHemoglobinConcField(
-                    size=self.__get_field_size(
-                        definition_message, RecordTotalHemoglobinConcField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordTotalHemoglobinConcMinField(
-                    size=self.__get_field_size(
-                        definition_message, RecordTotalHemoglobinConcMinField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordTotalHemoglobinConcMaxField(
-                    size=self.__get_field_size(
-                        definition_message, RecordTotalHemoglobinConcMaxField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordSaturatedHemoglobinPercentField(
-                    size=self.__get_field_size(
-                        definition_message, RecordSaturatedHemoglobinPercentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordSaturatedHemoglobinPercentMinField(
-                    size=self.__get_field_size(
-                        definition_message, RecordSaturatedHemoglobinPercentMinField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordSaturatedHemoglobinPercentMaxField(
-                    size=self.__get_field_size(
-                        definition_message, RecordSaturatedHemoglobinPercentMaxField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordDeviceIndexField(
-                    size=self.__get_field_size(
-                        definition_message, RecordDeviceIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordLeftPcoField(
-                    size=self.__get_field_size(
-                        definition_message, RecordLeftPcoField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordRightPcoField(
-                    size=self.__get_field_size(
-                        definition_message, RecordRightPcoField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordLeftPowerPhaseField(
-                    size=self.__get_field_size(
-                        definition_message, RecordLeftPowerPhaseField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordLeftPowerPhasePeakField(
-                    size=self.__get_field_size(
-                        definition_message, RecordLeftPowerPhasePeakField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordRightPowerPhaseField(
-                    size=self.__get_field_size(
-                        definition_message, RecordRightPowerPhaseField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordRightPowerPhasePeakField(
-                    size=self.__get_field_size(
-                        definition_message, RecordRightPowerPhasePeakField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordEnhancedSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, RecordEnhancedSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordEnhancedAltitudeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordEnhancedAltitudeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordBatterySocField(
-                    size=self.__get_field_size(
-                        definition_message, RecordBatterySocField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordMotorPowerField(
-                    size=self.__get_field_size(
-                        definition_message, RecordMotorPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordVerticalRatioField(
-                    size=self.__get_field_size(
-                        definition_message, RecordVerticalRatioField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordStanceTimeBalanceField(
-                    size=self.__get_field_size(
-                        definition_message, RecordStanceTimeBalanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordStepLengthField(
-                    size=self.__get_field_size(
-                        definition_message, RecordStepLengthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCycleLength16Field(
-                    size=self.__get_field_size(
-                        definition_message, RecordCycleLength16Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordAbsolutePressureField(
-                    size=self.__get_field_size(
-                        definition_message, RecordAbsolutePressureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordDepthField(
-                    size=self.__get_field_size(definition_message, RecordDepthField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordNextStopDepthField(
-                    size=self.__get_field_size(
-                        definition_message, RecordNextStopDepthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordNextStopTimeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordNextStopTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordTimeToSurfaceField(
-                    size=self.__get_field_size(
-                        definition_message, RecordTimeToSurfaceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordNdlTimeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordNdlTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordCnsLoadField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCnsLoadField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordN2LoadField(
-                    size=self.__get_field_size(
-                        definition_message, RecordN2LoadField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordRespirationRateField(
-                    size=self.__get_field_size(
-                        definition_message, RecordRespirationRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordEnhancedRespirationRateField(
-                    size=self.__get_field_size(
-                        definition_message, RecordEnhancedRespirationRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordGritField(
-                    size=self.__get_field_size(definition_message, RecordGritField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordFlowField(
-                    size=self.__get_field_size(definition_message, RecordFlowField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordCurrentStressField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCurrentStressField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordEbikeTravelRangeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordEbikeTravelRangeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordEbikeBatteryLevelField(
-                    size=self.__get_field_size(
-                        definition_message, RecordEbikeBatteryLevelField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordEbikeAssistModeField(
-                    size=self.__get_field_size(
-                        definition_message, RecordEbikeAssistModeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordEbikeAssistLevelPercentField(
-                    size=self.__get_field_size(
-                        definition_message, RecordEbikeAssistLevelPercentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordAirTimeRemainingField(
-                    size=self.__get_field_size(
-                        definition_message, RecordAirTimeRemainingField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordPressureSacField(
-                    size=self.__get_field_size(
-                        definition_message, RecordPressureSacField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordVolumeSacField(
-                    size=self.__get_field_size(
-                        definition_message, RecordVolumeSacField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordRmvField(
-                    size=self.__get_field_size(definition_message, RecordRmvField.ID),
-                    growable=definition_message is None,
-                ),
-                RecordAscentRateField(
-                    size=self.__get_field_size(
-                        definition_message, RecordAscentRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RecordPo2Field(
-                    size=self.__get_field_size(definition_message, RecordPo2Field.ID),
-                    growable=definition_message is None,
-                ),
-                RecordCoreTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, RecordCoreTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=RecordMessage.NAME,
+                         global_id=RecordMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        RecordPositionLatField(
+            size=self.__get_field_size(definition_message, RecordPositionLatField.ID),
+            growable=definition_message is None), 
+        RecordPositionLongField(
+            size=self.__get_field_size(definition_message, RecordPositionLongField.ID),
+            growable=definition_message is None), 
+        RecordAltitudeField(
+            size=self.__get_field_size(definition_message, RecordAltitudeField.ID),
+            growable=definition_message is None), 
+        RecordHeartRateField(
+            size=self.__get_field_size(definition_message, RecordHeartRateField.ID),
+            growable=definition_message is None), 
+        RecordCadenceField(
+            size=self.__get_field_size(definition_message, RecordCadenceField.ID),
+            growable=definition_message is None), 
+        RecordDistanceField(
+            size=self.__get_field_size(definition_message, RecordDistanceField.ID),
+            growable=definition_message is None), 
+        RecordSpeedField(
+            size=self.__get_field_size(definition_message, RecordSpeedField.ID),
+            growable=definition_message is None), 
+        RecordPowerField(
+            size=self.__get_field_size(definition_message, RecordPowerField.ID),
+            growable=definition_message is None), 
+        RecordCompressedSpeedDistanceField(
+            size=self.__get_field_size(definition_message, RecordCompressedSpeedDistanceField.ID),
+            growable=definition_message is None), 
+        RecordGradeField(
+            size=self.__get_field_size(definition_message, RecordGradeField.ID),
+            growable=definition_message is None), 
+        RecordResistanceField(
+            size=self.__get_field_size(definition_message, RecordResistanceField.ID),
+            growable=definition_message is None), 
+        RecordTimeFromCourseField(
+            size=self.__get_field_size(definition_message, RecordTimeFromCourseField.ID),
+            growable=definition_message is None), 
+        RecordCycleLengthField(
+            size=self.__get_field_size(definition_message, RecordCycleLengthField.ID),
+            growable=definition_message is None), 
+        RecordTemperatureField(
+            size=self.__get_field_size(definition_message, RecordTemperatureField.ID),
+            growable=definition_message is None), 
+        RecordSpeed1sField(
+            size=self.__get_field_size(definition_message, RecordSpeed1sField.ID),
+            growable=definition_message is None), 
+        RecordCyclesField(
+            size=self.__get_field_size(definition_message, RecordCyclesField.ID),
+            growable=definition_message is None), 
+        RecordTotalCyclesField(
+            size=self.__get_field_size(definition_message, RecordTotalCyclesField.ID),
+            growable=definition_message is None), 
+        RecordCompressedAccumulatedPowerField(
+            size=self.__get_field_size(definition_message, RecordCompressedAccumulatedPowerField.ID),
+            growable=definition_message is None), 
+        RecordAccumulatedPowerField(
+            size=self.__get_field_size(definition_message, RecordAccumulatedPowerField.ID),
+            growable=definition_message is None), 
+        RecordLeftRightBalanceField(
+            size=self.__get_field_size(definition_message, RecordLeftRightBalanceField.ID),
+            growable=definition_message is None), 
+        RecordGpsAccuracyField(
+            size=self.__get_field_size(definition_message, RecordGpsAccuracyField.ID),
+            growable=definition_message is None), 
+        RecordVerticalSpeedField(
+            size=self.__get_field_size(definition_message, RecordVerticalSpeedField.ID),
+            growable=definition_message is None), 
+        RecordCaloriesField(
+            size=self.__get_field_size(definition_message, RecordCaloriesField.ID),
+            growable=definition_message is None), 
+        RecordVerticalOscillationField(
+            size=self.__get_field_size(definition_message, RecordVerticalOscillationField.ID),
+            growable=definition_message is None), 
+        RecordStanceTimePercentField(
+            size=self.__get_field_size(definition_message, RecordStanceTimePercentField.ID),
+            growable=definition_message is None), 
+        RecordStanceTimeField(
+            size=self.__get_field_size(definition_message, RecordStanceTimeField.ID),
+            growable=definition_message is None), 
+        RecordActivityTypeField(
+            size=self.__get_field_size(definition_message, RecordActivityTypeField.ID),
+            growable=definition_message is None), 
+        RecordLeftTorqueEffectivenessField(
+            size=self.__get_field_size(definition_message, RecordLeftTorqueEffectivenessField.ID),
+            growable=definition_message is None), 
+        RecordRightTorqueEffectivenessField(
+            size=self.__get_field_size(definition_message, RecordRightTorqueEffectivenessField.ID),
+            growable=definition_message is None), 
+        RecordLeftPedalSmoothnessField(
+            size=self.__get_field_size(definition_message, RecordLeftPedalSmoothnessField.ID),
+            growable=definition_message is None), 
+        RecordRightPedalSmoothnessField(
+            size=self.__get_field_size(definition_message, RecordRightPedalSmoothnessField.ID),
+            growable=definition_message is None), 
+        RecordCombinedPedalSmoothnessField(
+            size=self.__get_field_size(definition_message, RecordCombinedPedalSmoothnessField.ID),
+            growable=definition_message is None), 
+        RecordTime128Field(
+            size=self.__get_field_size(definition_message, RecordTime128Field.ID),
+            growable=definition_message is None), 
+        RecordStrokeTypeField(
+            size=self.__get_field_size(definition_message, RecordStrokeTypeField.ID),
+            growable=definition_message is None), 
+        RecordZoneField(
+            size=self.__get_field_size(definition_message, RecordZoneField.ID),
+            growable=definition_message is None), 
+        RecordBallSpeedField(
+            size=self.__get_field_size(definition_message, RecordBallSpeedField.ID),
+            growable=definition_message is None), 
+        RecordCadence256Field(
+            size=self.__get_field_size(definition_message, RecordCadence256Field.ID),
+            growable=definition_message is None), 
+        RecordFractionalCadenceField(
+            size=self.__get_field_size(definition_message, RecordFractionalCadenceField.ID),
+            growable=definition_message is None), 
+        RecordTotalHemoglobinConcField(
+            size=self.__get_field_size(definition_message, RecordTotalHemoglobinConcField.ID),
+            growable=definition_message is None), 
+        RecordTotalHemoglobinConcMinField(
+            size=self.__get_field_size(definition_message, RecordTotalHemoglobinConcMinField.ID),
+            growable=definition_message is None), 
+        RecordTotalHemoglobinConcMaxField(
+            size=self.__get_field_size(definition_message, RecordTotalHemoglobinConcMaxField.ID),
+            growable=definition_message is None), 
+        RecordSaturatedHemoglobinPercentField(
+            size=self.__get_field_size(definition_message, RecordSaturatedHemoglobinPercentField.ID),
+            growable=definition_message is None), 
+        RecordSaturatedHemoglobinPercentMinField(
+            size=self.__get_field_size(definition_message, RecordSaturatedHemoglobinPercentMinField.ID),
+            growable=definition_message is None), 
+        RecordSaturatedHemoglobinPercentMaxField(
+            size=self.__get_field_size(definition_message, RecordSaturatedHemoglobinPercentMaxField.ID),
+            growable=definition_message is None), 
+        RecordDeviceIndexField(
+            size=self.__get_field_size(definition_message, RecordDeviceIndexField.ID),
+            growable=definition_message is None), 
+        RecordLeftPcoField(
+            size=self.__get_field_size(definition_message, RecordLeftPcoField.ID),
+            growable=definition_message is None), 
+        RecordRightPcoField(
+            size=self.__get_field_size(definition_message, RecordRightPcoField.ID),
+            growable=definition_message is None), 
+        RecordLeftPowerPhaseField(
+            size=self.__get_field_size(definition_message, RecordLeftPowerPhaseField.ID),
+            growable=definition_message is None), 
+        RecordLeftPowerPhasePeakField(
+            size=self.__get_field_size(definition_message, RecordLeftPowerPhasePeakField.ID),
+            growable=definition_message is None), 
+        RecordRightPowerPhaseField(
+            size=self.__get_field_size(definition_message, RecordRightPowerPhaseField.ID),
+            growable=definition_message is None), 
+        RecordRightPowerPhasePeakField(
+            size=self.__get_field_size(definition_message, RecordRightPowerPhasePeakField.ID),
+            growable=definition_message is None), 
+        RecordEnhancedSpeedField(
+            size=self.__get_field_size(definition_message, RecordEnhancedSpeedField.ID),
+            growable=definition_message is None), 
+        RecordEnhancedAltitudeField(
+            size=self.__get_field_size(definition_message, RecordEnhancedAltitudeField.ID),
+            growable=definition_message is None), 
+        RecordBatterySocField(
+            size=self.__get_field_size(definition_message, RecordBatterySocField.ID),
+            growable=definition_message is None), 
+        RecordMotorPowerField(
+            size=self.__get_field_size(definition_message, RecordMotorPowerField.ID),
+            growable=definition_message is None), 
+        RecordVerticalRatioField(
+            size=self.__get_field_size(definition_message, RecordVerticalRatioField.ID),
+            growable=definition_message is None), 
+        RecordStanceTimeBalanceField(
+            size=self.__get_field_size(definition_message, RecordStanceTimeBalanceField.ID),
+            growable=definition_message is None), 
+        RecordStepLengthField(
+            size=self.__get_field_size(definition_message, RecordStepLengthField.ID),
+            growable=definition_message is None), 
+        RecordCycleLength16Field(
+            size=self.__get_field_size(definition_message, RecordCycleLength16Field.ID),
+            growable=definition_message is None), 
+        RecordAbsolutePressureField(
+            size=self.__get_field_size(definition_message, RecordAbsolutePressureField.ID),
+            growable=definition_message is None), 
+        RecordDepthField(
+            size=self.__get_field_size(definition_message, RecordDepthField.ID),
+            growable=definition_message is None), 
+        RecordNextStopDepthField(
+            size=self.__get_field_size(definition_message, RecordNextStopDepthField.ID),
+            growable=definition_message is None), 
+        RecordNextStopTimeField(
+            size=self.__get_field_size(definition_message, RecordNextStopTimeField.ID),
+            growable=definition_message is None), 
+        RecordTimeToSurfaceField(
+            size=self.__get_field_size(definition_message, RecordTimeToSurfaceField.ID),
+            growable=definition_message is None), 
+        RecordNdlTimeField(
+            size=self.__get_field_size(definition_message, RecordNdlTimeField.ID),
+            growable=definition_message is None), 
+        RecordCnsLoadField(
+            size=self.__get_field_size(definition_message, RecordCnsLoadField.ID),
+            growable=definition_message is None), 
+        RecordN2LoadField(
+            size=self.__get_field_size(definition_message, RecordN2LoadField.ID),
+            growable=definition_message is None), 
+        RecordRespirationRateField(
+            size=self.__get_field_size(definition_message, RecordRespirationRateField.ID),
+            growable=definition_message is None), 
+        RecordEnhancedRespirationRateField(
+            size=self.__get_field_size(definition_message, RecordEnhancedRespirationRateField.ID),
+            growable=definition_message is None), 
+        RecordGritField(
+            size=self.__get_field_size(definition_message, RecordGritField.ID),
+            growable=definition_message is None), 
+        RecordFlowField(
+            size=self.__get_field_size(definition_message, RecordFlowField.ID),
+            growable=definition_message is None), 
+        RecordCurrentStressField(
+            size=self.__get_field_size(definition_message, RecordCurrentStressField.ID),
+            growable=definition_message is None), 
+        RecordEbikeTravelRangeField(
+            size=self.__get_field_size(definition_message, RecordEbikeTravelRangeField.ID),
+            growable=definition_message is None), 
+        RecordEbikeBatteryLevelField(
+            size=self.__get_field_size(definition_message, RecordEbikeBatteryLevelField.ID),
+            growable=definition_message is None), 
+        RecordEbikeAssistModeField(
+            size=self.__get_field_size(definition_message, RecordEbikeAssistModeField.ID),
+            growable=definition_message is None), 
+        RecordEbikeAssistLevelPercentField(
+            size=self.__get_field_size(definition_message, RecordEbikeAssistLevelPercentField.ID),
+            growable=definition_message is None), 
+        RecordAirTimeRemainingField(
+            size=self.__get_field_size(definition_message, RecordAirTimeRemainingField.ID),
+            growable=definition_message is None), 
+        RecordPressureSacField(
+            size=self.__get_field_size(definition_message, RecordPressureSacField.ID),
+            growable=definition_message is None), 
+        RecordVolumeSacField(
+            size=self.__get_field_size(definition_message, RecordVolumeSacField.ID),
+            growable=definition_message is None), 
+        RecordRmvField(
+            size=self.__get_field_size(definition_message, RecordRmvField.ID),
+            growable=definition_message is None), 
+        RecordAscentRateField(
+            size=self.__get_field_size(definition_message, RecordAscentRateField.ID),
+            growable=definition_message is None), 
+        RecordPo2Field(
+            size=self.__get_field_size(definition_message, RecordPo2Field.ID),
+            growable=definition_message is None), 
+        RecordCoreTemperatureField(
+            size=self.__get_field_size(definition_message, RecordCoreTemperatureField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -555,6 +313,7 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -569,6 +328,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def position_lat(self) -> Optional[float]:
         field = self.get_field(RecordPositionLatField.ID)
@@ -577,6 +338,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @position_lat.setter
     def position_lat(self, value: float):
@@ -589,6 +352,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def position_long(self) -> Optional[float]:
         field = self.get_field(RecordPositionLongField.ID)
@@ -597,6 +362,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @position_long.setter
     def position_long(self, value: float):
@@ -609,6 +376,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def altitude(self) -> Optional[float]:
         field = self.get_field(RecordAltitudeField.ID)
@@ -617,6 +386,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @altitude.setter
     def altitude(self, value: float):
@@ -629,6 +400,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def heart_rate(self) -> Optional[int]:
         field = self.get_field(RecordHeartRateField.ID)
@@ -637,6 +410,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @heart_rate.setter
     def heart_rate(self, value: int):
@@ -649,6 +424,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def cadence(self) -> Optional[int]:
         field = self.get_field(RecordCadenceField.ID)
@@ -657,6 +434,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @cadence.setter
     def cadence(self, value: int):
@@ -669,6 +448,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def distance(self) -> Optional[float]:
         field = self.get_field(RecordDistanceField.ID)
@@ -677,6 +458,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @distance.setter
     def distance(self, value: float):
@@ -689,6 +472,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def speed(self) -> Optional[float]:
         field = self.get_field(RecordSpeedField.ID)
@@ -697,6 +482,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @speed.setter
     def speed(self, value: float):
@@ -709,6 +496,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def power(self) -> Optional[int]:
         field = self.get_field(RecordPowerField.ID)
@@ -717,6 +506,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @power.setter
     def power(self, value: int):
@@ -729,6 +520,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def compressed_speed_distance(self) -> Optional[bytes]:
         field = self.get_field(RecordCompressedSpeedDistanceField.ID)
@@ -736,6 +529,8 @@ class RecordMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @compressed_speed_distance.setter
     def compressed_speed_distance(self, value: bytes):
@@ -747,6 +542,8 @@ class RecordMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def grade(self) -> Optional[float]:
         field = self.get_field(RecordGradeField.ID)
@@ -755,6 +552,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @grade.setter
     def grade(self, value: float):
@@ -767,6 +566,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def resistance(self) -> Optional[int]:
         field = self.get_field(RecordResistanceField.ID)
@@ -775,6 +576,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @resistance.setter
     def resistance(self, value: int):
@@ -787,6 +590,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def time_from_course(self) -> Optional[float]:
         field = self.get_field(RecordTimeFromCourseField.ID)
@@ -795,6 +600,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @time_from_course.setter
     def time_from_course(self, value: float):
@@ -807,6 +614,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def cycle_length(self) -> Optional[float]:
         field = self.get_field(RecordCycleLengthField.ID)
@@ -815,6 +624,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @cycle_length.setter
     def cycle_length(self, value: float):
@@ -827,6 +638,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def temperature(self) -> Optional[int]:
         field = self.get_field(RecordTemperatureField.ID)
@@ -835,6 +648,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @temperature.setter
     def temperature(self, value: int):
@@ -847,6 +662,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def speed_1s(self) -> Optional[list[float]]:
         field = self.get_field(RecordSpeed1sField.ID)
@@ -854,6 +671,8 @@ class RecordMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @speed_1s.setter
     def speed_1s(self, value: list[float]):
@@ -865,6 +684,8 @@ class RecordMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def cycles(self) -> Optional[int]:
         field = self.get_field(RecordCyclesField.ID)
@@ -873,6 +694,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @cycles.setter
     def cycles(self, value: int):
@@ -885,6 +708,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_cycles(self) -> Optional[int]:
         field = self.get_field(RecordTotalCyclesField.ID)
@@ -893,6 +718,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_cycles.setter
     def total_cycles(self, value: int):
@@ -905,6 +732,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def compressed_accumulated_power(self) -> Optional[int]:
         field = self.get_field(RecordCompressedAccumulatedPowerField.ID)
@@ -913,6 +742,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @compressed_accumulated_power.setter
     def compressed_accumulated_power(self, value: int):
@@ -925,6 +756,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def accumulated_power(self) -> Optional[int]:
         field = self.get_field(RecordAccumulatedPowerField.ID)
@@ -933,6 +766,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @accumulated_power.setter
     def accumulated_power(self, value: int):
@@ -945,6 +780,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def left_right_balance(self) -> Optional[int]:
         field = self.get_field(RecordLeftRightBalanceField.ID)
@@ -953,6 +790,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @left_right_balance.setter
     def left_right_balance(self, value: int):
@@ -965,6 +804,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def gps_accuracy(self) -> Optional[int]:
         field = self.get_field(RecordGpsAccuracyField.ID)
@@ -973,6 +814,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @gps_accuracy.setter
     def gps_accuracy(self, value: int):
@@ -985,6 +828,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def vertical_speed(self) -> Optional[float]:
         field = self.get_field(RecordVerticalSpeedField.ID)
@@ -993,6 +838,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @vertical_speed.setter
     def vertical_speed(self, value: float):
@@ -1005,6 +852,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def calories(self) -> Optional[int]:
         field = self.get_field(RecordCaloriesField.ID)
@@ -1013,6 +862,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @calories.setter
     def calories(self, value: int):
@@ -1025,6 +876,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def vertical_oscillation(self) -> Optional[float]:
         field = self.get_field(RecordVerticalOscillationField.ID)
@@ -1033,6 +886,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @vertical_oscillation.setter
     def vertical_oscillation(self, value: float):
@@ -1045,6 +900,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def stance_time_percent(self) -> Optional[float]:
         field = self.get_field(RecordStanceTimePercentField.ID)
@@ -1053,6 +910,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @stance_time_percent.setter
     def stance_time_percent(self, value: float):
@@ -1065,6 +924,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def stance_time(self) -> Optional[float]:
         field = self.get_field(RecordStanceTimeField.ID)
@@ -1073,6 +934,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @stance_time.setter
     def stance_time(self, value: float):
@@ -1085,6 +948,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def activity_type(self) -> Optional[ActivityType]:
         field = self.get_field(RecordActivityTypeField.ID)
@@ -1093,6 +958,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @activity_type.setter
     def activity_type(self, value: ActivityType):
@@ -1105,6 +972,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def left_torque_effectiveness(self) -> Optional[float]:
         field = self.get_field(RecordLeftTorqueEffectivenessField.ID)
@@ -1113,6 +982,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @left_torque_effectiveness.setter
     def left_torque_effectiveness(self, value: float):
@@ -1125,6 +996,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def right_torque_effectiveness(self) -> Optional[float]:
         field = self.get_field(RecordRightTorqueEffectivenessField.ID)
@@ -1133,6 +1006,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @right_torque_effectiveness.setter
     def right_torque_effectiveness(self, value: float):
@@ -1145,6 +1020,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def left_pedal_smoothness(self) -> Optional[float]:
         field = self.get_field(RecordLeftPedalSmoothnessField.ID)
@@ -1153,6 +1030,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @left_pedal_smoothness.setter
     def left_pedal_smoothness(self, value: float):
@@ -1165,6 +1044,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def right_pedal_smoothness(self) -> Optional[float]:
         field = self.get_field(RecordRightPedalSmoothnessField.ID)
@@ -1173,6 +1054,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @right_pedal_smoothness.setter
     def right_pedal_smoothness(self, value: float):
@@ -1185,6 +1068,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def combined_pedal_smoothness(self) -> Optional[float]:
         field = self.get_field(RecordCombinedPedalSmoothnessField.ID)
@@ -1193,6 +1078,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @combined_pedal_smoothness.setter
     def combined_pedal_smoothness(self, value: float):
@@ -1205,6 +1092,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def time128(self) -> Optional[float]:
         field = self.get_field(RecordTime128Field.ID)
@@ -1213,6 +1102,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @time128.setter
     def time128(self, value: float):
@@ -1225,6 +1116,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def stroke_type(self) -> Optional[StrokeType]:
         field = self.get_field(RecordStrokeTypeField.ID)
@@ -1233,6 +1126,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @stroke_type.setter
     def stroke_type(self, value: StrokeType):
@@ -1245,6 +1140,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def zone(self) -> Optional[int]:
         field = self.get_field(RecordZoneField.ID)
@@ -1253,6 +1150,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @zone.setter
     def zone(self, value: int):
@@ -1265,6 +1164,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ball_speed(self) -> Optional[float]:
         field = self.get_field(RecordBallSpeedField.ID)
@@ -1273,6 +1174,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ball_speed.setter
     def ball_speed(self, value: float):
@@ -1285,6 +1188,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def cadence256(self) -> Optional[float]:
         field = self.get_field(RecordCadence256Field.ID)
@@ -1293,6 +1198,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @cadence256.setter
     def cadence256(self, value: float):
@@ -1305,6 +1212,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def fractional_cadence(self) -> Optional[float]:
         field = self.get_field(RecordFractionalCadenceField.ID)
@@ -1313,6 +1222,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @fractional_cadence.setter
     def fractional_cadence(self, value: float):
@@ -1325,6 +1236,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_hemoglobin_conc(self) -> Optional[float]:
         field = self.get_field(RecordTotalHemoglobinConcField.ID)
@@ -1333,6 +1246,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_hemoglobin_conc.setter
     def total_hemoglobin_conc(self, value: float):
@@ -1345,6 +1260,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_hemoglobin_conc_min(self) -> Optional[float]:
         field = self.get_field(RecordTotalHemoglobinConcMinField.ID)
@@ -1353,6 +1270,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_hemoglobin_conc_min.setter
     def total_hemoglobin_conc_min(self, value: float):
@@ -1365,6 +1284,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_hemoglobin_conc_max(self) -> Optional[float]:
         field = self.get_field(RecordTotalHemoglobinConcMaxField.ID)
@@ -1373,6 +1294,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_hemoglobin_conc_max.setter
     def total_hemoglobin_conc_max(self, value: float):
@@ -1385,6 +1308,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def saturated_hemoglobin_percent(self) -> Optional[float]:
         field = self.get_field(RecordSaturatedHemoglobinPercentField.ID)
@@ -1393,6 +1318,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @saturated_hemoglobin_percent.setter
     def saturated_hemoglobin_percent(self, value: float):
@@ -1405,6 +1332,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def saturated_hemoglobin_percent_min(self) -> Optional[float]:
         field = self.get_field(RecordSaturatedHemoglobinPercentMinField.ID)
@@ -1413,6 +1342,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @saturated_hemoglobin_percent_min.setter
     def saturated_hemoglobin_percent_min(self, value: float):
@@ -1425,6 +1356,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def saturated_hemoglobin_percent_max(self) -> Optional[float]:
         field = self.get_field(RecordSaturatedHemoglobinPercentMaxField.ID)
@@ -1433,6 +1366,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @saturated_hemoglobin_percent_max.setter
     def saturated_hemoglobin_percent_max(self, value: float):
@@ -1445,6 +1380,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def device_index(self) -> Optional[int]:
         field = self.get_field(RecordDeviceIndexField.ID)
@@ -1453,6 +1390,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @device_index.setter
     def device_index(self, value: int):
@@ -1465,6 +1404,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def left_pco(self) -> Optional[int]:
         field = self.get_field(RecordLeftPcoField.ID)
@@ -1473,6 +1414,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @left_pco.setter
     def left_pco(self, value: int):
@@ -1485,6 +1428,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def right_pco(self) -> Optional[int]:
         field = self.get_field(RecordRightPcoField.ID)
@@ -1493,6 +1438,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @right_pco.setter
     def right_pco(self, value: int):
@@ -1505,6 +1452,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def left_power_phase(self) -> Optional[list[float]]:
         field = self.get_field(RecordLeftPowerPhaseField.ID)
@@ -1512,6 +1461,8 @@ class RecordMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @left_power_phase.setter
     def left_power_phase(self, value: list[float]):
@@ -1523,6 +1474,8 @@ class RecordMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def left_power_phase_peak(self) -> Optional[list[float]]:
         field = self.get_field(RecordLeftPowerPhasePeakField.ID)
@@ -1530,6 +1483,8 @@ class RecordMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @left_power_phase_peak.setter
     def left_power_phase_peak(self, value: list[float]):
@@ -1541,6 +1496,8 @@ class RecordMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def right_power_phase(self) -> Optional[list[float]]:
         field = self.get_field(RecordRightPowerPhaseField.ID)
@@ -1548,6 +1505,8 @@ class RecordMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @right_power_phase.setter
     def right_power_phase(self, value: list[float]):
@@ -1559,6 +1518,8 @@ class RecordMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def right_power_phase_peak(self) -> Optional[list[float]]:
         field = self.get_field(RecordRightPowerPhasePeakField.ID)
@@ -1566,6 +1527,8 @@ class RecordMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @right_power_phase_peak.setter
     def right_power_phase_peak(self, value: list[float]):
@@ -1577,6 +1540,8 @@ class RecordMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def enhanced_speed(self) -> Optional[float]:
         field = self.get_field(RecordEnhancedSpeedField.ID)
@@ -1585,6 +1550,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_speed.setter
     def enhanced_speed(self, value: float):
@@ -1597,6 +1564,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_altitude(self) -> Optional[float]:
         field = self.get_field(RecordEnhancedAltitudeField.ID)
@@ -1605,6 +1574,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_altitude.setter
     def enhanced_altitude(self, value: float):
@@ -1617,6 +1588,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def battery_soc(self) -> Optional[float]:
         field = self.get_field(RecordBatterySocField.ID)
@@ -1625,6 +1598,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @battery_soc.setter
     def battery_soc(self, value: float):
@@ -1637,6 +1612,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def motor_power(self) -> Optional[int]:
         field = self.get_field(RecordMotorPowerField.ID)
@@ -1645,6 +1622,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @motor_power.setter
     def motor_power(self, value: int):
@@ -1657,6 +1636,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def vertical_ratio(self) -> Optional[float]:
         field = self.get_field(RecordVerticalRatioField.ID)
@@ -1665,6 +1646,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @vertical_ratio.setter
     def vertical_ratio(self, value: float):
@@ -1677,6 +1660,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def stance_time_balance(self) -> Optional[float]:
         field = self.get_field(RecordStanceTimeBalanceField.ID)
@@ -1685,6 +1670,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @stance_time_balance.setter
     def stance_time_balance(self, value: float):
@@ -1697,6 +1684,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def step_length(self) -> Optional[float]:
         field = self.get_field(RecordStepLengthField.ID)
@@ -1705,6 +1694,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @step_length.setter
     def step_length(self, value: float):
@@ -1717,6 +1708,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def cycle_length16(self) -> Optional[float]:
         field = self.get_field(RecordCycleLength16Field.ID)
@@ -1725,6 +1718,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @cycle_length16.setter
     def cycle_length16(self, value: float):
@@ -1737,6 +1732,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def absolute_pressure(self) -> Optional[int]:
         field = self.get_field(RecordAbsolutePressureField.ID)
@@ -1745,6 +1742,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @absolute_pressure.setter
     def absolute_pressure(self, value: int):
@@ -1757,6 +1756,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def depth(self) -> Optional[float]:
         field = self.get_field(RecordDepthField.ID)
@@ -1765,6 +1766,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @depth.setter
     def depth(self, value: float):
@@ -1777,6 +1780,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def next_stop_depth(self) -> Optional[float]:
         field = self.get_field(RecordNextStopDepthField.ID)
@@ -1785,6 +1790,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @next_stop_depth.setter
     def next_stop_depth(self, value: float):
@@ -1797,6 +1804,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def next_stop_time(self) -> Optional[int]:
         field = self.get_field(RecordNextStopTimeField.ID)
@@ -1805,6 +1814,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @next_stop_time.setter
     def next_stop_time(self, value: int):
@@ -1817,6 +1828,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def time_to_surface(self) -> Optional[int]:
         field = self.get_field(RecordTimeToSurfaceField.ID)
@@ -1825,6 +1838,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @time_to_surface.setter
     def time_to_surface(self, value: int):
@@ -1837,6 +1852,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ndl_time(self) -> Optional[int]:
         field = self.get_field(RecordNdlTimeField.ID)
@@ -1845,6 +1862,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ndl_time.setter
     def ndl_time(self, value: int):
@@ -1857,6 +1876,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def cns_load(self) -> Optional[int]:
         field = self.get_field(RecordCnsLoadField.ID)
@@ -1865,6 +1886,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @cns_load.setter
     def cns_load(self, value: int):
@@ -1877,6 +1900,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def n2_load(self) -> Optional[int]:
         field = self.get_field(RecordN2LoadField.ID)
@@ -1885,6 +1910,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @n2_load.setter
     def n2_load(self, value: int):
@@ -1897,6 +1924,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def respiration_rate(self) -> Optional[int]:
         field = self.get_field(RecordRespirationRateField.ID)
@@ -1905,6 +1934,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @respiration_rate.setter
     def respiration_rate(self, value: int):
@@ -1917,6 +1948,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_respiration_rate(self) -> Optional[float]:
         field = self.get_field(RecordEnhancedRespirationRateField.ID)
@@ -1925,6 +1958,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_respiration_rate.setter
     def enhanced_respiration_rate(self, value: float):
@@ -1937,6 +1972,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def grit(self) -> Optional[float]:
         field = self.get_field(RecordGritField.ID)
@@ -1945,6 +1982,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @grit.setter
     def grit(self, value: float):
@@ -1957,6 +1996,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def flow(self) -> Optional[float]:
         field = self.get_field(RecordFlowField.ID)
@@ -1965,6 +2006,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @flow.setter
     def flow(self, value: float):
@@ -1977,6 +2020,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def current_stress(self) -> Optional[float]:
         field = self.get_field(RecordCurrentStressField.ID)
@@ -1985,6 +2030,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @current_stress.setter
     def current_stress(self, value: float):
@@ -1997,6 +2044,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ebike_travel_range(self) -> Optional[int]:
         field = self.get_field(RecordEbikeTravelRangeField.ID)
@@ -2005,6 +2054,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ebike_travel_range.setter
     def ebike_travel_range(self, value: int):
@@ -2017,6 +2068,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ebike_battery_level(self) -> Optional[int]:
         field = self.get_field(RecordEbikeBatteryLevelField.ID)
@@ -2025,6 +2078,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ebike_battery_level.setter
     def ebike_battery_level(self, value: int):
@@ -2037,6 +2092,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ebike_assist_mode(self) -> Optional[int]:
         field = self.get_field(RecordEbikeAssistModeField.ID)
@@ -2045,6 +2102,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ebike_assist_mode.setter
     def ebike_assist_mode(self, value: int):
@@ -2057,6 +2116,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ebike_assist_level_percent(self) -> Optional[int]:
         field = self.get_field(RecordEbikeAssistLevelPercentField.ID)
@@ -2065,6 +2126,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ebike_assist_level_percent.setter
     def ebike_assist_level_percent(self, value: int):
@@ -2077,6 +2140,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def air_time_remaining(self) -> Optional[int]:
         field = self.get_field(RecordAirTimeRemainingField.ID)
@@ -2085,6 +2150,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @air_time_remaining.setter
     def air_time_remaining(self, value: int):
@@ -2097,6 +2164,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def pressure_sac(self) -> Optional[float]:
         field = self.get_field(RecordPressureSacField.ID)
@@ -2105,6 +2174,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @pressure_sac.setter
     def pressure_sac(self, value: float):
@@ -2117,6 +2188,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def volume_sac(self) -> Optional[float]:
         field = self.get_field(RecordVolumeSacField.ID)
@@ -2125,6 +2198,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @volume_sac.setter
     def volume_sac(self, value: float):
@@ -2137,6 +2212,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def rmv(self) -> Optional[float]:
         field = self.get_field(RecordRmvField.ID)
@@ -2145,6 +2222,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @rmv.setter
     def rmv(self, value: float):
@@ -2157,6 +2236,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ascent_rate(self) -> Optional[float]:
         field = self.get_field(RecordAscentRateField.ID)
@@ -2165,6 +2246,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ascent_rate.setter
     def ascent_rate(self, value: float):
@@ -2177,6 +2260,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def po2(self) -> Optional[float]:
         field = self.get_field(RecordPo2Field.ID)
@@ -2185,6 +2270,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @po2.setter
     def po2(self, value: float):
@@ -2197,6 +2284,8 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def core_temperature(self) -> Optional[float]:
         field = self.get_field(RecordCoreTemperatureField.ID)
@@ -2205,6 +2294,8 @@ class RecordMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @core_temperature.setter
     def core_temperature(self, value: float):
@@ -2217,22 +2308,28 @@ class RecordMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2241,16 +2338,17 @@ class RecordPositionLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="position_lat",
+            name='position_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2259,16 +2357,17 @@ class RecordPositionLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="position_long",
+            name='position_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2277,16 +2376,17 @@ class RecordAltitudeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="altitude",
+            name='altitude',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2295,16 +2395,17 @@ class RecordHeartRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="heart_rate",
+            name='heart_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="bpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'bpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2313,16 +2414,17 @@ class RecordCadenceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cadence",
+            name='cadence',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2331,16 +2433,17 @@ class RecordDistanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="distance",
+            name='distance',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2349,16 +2452,17 @@ class RecordSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="speed",
+            name='speed',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2367,16 +2471,17 @@ class RecordPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="power",
+            name='power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2385,16 +2490,17 @@ class RecordCompressedSpeedDistanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="compressed_speed_distance",
+            name='compressed_speed_distance',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m/s,m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm/s,m',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2403,16 +2509,17 @@ class RecordGradeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="grade",
+            name='grade',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2421,14 +2528,15 @@ class RecordResistanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="resistance",
+            name='resistance',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2437,16 +2545,17 @@ class RecordTimeFromCourseField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_from_course",
+            name='time_from_course',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2455,16 +2564,17 @@ class RecordCycleLengthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cycle_length",
+            name='cycle_length',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2473,16 +2583,17 @@ class RecordTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="temperature",
+            name='temperature',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2491,16 +2602,17 @@ class RecordSpeed1sField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="speed_1s",
+            name='speed_1s',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=16,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 16,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2509,16 +2621,17 @@ class RecordCyclesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cycles",
+            name='cycles',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="cycles",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'cycles',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2527,16 +2640,17 @@ class RecordTotalCyclesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_cycles",
+            name='total_cycles',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="cycles",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'cycles',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2545,16 +2659,17 @@ class RecordCompressedAccumulatedPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="compressed_accumulated_power",
+            name='compressed_accumulated_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2563,16 +2678,17 @@ class RecordAccumulatedPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="accumulated_power",
+            name='accumulated_power',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2581,14 +2697,15 @@ class RecordLeftRightBalanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="left_right_balance",
+            name='left_right_balance',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2597,16 +2714,17 @@ class RecordGpsAccuracyField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="gps_accuracy",
+            name='gps_accuracy',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2615,16 +2733,17 @@ class RecordVerticalSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="vertical_speed",
+            name='vertical_speed',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2633,16 +2752,17 @@ class RecordCaloriesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="calories",
+            name='calories',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kcal",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kcal',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2651,16 +2771,17 @@ class RecordVerticalOscillationField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="vertical_oscillation",
+            name='vertical_oscillation',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="mm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'mm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2669,16 +2790,17 @@ class RecordStanceTimePercentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="stance_time_percent",
+            name='stance_time_percent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2687,16 +2809,17 @@ class RecordStanceTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="stance_time",
+            name='stance_time',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2705,14 +2828,15 @@ class RecordActivityTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="activity_type",
+            name='activity_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2721,16 +2845,17 @@ class RecordLeftTorqueEffectivenessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="left_torque_effectiveness",
+            name='left_torque_effectiveness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2739,16 +2864,17 @@ class RecordRightTorqueEffectivenessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="right_torque_effectiveness",
+            name='right_torque_effectiveness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2757,16 +2883,17 @@ class RecordLeftPedalSmoothnessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="left_pedal_smoothness",
+            name='left_pedal_smoothness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2775,16 +2902,17 @@ class RecordRightPedalSmoothnessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="right_pedal_smoothness",
+            name='right_pedal_smoothness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2793,16 +2921,17 @@ class RecordCombinedPedalSmoothnessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="combined_pedal_smoothness",
+            name='combined_pedal_smoothness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2811,16 +2940,17 @@ class RecordTime128Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time128",
+            name='time128',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=128,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2829,14 +2959,15 @@ class RecordStrokeTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="stroke_type",
+            name='stroke_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2845,14 +2976,15 @@ class RecordZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="zone",
+            name='zone',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2861,16 +2993,17 @@ class RecordBallSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ball_speed",
+            name='ball_speed',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2879,16 +3012,17 @@ class RecordCadence256Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cadence256",
+            name='cadence256',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=256,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 256,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2897,16 +3031,17 @@ class RecordFractionalCadenceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="fractional_cadence",
+            name='fractional_cadence',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=128,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2915,16 +3050,17 @@ class RecordTotalHemoglobinConcField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_hemoglobin_conc",
+            name='total_hemoglobin_conc',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="g/dL",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'g/dL',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2933,16 +3069,17 @@ class RecordTotalHemoglobinConcMinField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_hemoglobin_conc_min",
+            name='total_hemoglobin_conc_min',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="g/dL",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'g/dL',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2951,16 +3088,17 @@ class RecordTotalHemoglobinConcMaxField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_hemoglobin_conc_max",
+            name='total_hemoglobin_conc_max',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="g/dL",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'g/dL',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2969,16 +3107,17 @@ class RecordSaturatedHemoglobinPercentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="saturated_hemoglobin_percent",
+            name='saturated_hemoglobin_percent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -2987,16 +3126,17 @@ class RecordSaturatedHemoglobinPercentMinField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="saturated_hemoglobin_percent_min",
+            name='saturated_hemoglobin_percent_min',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3005,16 +3145,17 @@ class RecordSaturatedHemoglobinPercentMaxField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="saturated_hemoglobin_percent_max",
+            name='saturated_hemoglobin_percent_max',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3023,14 +3164,15 @@ class RecordDeviceIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="device_index",
+            name='device_index',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3039,16 +3181,17 @@ class RecordLeftPcoField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="left_pco",
+            name='left_pco',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="mm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'mm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3057,16 +3200,17 @@ class RecordRightPcoField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="right_pco",
+            name='right_pco',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="mm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'mm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3075,16 +3219,17 @@ class RecordLeftPowerPhaseField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="left_power_phase",
+            name='left_power_phase',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=0.7111111,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 0.7111111,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3093,16 +3238,17 @@ class RecordLeftPowerPhasePeakField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="left_power_phase_peak",
+            name='left_power_phase_peak',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=0.7111111,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 0.7111111,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3111,16 +3257,17 @@ class RecordRightPowerPhaseField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="right_power_phase",
+            name='right_power_phase',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=0.7111111,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 0.7111111,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3129,16 +3276,17 @@ class RecordRightPowerPhasePeakField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="right_power_phase_peak",
+            name='right_power_phase_peak',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=0.7111111,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 0.7111111,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3147,16 +3295,17 @@ class RecordEnhancedSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_speed",
+            name='enhanced_speed',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3165,16 +3314,17 @@ class RecordEnhancedAltitudeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_altitude",
+            name='enhanced_altitude',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3183,16 +3333,17 @@ class RecordBatterySocField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="battery_soc",
+            name='battery_soc',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3201,16 +3352,17 @@ class RecordMotorPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="motor_power",
+            name='motor_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3219,16 +3371,17 @@ class RecordVerticalRatioField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="vertical_ratio",
+            name='vertical_ratio',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3237,16 +3390,17 @@ class RecordStanceTimeBalanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="stance_time_balance",
+            name='stance_time_balance',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3255,16 +3409,17 @@ class RecordStepLengthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="step_length",
+            name='step_length',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="mm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'mm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3273,16 +3428,17 @@ class RecordCycleLength16Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cycle_length16",
+            name='cycle_length16',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3291,16 +3447,17 @@ class RecordAbsolutePressureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="absolute_pressure",
+            name='absolute_pressure',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="Pa",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'Pa',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3309,16 +3466,17 @@ class RecordDepthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="depth",
+            name='depth',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3327,16 +3485,17 @@ class RecordNextStopDepthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="next_stop_depth",
+            name='next_stop_depth',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3345,16 +3504,17 @@ class RecordNextStopTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="next_stop_time",
+            name='next_stop_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3363,16 +3523,17 @@ class RecordTimeToSurfaceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_to_surface",
+            name='time_to_surface',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3381,16 +3542,17 @@ class RecordNdlTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ndl_time",
+            name='ndl_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3399,16 +3561,17 @@ class RecordCnsLoadField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cns_load",
+            name='cns_load',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3417,16 +3580,17 @@ class RecordN2LoadField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="n2_load",
+            name='n2_load',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3435,16 +3599,17 @@ class RecordRespirationRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="respiration_rate",
+            name='respiration_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3453,16 +3618,17 @@ class RecordEnhancedRespirationRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_respiration_rate",
+            name='enhanced_respiration_rate',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="Breaths/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'Breaths/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3471,14 +3637,15 @@ class RecordGritField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="grit",
+            name='grit',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3487,14 +3654,15 @@ class RecordFlowField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="flow",
+            name='flow',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3503,14 +3671,15 @@ class RecordCurrentStressField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="current_stress",
+            name='current_stress',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3519,16 +3688,17 @@ class RecordEbikeTravelRangeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ebike_travel_range",
+            name='ebike_travel_range',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="km",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'km',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3537,16 +3707,17 @@ class RecordEbikeBatteryLevelField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ebike_battery_level",
+            name='ebike_battery_level',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3555,16 +3726,17 @@ class RecordEbikeAssistModeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ebike_assist_mode",
+            name='ebike_assist_mode',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="depends on sensor",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'depends on sensor',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3573,16 +3745,17 @@ class RecordEbikeAssistLevelPercentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ebike_assist_level_percent",
+            name='ebike_assist_level_percent',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3591,16 +3764,17 @@ class RecordAirTimeRemainingField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="air_time_remaining",
+            name='air_time_remaining',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3609,16 +3783,17 @@ class RecordPressureSacField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="pressure_sac",
+            name='pressure_sac',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="bar/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'bar/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3627,16 +3802,17 @@ class RecordVolumeSacField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="volume_sac",
+            name='volume_sac',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="L/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'L/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3645,16 +3821,17 @@ class RecordRmvField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="rmv",
+            name='rmv',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="L/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'L/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3663,16 +3840,17 @@ class RecordAscentRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ascent_rate",
+            name='ascent_rate',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3681,16 +3859,17 @@ class RecordPo2Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="po2",
+            name='po2',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=100,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -3699,14 +3878,15 @@ class RecordCoreTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="core_temperature",
+            name='core_temperature',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

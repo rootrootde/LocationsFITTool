@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class HsaAccelerometerDataMessage(DataMessage):
     ID = 302
-    NAME = "hsa_accelerometer_data"
+    NAME = 'hsa_accelerometer_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,81 +29,50 @@ class HsaAccelerometerDataMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=HsaAccelerometerDataMessage.NAME,
-            global_id=HsaAccelerometerDataMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                HsaAccelerometerDataTimestampMsField(
-                    size=self.__get_field_size(
-                        definition_message, HsaAccelerometerDataTimestampMsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaAccelerometerDataSamplingIntervalField(
-                    size=self.__get_field_size(
-                        definition_message, HsaAccelerometerDataSamplingIntervalField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaAccelerometerDataAccelXField(
-                    size=self.__get_field_size(
-                        definition_message, HsaAccelerometerDataAccelXField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaAccelerometerDataAccelYField(
-                    size=self.__get_field_size(
-                        definition_message, HsaAccelerometerDataAccelYField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaAccelerometerDataAccelZField(
-                    size=self.__get_field_size(
-                        definition_message, HsaAccelerometerDataAccelZField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HsaAccelerometerDataTimestamp32kField(
-                    size=self.__get_field_size(
-                        definition_message, HsaAccelerometerDataTimestamp32kField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=HsaAccelerometerDataMessage.NAME,
+                         global_id=HsaAccelerometerDataMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        HsaAccelerometerDataTimestampMsField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataTimestampMsField.ID),
+            growable=definition_message is None), 
+        HsaAccelerometerDataSamplingIntervalField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataSamplingIntervalField.ID),
+            growable=definition_message is None), 
+        HsaAccelerometerDataAccelXField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataAccelXField.ID),
+            growable=definition_message is None), 
+        HsaAccelerometerDataAccelYField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataAccelYField.ID),
+            growable=definition_message is None), 
+        HsaAccelerometerDataAccelZField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataAccelZField.ID),
+            growable=definition_message is None), 
+        HsaAccelerometerDataTimestamp32kField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataTimestamp32kField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -111,6 +82,7 @@ class HsaAccelerometerDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -125,6 +97,8 @@ class HsaAccelerometerDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def timestamp_ms(self) -> Optional[int]:
         field = self.get_field(HsaAccelerometerDataTimestampMsField.ID)
@@ -133,6 +107,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @timestamp_ms.setter
     def timestamp_ms(self, value: int):
@@ -145,6 +121,8 @@ class HsaAccelerometerDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sampling_interval(self) -> Optional[int]:
         field = self.get_field(HsaAccelerometerDataSamplingIntervalField.ID)
@@ -153,6 +131,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sampling_interval.setter
     def sampling_interval(self, value: int):
@@ -165,6 +145,8 @@ class HsaAccelerometerDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def accel_x(self) -> Optional[list[float]]:
         field = self.get_field(HsaAccelerometerDataAccelXField.ID)
@@ -172,6 +154,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @accel_x.setter
     def accel_x(self, value: list[float]):
@@ -183,6 +167,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def accel_y(self) -> Optional[list[float]]:
         field = self.get_field(HsaAccelerometerDataAccelYField.ID)
@@ -190,6 +176,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @accel_y.setter
     def accel_y(self, value: list[float]):
@@ -201,6 +189,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def accel_z(self) -> Optional[list[float]]:
         field = self.get_field(HsaAccelerometerDataAccelZField.ID)
@@ -208,6 +198,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @accel_z.setter
     def accel_z(self, value: list[float]):
@@ -219,6 +211,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def timestamp_32k(self) -> Optional[int]:
         field = self.get_field(HsaAccelerometerDataTimestamp32kField.ID)
@@ -227,6 +221,8 @@ class HsaAccelerometerDataMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @timestamp_32k.setter
     def timestamp_32k(self, value: int):
@@ -239,22 +235,28 @@ class HsaAccelerometerDataMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -263,16 +265,17 @@ class HsaAccelerometerDataTimestampMsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp_ms",
+            name='timestamp_ms',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -281,16 +284,17 @@ class HsaAccelerometerDataSamplingIntervalField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sampling_interval",
+            name='sampling_interval',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -299,16 +303,17 @@ class HsaAccelerometerDataAccelXField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="accel_x",
+            name='accel_x',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1.024,
-            size=size,
-            units="mG",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1.024,
+                         size = size,
+        units = 'mG',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -317,16 +322,17 @@ class HsaAccelerometerDataAccelYField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="accel_y",
+            name='accel_y',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1.024,
-            size=size,
-            units="mG",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1.024,
+                         size = size,
+        units = 'mG',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -335,16 +341,17 @@ class HsaAccelerometerDataAccelZField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="accel_z",
+            name='accel_z',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1.024,
-            size=size,
-            units="mG",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1.024,
+                         size = size,
+        units = 'mG',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -353,12 +360,13 @@ class HsaAccelerometerDataTimestamp32kField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp_32k",
+            name='timestamp_32k',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

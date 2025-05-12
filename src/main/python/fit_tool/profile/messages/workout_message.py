@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class WorkoutMessage(DataMessage):
     ID = 26
-    NAME = "workout"
+    NAME = 'workout'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,93 +29,55 @@ class WorkoutMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=WorkoutMessage.NAME,
-            global_id=WorkoutMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MessageIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MessageIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutSportField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutSportField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutCapabilitiesField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutCapabilitiesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutNumValidStepsField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutNumValidStepsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutWorkoutNameField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutWorkoutNameField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutSubSportField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutSubSportField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutPoolLengthField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutPoolLengthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutPoolLengthUnitField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutPoolLengthUnitField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                WorkoutWorkoutDescriptionField(
-                    size=self.__get_field_size(
-                        definition_message, WorkoutWorkoutDescriptionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=WorkoutMessage.NAME,
+                         global_id=WorkoutMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MessageIndexField(
+            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+            growable=definition_message is None), 
+        WorkoutSportField(
+            size=self.__get_field_size(definition_message, WorkoutSportField.ID),
+            growable=definition_message is None), 
+        WorkoutCapabilitiesField(
+            size=self.__get_field_size(definition_message, WorkoutCapabilitiesField.ID),
+            growable=definition_message is None), 
+        WorkoutNumValidStepsField(
+            size=self.__get_field_size(definition_message, WorkoutNumValidStepsField.ID),
+            growable=definition_message is None), 
+        WorkoutWorkoutNameField(
+            size=self.__get_field_size(definition_message, WorkoutWorkoutNameField.ID),
+            growable=definition_message is None), 
+        WorkoutSubSportField(
+            size=self.__get_field_size(definition_message, WorkoutSubSportField.ID),
+            growable=definition_message is None), 
+        WorkoutPoolLengthField(
+            size=self.__get_field_size(definition_message, WorkoutPoolLengthField.ID),
+            growable=definition_message is None), 
+        WorkoutPoolLengthUnitField(
+            size=self.__get_field_size(definition_message, WorkoutPoolLengthUnitField.ID),
+            growable=definition_message is None), 
+        WorkoutWorkoutDescriptionField(
+            size=self.__get_field_size(definition_message, WorkoutWorkoutDescriptionField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def message_index(self) -> Optional[int]:
@@ -123,6 +87,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @message_index.setter
     def message_index(self, value: int):
@@ -135,6 +101,8 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sport(self) -> Optional[Sport]:
         field = self.get_field(WorkoutSportField.ID)
@@ -143,6 +111,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sport.setter
     def sport(self, value: Sport):
@@ -155,6 +125,8 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def capabilities(self) -> Optional[int]:
         field = self.get_field(WorkoutCapabilitiesField.ID)
@@ -163,6 +135,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @capabilities.setter
     def capabilities(self, value: int):
@@ -175,6 +149,8 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def num_valid_steps(self) -> Optional[int]:
         field = self.get_field(WorkoutNumValidStepsField.ID)
@@ -183,6 +159,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @num_valid_steps.setter
     def num_valid_steps(self, value: int):
@@ -195,6 +173,8 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def workout_name(self) -> Optional[str]:
         field = self.get_field(WorkoutWorkoutNameField.ID)
@@ -203,6 +183,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @workout_name.setter
     def workout_name(self, value: str):
@@ -215,6 +197,8 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sub_sport(self) -> Optional[SubSport]:
         field = self.get_field(WorkoutSubSportField.ID)
@@ -223,6 +207,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sub_sport.setter
     def sub_sport(self, value: SubSport):
@@ -235,6 +221,8 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def pool_length(self) -> Optional[float]:
         field = self.get_field(WorkoutPoolLengthField.ID)
@@ -243,6 +231,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @pool_length.setter
     def pool_length(self, value: float):
@@ -255,6 +245,8 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def pool_length_unit(self) -> Optional[DisplayMeasure]:
         field = self.get_field(WorkoutPoolLengthUnitField.ID)
@@ -263,6 +255,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @pool_length_unit.setter
     def pool_length_unit(self, value: DisplayMeasure):
@@ -275,6 +269,8 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def workout_description(self) -> Optional[str]:
         field = self.get_field(WorkoutWorkoutDescriptionField.ID)
@@ -283,6 +279,8 @@ class WorkoutMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @workout_description.setter
     def workout_description(self, value: str):
@@ -295,20 +293,26 @@ class WorkoutMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class MessageIndexField(Field):
     ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="message_index",
+            name='message_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -317,14 +321,15 @@ class WorkoutSportField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sport",
+            name='sport',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -333,14 +338,15 @@ class WorkoutCapabilitiesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="capabilities",
+            name='capabilities',
             field_id=self.ID,
             base_type=BaseType.UINT32Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -349,14 +355,15 @@ class WorkoutNumValidStepsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="num_valid_steps",
+            name='num_valid_steps',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -365,14 +372,15 @@ class WorkoutWorkoutNameField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="wkt_name",
+            name='wkt_name',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -381,14 +389,15 @@ class WorkoutSubSportField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sub_sport",
+            name='sub_sport',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -397,16 +406,17 @@ class WorkoutPoolLengthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="pool_length",
+            name='pool_length',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -415,14 +425,15 @@ class WorkoutPoolLengthUnitField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="pool_length_unit",
+            name='pool_length_unit',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -431,12 +442,13 @@ class WorkoutWorkoutDescriptionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="wkt_description",
+            name='wkt_description',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

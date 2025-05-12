@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class RawBbiMessage(DataMessage):
     ID = 372
-    NAME = "raw_bbi"
+    NAME = 'raw_bbi'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,69 +29,47 @@ class RawBbiMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=RawBbiMessage.NAME,
-            global_id=RawBbiMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                RawBbiTimestampMsField(
-                    size=self.__get_field_size(
-                        definition_message, RawBbiTimestampMsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RawBbiDataField(
-                    size=self.__get_field_size(definition_message, RawBbiDataField.ID),
-                    growable=definition_message is None,
-                ),
-                RawBbiTimeField(
-                    size=self.__get_field_size(definition_message, RawBbiTimeField.ID),
-                    growable=definition_message is None,
-                ),
-                RawBbiQualityField(
-                    size=self.__get_field_size(
-                        definition_message, RawBbiQualityField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                RawBbiGapField(
-                    size=self.__get_field_size(definition_message, RawBbiGapField.ID),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=RawBbiMessage.NAME,
+                         global_id=RawBbiMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        RawBbiTimestampMsField(
+            size=self.__get_field_size(definition_message, RawBbiTimestampMsField.ID),
+            growable=definition_message is None), 
+        RawBbiDataField(
+            size=self.__get_field_size(definition_message, RawBbiDataField.ID),
+            growable=definition_message is None), 
+        RawBbiTimeField(
+            size=self.__get_field_size(definition_message, RawBbiTimeField.ID),
+            growable=definition_message is None), 
+        RawBbiQualityField(
+            size=self.__get_field_size(definition_message, RawBbiQualityField.ID),
+            growable=definition_message is None), 
+        RawBbiGapField(
+            size=self.__get_field_size(definition_message, RawBbiGapField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -99,6 +79,7 @@ class RawBbiMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -113,6 +94,8 @@ class RawBbiMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def timestamp_ms(self) -> Optional[int]:
         field = self.get_field(RawBbiTimestampMsField.ID)
@@ -121,6 +104,8 @@ class RawBbiMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @timestamp_ms.setter
     def timestamp_ms(self, value: int):
@@ -133,6 +118,8 @@ class RawBbiMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def data(self) -> Optional[list[int]]:
         field = self.get_field(RawBbiDataField.ID)
@@ -140,6 +127,8 @@ class RawBbiMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @data.setter
     def data(self, value: list[int]):
@@ -151,6 +140,8 @@ class RawBbiMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def time(self) -> Optional[list[int]]:
         field = self.get_field(RawBbiTimeField.ID)
@@ -158,6 +149,8 @@ class RawBbiMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time.setter
     def time(self, value: list[int]):
@@ -169,6 +162,8 @@ class RawBbiMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def quality(self) -> Optional[list[int]]:
         field = self.get_field(RawBbiQualityField.ID)
@@ -176,6 +171,8 @@ class RawBbiMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @quality.setter
     def quality(self, value: list[int]):
@@ -187,6 +184,8 @@ class RawBbiMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def gap(self) -> Optional[list[int]]:
         field = self.get_field(RawBbiGapField.ID)
@@ -194,6 +193,8 @@ class RawBbiMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @gap.setter
     def gap(self, value: list[int]):
@@ -205,22 +206,28 @@ class RawBbiMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -229,16 +236,17 @@ class RawBbiTimestampMsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp_ms",
+            name='timestamp_ms',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -247,14 +255,15 @@ class RawBbiDataField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="data",
+            name='data',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -263,16 +272,17 @@ class RawBbiTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time",
+            name='time',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -281,14 +291,15 @@ class RawBbiQualityField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="quality",
+            name='quality',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -297,12 +308,13 @@ class RawBbiGapField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="gap",
+            name='gap',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

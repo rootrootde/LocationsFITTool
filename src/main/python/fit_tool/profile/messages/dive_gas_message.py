@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class DiveGasMessage(DataMessage):
     ID = 259
-    NAME = "dive_gas"
+    NAME = 'dive_gas'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,67 +29,43 @@ class DiveGasMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=DiveGasMessage.NAME,
-            global_id=DiveGasMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MessageIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MessageIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveGasHeliumContentField(
-                    size=self.__get_field_size(
-                        definition_message, DiveGasHeliumContentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveGasOxygenContentField(
-                    size=self.__get_field_size(
-                        definition_message, DiveGasOxygenContentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveGasStatusField(
-                    size=self.__get_field_size(
-                        definition_message, DiveGasStatusField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveGasModeField(
-                    size=self.__get_field_size(definition_message, DiveGasModeField.ID),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=DiveGasMessage.NAME,
+                         global_id=DiveGasMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MessageIndexField(
+            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+            growable=definition_message is None), 
+        DiveGasHeliumContentField(
+            size=self.__get_field_size(definition_message, DiveGasHeliumContentField.ID),
+            growable=definition_message is None), 
+        DiveGasOxygenContentField(
+            size=self.__get_field_size(definition_message, DiveGasOxygenContentField.ID),
+            growable=definition_message is None), 
+        DiveGasStatusField(
+            size=self.__get_field_size(definition_message, DiveGasStatusField.ID),
+            growable=definition_message is None), 
+        DiveGasModeField(
+            size=self.__get_field_size(definition_message, DiveGasModeField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def message_index(self) -> Optional[int]:
@@ -97,6 +75,8 @@ class DiveGasMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @message_index.setter
     def message_index(self, value: int):
@@ -109,6 +89,8 @@ class DiveGasMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def helium_content(self) -> Optional[int]:
         field = self.get_field(DiveGasHeliumContentField.ID)
@@ -117,6 +99,8 @@ class DiveGasMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @helium_content.setter
     def helium_content(self, value: int):
@@ -129,6 +113,8 @@ class DiveGasMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def oxygen_content(self) -> Optional[int]:
         field = self.get_field(DiveGasOxygenContentField.ID)
@@ -137,6 +123,8 @@ class DiveGasMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @oxygen_content.setter
     def oxygen_content(self, value: int):
@@ -149,6 +137,8 @@ class DiveGasMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def status(self) -> Optional[DiveGasStatus]:
         field = self.get_field(DiveGasStatusField.ID)
@@ -157,6 +147,8 @@ class DiveGasMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @status.setter
     def status(self, value: DiveGasStatus):
@@ -169,6 +161,8 @@ class DiveGasMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def mode(self) -> Optional[DiveGasMode]:
         field = self.get_field(DiveGasModeField.ID)
@@ -177,6 +171,8 @@ class DiveGasMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @mode.setter
     def mode(self, value: DiveGasMode):
@@ -189,20 +185,26 @@ class DiveGasMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class MessageIndexField(Field):
     ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="message_index",
+            name='message_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -211,16 +213,17 @@ class DiveGasHeliumContentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="helium_content",
+            name='helium_content',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -229,16 +232,17 @@ class DiveGasOxygenContentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="oxygen_content",
+            name='oxygen_content',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -247,14 +251,15 @@ class DiveGasStatusField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="status",
+            name='status',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -263,12 +268,13 @@ class DiveGasModeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="mode",
+            name='mode',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

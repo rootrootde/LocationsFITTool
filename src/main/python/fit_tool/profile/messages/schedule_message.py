@@ -12,11 +12,12 @@ from fit_tool.field import Field
 from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class ScheduleMessage(DataMessage):
     ID = 28
-    NAME = "schedule"
+    NAME = 'schedule'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -28,81 +29,49 @@ class ScheduleMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=ScheduleMessage.NAME,
-            global_id=ScheduleMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                ScheduleManufacturerField(
-                    size=self.__get_field_size(
-                        definition_message, ScheduleManufacturerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ScheduleProductField(
-                    size=self.__get_field_size(
-                        definition_message, ScheduleProductField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ScheduleSerialNumberField(
-                    size=self.__get_field_size(
-                        definition_message, ScheduleSerialNumberField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ScheduleTimeCreatedField(
-                    size=self.__get_field_size(
-                        definition_message, ScheduleTimeCreatedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ScheduleCompletedField(
-                    size=self.__get_field_size(
-                        definition_message, ScheduleCompletedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ScheduleTypeField(
-                    size=self.__get_field_size(
-                        definition_message, ScheduleTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                ScheduleScheduledTimeField(
-                    size=self.__get_field_size(
-                        definition_message, ScheduleScheduledTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=ScheduleMessage.NAME,
+                         global_id=ScheduleMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        ScheduleManufacturerField(
+            size=self.__get_field_size(definition_message, ScheduleManufacturerField.ID),
+            growable=definition_message is None), 
+        ScheduleProductField(
+            size=self.__get_field_size(definition_message, ScheduleProductField.ID),
+            growable=definition_message is None), 
+        ScheduleSerialNumberField(
+            size=self.__get_field_size(definition_message, ScheduleSerialNumberField.ID),
+            growable=definition_message is None), 
+        ScheduleTimeCreatedField(
+            size=self.__get_field_size(definition_message, ScheduleTimeCreatedField.ID),
+            growable=definition_message is None), 
+        ScheduleCompletedField(
+            size=self.__get_field_size(definition_message, ScheduleCompletedField.ID),
+            growable=definition_message is None), 
+        ScheduleTypeField(
+            size=self.__get_field_size(definition_message, ScheduleTypeField.ID),
+            growable=definition_message is None), 
+        ScheduleScheduledTimeField(
+            size=self.__get_field_size(definition_message, ScheduleScheduledTimeField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def manufacturer(self) -> Optional[int]:
@@ -112,6 +81,8 @@ class ScheduleMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @manufacturer.setter
     def manufacturer(self, value: int):
@@ -124,6 +95,8 @@ class ScheduleMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def product(self) -> Optional[int]:
         field = self.get_field(ScheduleProductField.ID)
@@ -132,6 +105,8 @@ class ScheduleMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @product.setter
     def product(self, value: int):
@@ -143,6 +118,9 @@ class ScheduleMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def favero_product(self) -> Optional[int]:
@@ -165,6 +143,7 @@ class ScheduleMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def garmin_product(self) -> Optional[int]:
@@ -197,6 +176,8 @@ class ScheduleMessage(DataMessage):
         else:
             return None
 
+
+
     @serial_number.setter
     def serial_number(self, value: int):
         field = self.get_field(ScheduleSerialNumberField.ID)
@@ -208,7 +189,8 @@ class ScheduleMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def time_created(self) -> Optional[int]:
@@ -218,6 +200,7 @@ class ScheduleMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -232,6 +215,8 @@ class ScheduleMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def completed(self) -> Optional[bool]:
         field = self.get_field(ScheduleCompletedField.ID)
@@ -240,6 +225,8 @@ class ScheduleMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @completed.setter
     def completed(self, value: bool):
@@ -252,6 +239,8 @@ class ScheduleMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def type(self) -> Optional[Schedule]:
         field = self.get_field(ScheduleTypeField.ID)
@@ -260,6 +249,8 @@ class ScheduleMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @type.setter
     def type(self, value: Schedule):
@@ -272,6 +263,8 @@ class ScheduleMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def scheduled_time(self) -> Optional[int]:
         field = self.get_field(ScheduleScheduledTimeField.ID)
@@ -280,6 +273,8 @@ class ScheduleMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @scheduled_time.setter
     def scheduled_time(self, value: int):
@@ -292,20 +287,26 @@ class ScheduleMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class ScheduleManufacturerField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="manufacturer",
+            name='manufacturer',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -314,29 +315,31 @@ class ScheduleProductField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="product",
+            name='product',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="favero_product",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    reference_map={ScheduleManufacturerField.ID: [263]},
-                ),
-                SubField(
-                    name="garmin_product",
-                    base_type=BaseType.UINT16,
-                    scale=1,
-                    offset=0,
-                    reference_map={ScheduleManufacturerField.ID: [1, 15, 13, 89]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='favero_product',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        ScheduleManufacturerField.ID: [263]
+        }), 
+        SubField(
+            name='garmin_product',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        ScheduleManufacturerField.ID: [1, 15, 13, 89]
+        })
+        ]
         )
 
 
@@ -345,14 +348,15 @@ class ScheduleSerialNumberField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="serial_number",
+            name='serial_number',
             field_id=self.ID,
             base_type=BaseType.UINT32Z,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -361,16 +365,17 @@ class ScheduleTimeCreatedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_created",
+            name='time_created',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -379,14 +384,15 @@ class ScheduleCompletedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="completed",
+            name='completed',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -395,14 +401,15 @@ class ScheduleTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="type",
+            name='type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -411,12 +418,13 @@ class ScheduleScheduledTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="scheduled_time",
+            name='scheduled_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

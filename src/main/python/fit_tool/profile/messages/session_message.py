@@ -12,11 +12,12 @@ from fit_tool.field import Field
 from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class SessionMessage(DataMessage):
     ID = 18
-    NAME = "session"
+    NAME = 'session'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -28,973 +29,496 @@ class SessionMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=SessionMessage.NAME,
-            global_id=SessionMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MessageIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MessageIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                SessionEventField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEventField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEventTypeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEventTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionStartTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionStartTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionStartPositionLatField(
-                    size=self.__get_field_size(
-                        definition_message, SessionStartPositionLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionStartPositionLongField(
-                    size=self.__get_field_size(
-                        definition_message, SessionStartPositionLongField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSportField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSportField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSubSportField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSubSportField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalElapsedTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalElapsedTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalTimerTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalTimerTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalDistanceField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalDistanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalCyclesField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalCyclesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalCaloriesField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalCaloriesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalFatCaloriesField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalFatCaloriesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgHeartRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgHeartRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxHeartRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxHeartRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgCadenceField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgCadenceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxCadenceField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxCadenceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgPowerField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxPowerField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalAscentField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalAscentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalDescentField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalDescentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalTrainingEffectField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalTrainingEffectField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionFirstLapIndexField(
-                    size=self.__get_field_size(
-                        definition_message, SessionFirstLapIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionNumLapsField(
-                    size=self.__get_field_size(
-                        definition_message, SessionNumLapsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEventGroupField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEventGroupField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTriggerField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTriggerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionNecLatField(
-                    size=self.__get_field_size(
-                        definition_message, SessionNecLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionNecLongField(
-                    size=self.__get_field_size(
-                        definition_message, SessionNecLongField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSwcLatField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSwcLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSwcLongField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSwcLongField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionNumLengthsField(
-                    size=self.__get_field_size(
-                        definition_message, SessionNumLengthsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionNormalizedPowerField(
-                    size=self.__get_field_size(
-                        definition_message, SessionNormalizedPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTrainingStressScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTrainingStressScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionIntensityFactorField(
-                    size=self.__get_field_size(
-                        definition_message, SessionIntensityFactorField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionLeftRightBalanceField(
-                    size=self.__get_field_size(
-                        definition_message, SessionLeftRightBalanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEndPositionLatField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEndPositionLatField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEndPositionLongField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEndPositionLongField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgStrokeCountField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgStrokeCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgStrokeDistanceField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgStrokeDistanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSwimStrokeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSwimStrokeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionPoolLengthField(
-                    size=self.__get_field_size(
-                        definition_message, SessionPoolLengthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionThresholdPowerField(
-                    size=self.__get_field_size(
-                        definition_message, SessionThresholdPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionPoolLengthUnitField(
-                    size=self.__get_field_size(
-                        definition_message, SessionPoolLengthUnitField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionNumActiveLengthsField(
-                    size=self.__get_field_size(
-                        definition_message, SessionNumActiveLengthsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalWorkField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalWorkField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgAltitudeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgAltitudeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxAltitudeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxAltitudeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionGpsAccuracyField(
-                    size=self.__get_field_size(
-                        definition_message, SessionGpsAccuracyField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgGradeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgGradeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgPosGradeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgPosGradeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgNegGradeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgNegGradeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxPosGradeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxPosGradeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxNegGradeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxNegGradeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalMovingTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalMovingTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgPosVerticalSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgPosVerticalSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgNegVerticalSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgNegVerticalSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxPosVerticalSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxPosVerticalSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxNegVerticalSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxNegVerticalSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMinHeartRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMinHeartRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTimeInHrZoneField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTimeInHrZoneField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTimeInSpeedZoneField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTimeInSpeedZoneField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTimeInCadenceZoneField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTimeInCadenceZoneField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTimeInPowerZoneField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTimeInPowerZoneField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgLapTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgLapTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionBestLapIndexField(
-                    size=self.__get_field_size(
-                        definition_message, SessionBestLapIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMinAltitudeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMinAltitudeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionPlayerScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SessionPlayerScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionOpponentScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SessionOpponentScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionOpponentNameField(
-                    size=self.__get_field_size(
-                        definition_message, SessionOpponentNameField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionStrokeCountField(
-                    size=self.__get_field_size(
-                        definition_message, SessionStrokeCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionZoneCountField(
-                    size=self.__get_field_size(
-                        definition_message, SessionZoneCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxBallSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxBallSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgBallSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgBallSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgVerticalOscillationField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgVerticalOscillationField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgStanceTimePercentField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgStanceTimePercentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgStanceTimeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgStanceTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgFractionalCadenceField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgFractionalCadenceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxFractionalCadenceField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxFractionalCadenceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalFractionalCyclesField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalFractionalCyclesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgTotalHemoglobinConcField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgTotalHemoglobinConcField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMinTotalHemoglobinConcField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMinTotalHemoglobinConcField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxTotalHemoglobinConcField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxTotalHemoglobinConcField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgSaturatedHemoglobinPercentField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgSaturatedHemoglobinPercentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMinSaturatedHemoglobinPercentField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMinSaturatedHemoglobinPercentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxSaturatedHemoglobinPercentField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxSaturatedHemoglobinPercentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgLeftTorqueEffectivenessField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgLeftTorqueEffectivenessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgRightTorqueEffectivenessField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgRightTorqueEffectivenessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgLeftPedalSmoothnessField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgLeftPedalSmoothnessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgRightPedalSmoothnessField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgRightPedalSmoothnessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgCombinedPedalSmoothnessField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgCombinedPedalSmoothnessField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSportProfileNameField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSportProfileNameField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSportIndexField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSportIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTimeStandingField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTimeStandingField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionStandCountField(
-                    size=self.__get_field_size(
-                        definition_message, SessionStandCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgLeftPcoField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgLeftPcoField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgRightPcoField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgRightPcoField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgLeftPowerPhaseField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgLeftPowerPhaseField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgLeftPowerPhasePeakField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgLeftPowerPhasePeakField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgRightPowerPhaseField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgRightPowerPhaseField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgRightPowerPhasePeakField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgRightPowerPhasePeakField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgPowerPositionField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgPowerPositionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxPowerPositionField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxPowerPositionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgCadencePositionField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgCadencePositionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxCadencePositionField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxCadencePositionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEnhancedAvgSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEnhancedAvgSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEnhancedMaxSpeedField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEnhancedMaxSpeedField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEnhancedAvgAltitudeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEnhancedAvgAltitudeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEnhancedMinAltitudeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEnhancedMinAltitudeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEnhancedMaxAltitudeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEnhancedMaxAltitudeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgLevMotorPowerField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgLevMotorPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxLevMotorPowerField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxLevMotorPowerField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionLevBatteryConsumptionField(
-                    size=self.__get_field_size(
-                        definition_message, SessionLevBatteryConsumptionField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgVerticalRatioField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgVerticalRatioField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgStanceTimeBalanceField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgStanceTimeBalanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgStepLengthField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgStepLengthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalAnaerobicTrainingEffectField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalAnaerobicTrainingEffectField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgVamField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgVamField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgDepthField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgDepthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxDepthField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxDepthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSurfaceIntervalField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSurfaceIntervalField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionStartCnsField(
-                    size=self.__get_field_size(
-                        definition_message, SessionStartCnsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEndCnsField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEndCnsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionStartN2Field(
-                    size=self.__get_field_size(
-                        definition_message, SessionStartN2Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEndN2Field(
-                    size=self.__get_field_size(
-                        definition_message, SessionEndN2Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgRespirationRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgRespirationRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxRespirationRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxRespirationRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMinRespirationRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMinRespirationRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMinTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMinTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionO2ToxicityField(
-                    size=self.__get_field_size(
-                        definition_message, SessionO2ToxicityField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionDiveNumberField(
-                    size=self.__get_field_size(
-                        definition_message, SessionDiveNumberField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTrainingLoadPeakField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTrainingLoadPeakField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEnhancedAvgRespirationRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEnhancedAvgRespirationRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEnhancedMaxRespirationRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEnhancedMaxRespirationRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionEnhancedMinRespirationRateField(
-                    size=self.__get_field_size(
-                        definition_message, SessionEnhancedMinRespirationRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalGritField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalGritField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalFlowField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalFlowField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionJumpCountField(
-                    size=self.__get_field_size(
-                        definition_message, SessionJumpCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgGritField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgGritField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgFlowField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgFlowField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionWorkoutFeelField(
-                    size=self.__get_field_size(
-                        definition_message, SessionWorkoutFeelField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionWorkoutRpeField(
-                    size=self.__get_field_size(
-                        definition_message, SessionWorkoutRpeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgSpo2Field(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgSpo2Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgStressField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgStressField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionSdrrHrvField(
-                    size=self.__get_field_size(
-                        definition_message, SessionSdrrHrvField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionRmssdHrvField(
-                    size=self.__get_field_size(
-                        definition_message, SessionRmssdHrvField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalFractionalAscentField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalFractionalAscentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionTotalFractionalDescentField(
-                    size=self.__get_field_size(
-                        definition_message, SessionTotalFractionalDescentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionAvgCoreTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, SessionAvgCoreTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMinCoreTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMinCoreTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SessionMaxCoreTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, SessionMaxCoreTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=SessionMessage.NAME,
+                         global_id=SessionMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MessageIndexField(
+            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+            growable=definition_message is None), 
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        SessionEventField(
+            size=self.__get_field_size(definition_message, SessionEventField.ID),
+            growable=definition_message is None), 
+        SessionEventTypeField(
+            size=self.__get_field_size(definition_message, SessionEventTypeField.ID),
+            growable=definition_message is None), 
+        SessionStartTimeField(
+            size=self.__get_field_size(definition_message, SessionStartTimeField.ID),
+            growable=definition_message is None), 
+        SessionStartPositionLatField(
+            size=self.__get_field_size(definition_message, SessionStartPositionLatField.ID),
+            growable=definition_message is None), 
+        SessionStartPositionLongField(
+            size=self.__get_field_size(definition_message, SessionStartPositionLongField.ID),
+            growable=definition_message is None), 
+        SessionSportField(
+            size=self.__get_field_size(definition_message, SessionSportField.ID),
+            growable=definition_message is None), 
+        SessionSubSportField(
+            size=self.__get_field_size(definition_message, SessionSubSportField.ID),
+            growable=definition_message is None), 
+        SessionTotalElapsedTimeField(
+            size=self.__get_field_size(definition_message, SessionTotalElapsedTimeField.ID),
+            growable=definition_message is None), 
+        SessionTotalTimerTimeField(
+            size=self.__get_field_size(definition_message, SessionTotalTimerTimeField.ID),
+            growable=definition_message is None), 
+        SessionTotalDistanceField(
+            size=self.__get_field_size(definition_message, SessionTotalDistanceField.ID),
+            growable=definition_message is None), 
+        SessionTotalCyclesField(
+            size=self.__get_field_size(definition_message, SessionTotalCyclesField.ID),
+            growable=definition_message is None), 
+        SessionTotalCaloriesField(
+            size=self.__get_field_size(definition_message, SessionTotalCaloriesField.ID),
+            growable=definition_message is None), 
+        SessionTotalFatCaloriesField(
+            size=self.__get_field_size(definition_message, SessionTotalFatCaloriesField.ID),
+            growable=definition_message is None), 
+        SessionAvgSpeedField(
+            size=self.__get_field_size(definition_message, SessionAvgSpeedField.ID),
+            growable=definition_message is None), 
+        SessionMaxSpeedField(
+            size=self.__get_field_size(definition_message, SessionMaxSpeedField.ID),
+            growable=definition_message is None), 
+        SessionAvgHeartRateField(
+            size=self.__get_field_size(definition_message, SessionAvgHeartRateField.ID),
+            growable=definition_message is None), 
+        SessionMaxHeartRateField(
+            size=self.__get_field_size(definition_message, SessionMaxHeartRateField.ID),
+            growable=definition_message is None), 
+        SessionAvgCadenceField(
+            size=self.__get_field_size(definition_message, SessionAvgCadenceField.ID),
+            growable=definition_message is None), 
+        SessionMaxCadenceField(
+            size=self.__get_field_size(definition_message, SessionMaxCadenceField.ID),
+            growable=definition_message is None), 
+        SessionAvgPowerField(
+            size=self.__get_field_size(definition_message, SessionAvgPowerField.ID),
+            growable=definition_message is None), 
+        SessionMaxPowerField(
+            size=self.__get_field_size(definition_message, SessionMaxPowerField.ID),
+            growable=definition_message is None), 
+        SessionTotalAscentField(
+            size=self.__get_field_size(definition_message, SessionTotalAscentField.ID),
+            growable=definition_message is None), 
+        SessionTotalDescentField(
+            size=self.__get_field_size(definition_message, SessionTotalDescentField.ID),
+            growable=definition_message is None), 
+        SessionTotalTrainingEffectField(
+            size=self.__get_field_size(definition_message, SessionTotalTrainingEffectField.ID),
+            growable=definition_message is None), 
+        SessionFirstLapIndexField(
+            size=self.__get_field_size(definition_message, SessionFirstLapIndexField.ID),
+            growable=definition_message is None), 
+        SessionNumLapsField(
+            size=self.__get_field_size(definition_message, SessionNumLapsField.ID),
+            growable=definition_message is None), 
+        SessionEventGroupField(
+            size=self.__get_field_size(definition_message, SessionEventGroupField.ID),
+            growable=definition_message is None), 
+        SessionTriggerField(
+            size=self.__get_field_size(definition_message, SessionTriggerField.ID),
+            growable=definition_message is None), 
+        SessionNecLatField(
+            size=self.__get_field_size(definition_message, SessionNecLatField.ID),
+            growable=definition_message is None), 
+        SessionNecLongField(
+            size=self.__get_field_size(definition_message, SessionNecLongField.ID),
+            growable=definition_message is None), 
+        SessionSwcLatField(
+            size=self.__get_field_size(definition_message, SessionSwcLatField.ID),
+            growable=definition_message is None), 
+        SessionSwcLongField(
+            size=self.__get_field_size(definition_message, SessionSwcLongField.ID),
+            growable=definition_message is None), 
+        SessionNumLengthsField(
+            size=self.__get_field_size(definition_message, SessionNumLengthsField.ID),
+            growable=definition_message is None), 
+        SessionNormalizedPowerField(
+            size=self.__get_field_size(definition_message, SessionNormalizedPowerField.ID),
+            growable=definition_message is None), 
+        SessionTrainingStressScoreField(
+            size=self.__get_field_size(definition_message, SessionTrainingStressScoreField.ID),
+            growable=definition_message is None), 
+        SessionIntensityFactorField(
+            size=self.__get_field_size(definition_message, SessionIntensityFactorField.ID),
+            growable=definition_message is None), 
+        SessionLeftRightBalanceField(
+            size=self.__get_field_size(definition_message, SessionLeftRightBalanceField.ID),
+            growable=definition_message is None), 
+        SessionEndPositionLatField(
+            size=self.__get_field_size(definition_message, SessionEndPositionLatField.ID),
+            growable=definition_message is None), 
+        SessionEndPositionLongField(
+            size=self.__get_field_size(definition_message, SessionEndPositionLongField.ID),
+            growable=definition_message is None), 
+        SessionAvgStrokeCountField(
+            size=self.__get_field_size(definition_message, SessionAvgStrokeCountField.ID),
+            growable=definition_message is None), 
+        SessionAvgStrokeDistanceField(
+            size=self.__get_field_size(definition_message, SessionAvgStrokeDistanceField.ID),
+            growable=definition_message is None), 
+        SessionSwimStrokeField(
+            size=self.__get_field_size(definition_message, SessionSwimStrokeField.ID),
+            growable=definition_message is None), 
+        SessionPoolLengthField(
+            size=self.__get_field_size(definition_message, SessionPoolLengthField.ID),
+            growable=definition_message is None), 
+        SessionThresholdPowerField(
+            size=self.__get_field_size(definition_message, SessionThresholdPowerField.ID),
+            growable=definition_message is None), 
+        SessionPoolLengthUnitField(
+            size=self.__get_field_size(definition_message, SessionPoolLengthUnitField.ID),
+            growable=definition_message is None), 
+        SessionNumActiveLengthsField(
+            size=self.__get_field_size(definition_message, SessionNumActiveLengthsField.ID),
+            growable=definition_message is None), 
+        SessionTotalWorkField(
+            size=self.__get_field_size(definition_message, SessionTotalWorkField.ID),
+            growable=definition_message is None), 
+        SessionAvgAltitudeField(
+            size=self.__get_field_size(definition_message, SessionAvgAltitudeField.ID),
+            growable=definition_message is None), 
+        SessionMaxAltitudeField(
+            size=self.__get_field_size(definition_message, SessionMaxAltitudeField.ID),
+            growable=definition_message is None), 
+        SessionGpsAccuracyField(
+            size=self.__get_field_size(definition_message, SessionGpsAccuracyField.ID),
+            growable=definition_message is None), 
+        SessionAvgGradeField(
+            size=self.__get_field_size(definition_message, SessionAvgGradeField.ID),
+            growable=definition_message is None), 
+        SessionAvgPosGradeField(
+            size=self.__get_field_size(definition_message, SessionAvgPosGradeField.ID),
+            growable=definition_message is None), 
+        SessionAvgNegGradeField(
+            size=self.__get_field_size(definition_message, SessionAvgNegGradeField.ID),
+            growable=definition_message is None), 
+        SessionMaxPosGradeField(
+            size=self.__get_field_size(definition_message, SessionMaxPosGradeField.ID),
+            growable=definition_message is None), 
+        SessionMaxNegGradeField(
+            size=self.__get_field_size(definition_message, SessionMaxNegGradeField.ID),
+            growable=definition_message is None), 
+        SessionAvgTemperatureField(
+            size=self.__get_field_size(definition_message, SessionAvgTemperatureField.ID),
+            growable=definition_message is None), 
+        SessionMaxTemperatureField(
+            size=self.__get_field_size(definition_message, SessionMaxTemperatureField.ID),
+            growable=definition_message is None), 
+        SessionTotalMovingTimeField(
+            size=self.__get_field_size(definition_message, SessionTotalMovingTimeField.ID),
+            growable=definition_message is None), 
+        SessionAvgPosVerticalSpeedField(
+            size=self.__get_field_size(definition_message, SessionAvgPosVerticalSpeedField.ID),
+            growable=definition_message is None), 
+        SessionAvgNegVerticalSpeedField(
+            size=self.__get_field_size(definition_message, SessionAvgNegVerticalSpeedField.ID),
+            growable=definition_message is None), 
+        SessionMaxPosVerticalSpeedField(
+            size=self.__get_field_size(definition_message, SessionMaxPosVerticalSpeedField.ID),
+            growable=definition_message is None), 
+        SessionMaxNegVerticalSpeedField(
+            size=self.__get_field_size(definition_message, SessionMaxNegVerticalSpeedField.ID),
+            growable=definition_message is None), 
+        SessionMinHeartRateField(
+            size=self.__get_field_size(definition_message, SessionMinHeartRateField.ID),
+            growable=definition_message is None), 
+        SessionTimeInHrZoneField(
+            size=self.__get_field_size(definition_message, SessionTimeInHrZoneField.ID),
+            growable=definition_message is None), 
+        SessionTimeInSpeedZoneField(
+            size=self.__get_field_size(definition_message, SessionTimeInSpeedZoneField.ID),
+            growable=definition_message is None), 
+        SessionTimeInCadenceZoneField(
+            size=self.__get_field_size(definition_message, SessionTimeInCadenceZoneField.ID),
+            growable=definition_message is None), 
+        SessionTimeInPowerZoneField(
+            size=self.__get_field_size(definition_message, SessionTimeInPowerZoneField.ID),
+            growable=definition_message is None), 
+        SessionAvgLapTimeField(
+            size=self.__get_field_size(definition_message, SessionAvgLapTimeField.ID),
+            growable=definition_message is None), 
+        SessionBestLapIndexField(
+            size=self.__get_field_size(definition_message, SessionBestLapIndexField.ID),
+            growable=definition_message is None), 
+        SessionMinAltitudeField(
+            size=self.__get_field_size(definition_message, SessionMinAltitudeField.ID),
+            growable=definition_message is None), 
+        SessionPlayerScoreField(
+            size=self.__get_field_size(definition_message, SessionPlayerScoreField.ID),
+            growable=definition_message is None), 
+        SessionOpponentScoreField(
+            size=self.__get_field_size(definition_message, SessionOpponentScoreField.ID),
+            growable=definition_message is None), 
+        SessionOpponentNameField(
+            size=self.__get_field_size(definition_message, SessionOpponentNameField.ID),
+            growable=definition_message is None), 
+        SessionStrokeCountField(
+            size=self.__get_field_size(definition_message, SessionStrokeCountField.ID),
+            growable=definition_message is None), 
+        SessionZoneCountField(
+            size=self.__get_field_size(definition_message, SessionZoneCountField.ID),
+            growable=definition_message is None), 
+        SessionMaxBallSpeedField(
+            size=self.__get_field_size(definition_message, SessionMaxBallSpeedField.ID),
+            growable=definition_message is None), 
+        SessionAvgBallSpeedField(
+            size=self.__get_field_size(definition_message, SessionAvgBallSpeedField.ID),
+            growable=definition_message is None), 
+        SessionAvgVerticalOscillationField(
+            size=self.__get_field_size(definition_message, SessionAvgVerticalOscillationField.ID),
+            growable=definition_message is None), 
+        SessionAvgStanceTimePercentField(
+            size=self.__get_field_size(definition_message, SessionAvgStanceTimePercentField.ID),
+            growable=definition_message is None), 
+        SessionAvgStanceTimeField(
+            size=self.__get_field_size(definition_message, SessionAvgStanceTimeField.ID),
+            growable=definition_message is None), 
+        SessionAvgFractionalCadenceField(
+            size=self.__get_field_size(definition_message, SessionAvgFractionalCadenceField.ID),
+            growable=definition_message is None), 
+        SessionMaxFractionalCadenceField(
+            size=self.__get_field_size(definition_message, SessionMaxFractionalCadenceField.ID),
+            growable=definition_message is None), 
+        SessionTotalFractionalCyclesField(
+            size=self.__get_field_size(definition_message, SessionTotalFractionalCyclesField.ID),
+            growable=definition_message is None), 
+        SessionAvgTotalHemoglobinConcField(
+            size=self.__get_field_size(definition_message, SessionAvgTotalHemoglobinConcField.ID),
+            growable=definition_message is None), 
+        SessionMinTotalHemoglobinConcField(
+            size=self.__get_field_size(definition_message, SessionMinTotalHemoglobinConcField.ID),
+            growable=definition_message is None), 
+        SessionMaxTotalHemoglobinConcField(
+            size=self.__get_field_size(definition_message, SessionMaxTotalHemoglobinConcField.ID),
+            growable=definition_message is None), 
+        SessionAvgSaturatedHemoglobinPercentField(
+            size=self.__get_field_size(definition_message, SessionAvgSaturatedHemoglobinPercentField.ID),
+            growable=definition_message is None), 
+        SessionMinSaturatedHemoglobinPercentField(
+            size=self.__get_field_size(definition_message, SessionMinSaturatedHemoglobinPercentField.ID),
+            growable=definition_message is None), 
+        SessionMaxSaturatedHemoglobinPercentField(
+            size=self.__get_field_size(definition_message, SessionMaxSaturatedHemoglobinPercentField.ID),
+            growable=definition_message is None), 
+        SessionAvgLeftTorqueEffectivenessField(
+            size=self.__get_field_size(definition_message, SessionAvgLeftTorqueEffectivenessField.ID),
+            growable=definition_message is None), 
+        SessionAvgRightTorqueEffectivenessField(
+            size=self.__get_field_size(definition_message, SessionAvgRightTorqueEffectivenessField.ID),
+            growable=definition_message is None), 
+        SessionAvgLeftPedalSmoothnessField(
+            size=self.__get_field_size(definition_message, SessionAvgLeftPedalSmoothnessField.ID),
+            growable=definition_message is None), 
+        SessionAvgRightPedalSmoothnessField(
+            size=self.__get_field_size(definition_message, SessionAvgRightPedalSmoothnessField.ID),
+            growable=definition_message is None), 
+        SessionAvgCombinedPedalSmoothnessField(
+            size=self.__get_field_size(definition_message, SessionAvgCombinedPedalSmoothnessField.ID),
+            growable=definition_message is None), 
+        SessionSportProfileNameField(
+            size=self.__get_field_size(definition_message, SessionSportProfileNameField.ID),
+            growable=definition_message is None), 
+        SessionSportIndexField(
+            size=self.__get_field_size(definition_message, SessionSportIndexField.ID),
+            growable=definition_message is None), 
+        SessionTimeStandingField(
+            size=self.__get_field_size(definition_message, SessionTimeStandingField.ID),
+            growable=definition_message is None), 
+        SessionStandCountField(
+            size=self.__get_field_size(definition_message, SessionStandCountField.ID),
+            growable=definition_message is None), 
+        SessionAvgLeftPcoField(
+            size=self.__get_field_size(definition_message, SessionAvgLeftPcoField.ID),
+            growable=definition_message is None), 
+        SessionAvgRightPcoField(
+            size=self.__get_field_size(definition_message, SessionAvgRightPcoField.ID),
+            growable=definition_message is None), 
+        SessionAvgLeftPowerPhaseField(
+            size=self.__get_field_size(definition_message, SessionAvgLeftPowerPhaseField.ID),
+            growable=definition_message is None), 
+        SessionAvgLeftPowerPhasePeakField(
+            size=self.__get_field_size(definition_message, SessionAvgLeftPowerPhasePeakField.ID),
+            growable=definition_message is None), 
+        SessionAvgRightPowerPhaseField(
+            size=self.__get_field_size(definition_message, SessionAvgRightPowerPhaseField.ID),
+            growable=definition_message is None), 
+        SessionAvgRightPowerPhasePeakField(
+            size=self.__get_field_size(definition_message, SessionAvgRightPowerPhasePeakField.ID),
+            growable=definition_message is None), 
+        SessionAvgPowerPositionField(
+            size=self.__get_field_size(definition_message, SessionAvgPowerPositionField.ID),
+            growable=definition_message is None), 
+        SessionMaxPowerPositionField(
+            size=self.__get_field_size(definition_message, SessionMaxPowerPositionField.ID),
+            growable=definition_message is None), 
+        SessionAvgCadencePositionField(
+            size=self.__get_field_size(definition_message, SessionAvgCadencePositionField.ID),
+            growable=definition_message is None), 
+        SessionMaxCadencePositionField(
+            size=self.__get_field_size(definition_message, SessionMaxCadencePositionField.ID),
+            growable=definition_message is None), 
+        SessionEnhancedAvgSpeedField(
+            size=self.__get_field_size(definition_message, SessionEnhancedAvgSpeedField.ID),
+            growable=definition_message is None), 
+        SessionEnhancedMaxSpeedField(
+            size=self.__get_field_size(definition_message, SessionEnhancedMaxSpeedField.ID),
+            growable=definition_message is None), 
+        SessionEnhancedAvgAltitudeField(
+            size=self.__get_field_size(definition_message, SessionEnhancedAvgAltitudeField.ID),
+            growable=definition_message is None), 
+        SessionEnhancedMinAltitudeField(
+            size=self.__get_field_size(definition_message, SessionEnhancedMinAltitudeField.ID),
+            growable=definition_message is None), 
+        SessionEnhancedMaxAltitudeField(
+            size=self.__get_field_size(definition_message, SessionEnhancedMaxAltitudeField.ID),
+            growable=definition_message is None), 
+        SessionAvgLevMotorPowerField(
+            size=self.__get_field_size(definition_message, SessionAvgLevMotorPowerField.ID),
+            growable=definition_message is None), 
+        SessionMaxLevMotorPowerField(
+            size=self.__get_field_size(definition_message, SessionMaxLevMotorPowerField.ID),
+            growable=definition_message is None), 
+        SessionLevBatteryConsumptionField(
+            size=self.__get_field_size(definition_message, SessionLevBatteryConsumptionField.ID),
+            growable=definition_message is None), 
+        SessionAvgVerticalRatioField(
+            size=self.__get_field_size(definition_message, SessionAvgVerticalRatioField.ID),
+            growable=definition_message is None), 
+        SessionAvgStanceTimeBalanceField(
+            size=self.__get_field_size(definition_message, SessionAvgStanceTimeBalanceField.ID),
+            growable=definition_message is None), 
+        SessionAvgStepLengthField(
+            size=self.__get_field_size(definition_message, SessionAvgStepLengthField.ID),
+            growable=definition_message is None), 
+        SessionTotalAnaerobicTrainingEffectField(
+            size=self.__get_field_size(definition_message, SessionTotalAnaerobicTrainingEffectField.ID),
+            growable=definition_message is None), 
+        SessionAvgVamField(
+            size=self.__get_field_size(definition_message, SessionAvgVamField.ID),
+            growable=definition_message is None), 
+        SessionAvgDepthField(
+            size=self.__get_field_size(definition_message, SessionAvgDepthField.ID),
+            growable=definition_message is None), 
+        SessionMaxDepthField(
+            size=self.__get_field_size(definition_message, SessionMaxDepthField.ID),
+            growable=definition_message is None), 
+        SessionSurfaceIntervalField(
+            size=self.__get_field_size(definition_message, SessionSurfaceIntervalField.ID),
+            growable=definition_message is None), 
+        SessionStartCnsField(
+            size=self.__get_field_size(definition_message, SessionStartCnsField.ID),
+            growable=definition_message is None), 
+        SessionEndCnsField(
+            size=self.__get_field_size(definition_message, SessionEndCnsField.ID),
+            growable=definition_message is None), 
+        SessionStartN2Field(
+            size=self.__get_field_size(definition_message, SessionStartN2Field.ID),
+            growable=definition_message is None), 
+        SessionEndN2Field(
+            size=self.__get_field_size(definition_message, SessionEndN2Field.ID),
+            growable=definition_message is None), 
+        SessionAvgRespirationRateField(
+            size=self.__get_field_size(definition_message, SessionAvgRespirationRateField.ID),
+            growable=definition_message is None), 
+        SessionMaxRespirationRateField(
+            size=self.__get_field_size(definition_message, SessionMaxRespirationRateField.ID),
+            growable=definition_message is None), 
+        SessionMinRespirationRateField(
+            size=self.__get_field_size(definition_message, SessionMinRespirationRateField.ID),
+            growable=definition_message is None), 
+        SessionMinTemperatureField(
+            size=self.__get_field_size(definition_message, SessionMinTemperatureField.ID),
+            growable=definition_message is None), 
+        SessionO2ToxicityField(
+            size=self.__get_field_size(definition_message, SessionO2ToxicityField.ID),
+            growable=definition_message is None), 
+        SessionDiveNumberField(
+            size=self.__get_field_size(definition_message, SessionDiveNumberField.ID),
+            growable=definition_message is None), 
+        SessionTrainingLoadPeakField(
+            size=self.__get_field_size(definition_message, SessionTrainingLoadPeakField.ID),
+            growable=definition_message is None), 
+        SessionEnhancedAvgRespirationRateField(
+            size=self.__get_field_size(definition_message, SessionEnhancedAvgRespirationRateField.ID),
+            growable=definition_message is None), 
+        SessionEnhancedMaxRespirationRateField(
+            size=self.__get_field_size(definition_message, SessionEnhancedMaxRespirationRateField.ID),
+            growable=definition_message is None), 
+        SessionEnhancedMinRespirationRateField(
+            size=self.__get_field_size(definition_message, SessionEnhancedMinRespirationRateField.ID),
+            growable=definition_message is None), 
+        SessionTotalGritField(
+            size=self.__get_field_size(definition_message, SessionTotalGritField.ID),
+            growable=definition_message is None), 
+        SessionTotalFlowField(
+            size=self.__get_field_size(definition_message, SessionTotalFlowField.ID),
+            growable=definition_message is None), 
+        SessionJumpCountField(
+            size=self.__get_field_size(definition_message, SessionJumpCountField.ID),
+            growable=definition_message is None), 
+        SessionAvgGritField(
+            size=self.__get_field_size(definition_message, SessionAvgGritField.ID),
+            growable=definition_message is None), 
+        SessionAvgFlowField(
+            size=self.__get_field_size(definition_message, SessionAvgFlowField.ID),
+            growable=definition_message is None), 
+        SessionWorkoutFeelField(
+            size=self.__get_field_size(definition_message, SessionWorkoutFeelField.ID),
+            growable=definition_message is None), 
+        SessionWorkoutRpeField(
+            size=self.__get_field_size(definition_message, SessionWorkoutRpeField.ID),
+            growable=definition_message is None), 
+        SessionAvgSpo2Field(
+            size=self.__get_field_size(definition_message, SessionAvgSpo2Field.ID),
+            growable=definition_message is None), 
+        SessionAvgStressField(
+            size=self.__get_field_size(definition_message, SessionAvgStressField.ID),
+            growable=definition_message is None), 
+        SessionSdrrHrvField(
+            size=self.__get_field_size(definition_message, SessionSdrrHrvField.ID),
+            growable=definition_message is None), 
+        SessionRmssdHrvField(
+            size=self.__get_field_size(definition_message, SessionRmssdHrvField.ID),
+            growable=definition_message is None), 
+        SessionTotalFractionalAscentField(
+            size=self.__get_field_size(definition_message, SessionTotalFractionalAscentField.ID),
+            growable=definition_message is None), 
+        SessionTotalFractionalDescentField(
+            size=self.__get_field_size(definition_message, SessionTotalFractionalDescentField.ID),
+            growable=definition_message is None), 
+        SessionAvgCoreTemperatureField(
+            size=self.__get_field_size(definition_message, SessionAvgCoreTemperatureField.ID),
+            growable=definition_message is None), 
+        SessionMinCoreTemperatureField(
+            size=self.__get_field_size(definition_message, SessionMinCoreTemperatureField.ID),
+            growable=definition_message is None), 
+        SessionMaxCoreTemperatureField(
+            size=self.__get_field_size(definition_message, SessionMaxCoreTemperatureField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def message_index(self) -> Optional[int]:
@@ -1004,6 +528,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @message_index.setter
     def message_index(self, value: int):
@@ -1016,7 +542,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -1026,6 +553,7 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -1040,6 +568,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def event(self) -> Optional[Event]:
         field = self.get_field(SessionEventField.ID)
@@ -1048,6 +578,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @event.setter
     def event(self, value: Event):
@@ -1060,6 +592,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def event_type(self) -> Optional[EventType]:
         field = self.get_field(SessionEventTypeField.ID)
@@ -1068,6 +602,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @event_type.setter
     def event_type(self, value: EventType):
@@ -1080,7 +616,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def start_time(self) -> Optional[int]:
@@ -1090,6 +627,7 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -1104,6 +642,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_position_lat(self) -> Optional[float]:
         field = self.get_field(SessionStartPositionLatField.ID)
@@ -1112,6 +652,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_position_lat.setter
     def start_position_lat(self, value: float):
@@ -1124,6 +666,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_position_long(self) -> Optional[float]:
         field = self.get_field(SessionStartPositionLongField.ID)
@@ -1132,6 +676,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_position_long.setter
     def start_position_long(self, value: float):
@@ -1144,6 +690,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sport(self) -> Optional[Sport]:
         field = self.get_field(SessionSportField.ID)
@@ -1152,6 +700,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sport.setter
     def sport(self, value: Sport):
@@ -1164,6 +714,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sub_sport(self) -> Optional[SubSport]:
         field = self.get_field(SessionSubSportField.ID)
@@ -1172,6 +724,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sub_sport.setter
     def sub_sport(self, value: SubSport):
@@ -1184,6 +738,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_elapsed_time(self) -> Optional[float]:
         field = self.get_field(SessionTotalElapsedTimeField.ID)
@@ -1192,6 +748,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_elapsed_time.setter
     def total_elapsed_time(self, value: float):
@@ -1204,6 +762,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_timer_time(self) -> Optional[float]:
         field = self.get_field(SessionTotalTimerTimeField.ID)
@@ -1212,6 +772,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_timer_time.setter
     def total_timer_time(self, value: float):
@@ -1224,6 +786,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_distance(self) -> Optional[float]:
         field = self.get_field(SessionTotalDistanceField.ID)
@@ -1232,6 +796,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_distance.setter
     def total_distance(self, value: float):
@@ -1244,6 +810,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_cycles(self) -> Optional[int]:
         field = self.get_field(SessionTotalCyclesField.ID)
@@ -1252,6 +820,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_cycles.setter
     def total_cycles(self, value: int):
@@ -1263,6 +833,9 @@ class SessionMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def total_strides(self) -> Optional[int]:
@@ -1285,6 +858,7 @@ class SessionMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def total_strokes(self) -> Optional[int]:
@@ -1317,6 +891,8 @@ class SessionMessage(DataMessage):
         else:
             return None
 
+
+
     @total_calories.setter
     def total_calories(self, value: int):
         field = self.get_field(SessionTotalCaloriesField.ID)
@@ -1328,6 +904,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_fat_calories(self) -> Optional[int]:
         field = self.get_field(SessionTotalFatCaloriesField.ID)
@@ -1336,6 +914,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_fat_calories.setter
     def total_fat_calories(self, value: int):
@@ -1348,6 +928,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_speed(self) -> Optional[float]:
         field = self.get_field(SessionAvgSpeedField.ID)
@@ -1356,6 +938,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_speed.setter
     def avg_speed(self, value: float):
@@ -1368,6 +952,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_speed(self) -> Optional[float]:
         field = self.get_field(SessionMaxSpeedField.ID)
@@ -1376,6 +962,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_speed.setter
     def max_speed(self, value: float):
@@ -1388,6 +976,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_heart_rate(self) -> Optional[int]:
         field = self.get_field(SessionAvgHeartRateField.ID)
@@ -1396,6 +986,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_heart_rate.setter
     def avg_heart_rate(self, value: int):
@@ -1408,6 +1000,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_heart_rate(self) -> Optional[int]:
         field = self.get_field(SessionMaxHeartRateField.ID)
@@ -1416,6 +1010,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_heart_rate.setter
     def max_heart_rate(self, value: int):
@@ -1428,6 +1024,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_cadence(self) -> Optional[int]:
         field = self.get_field(SessionAvgCadenceField.ID)
@@ -1436,6 +1034,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_cadence.setter
     def avg_cadence(self, value: int):
@@ -1447,6 +1047,9 @@ class SessionMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def avg_running_cadence(self) -> Optional[int]:
@@ -1479,6 +1082,8 @@ class SessionMessage(DataMessage):
         else:
             return None
 
+
+
     @max_cadence.setter
     def max_cadence(self, value: int):
         field = self.get_field(SessionMaxCadenceField.ID)
@@ -1489,6 +1094,9 @@ class SessionMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def max_running_cadence(self) -> Optional[int]:
@@ -1521,6 +1129,8 @@ class SessionMessage(DataMessage):
         else:
             return None
 
+
+
     @avg_power.setter
     def avg_power(self, value: int):
         field = self.get_field(SessionAvgPowerField.ID)
@@ -1532,6 +1142,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_power(self) -> Optional[int]:
         field = self.get_field(SessionMaxPowerField.ID)
@@ -1540,6 +1152,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_power.setter
     def max_power(self, value: int):
@@ -1552,6 +1166,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_ascent(self) -> Optional[int]:
         field = self.get_field(SessionTotalAscentField.ID)
@@ -1560,6 +1176,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_ascent.setter
     def total_ascent(self, value: int):
@@ -1572,6 +1190,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_descent(self) -> Optional[int]:
         field = self.get_field(SessionTotalDescentField.ID)
@@ -1580,6 +1200,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_descent.setter
     def total_descent(self, value: int):
@@ -1592,6 +1214,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_training_effect(self) -> Optional[float]:
         field = self.get_field(SessionTotalTrainingEffectField.ID)
@@ -1600,6 +1224,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_training_effect.setter
     def total_training_effect(self, value: float):
@@ -1612,6 +1238,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def first_lap_index(self) -> Optional[int]:
         field = self.get_field(SessionFirstLapIndexField.ID)
@@ -1620,6 +1248,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @first_lap_index.setter
     def first_lap_index(self, value: int):
@@ -1632,6 +1262,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def num_laps(self) -> Optional[int]:
         field = self.get_field(SessionNumLapsField.ID)
@@ -1640,6 +1272,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @num_laps.setter
     def num_laps(self, value: int):
@@ -1652,6 +1286,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def event_group(self) -> Optional[int]:
         field = self.get_field(SessionEventGroupField.ID)
@@ -1660,6 +1296,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @event_group.setter
     def event_group(self, value: int):
@@ -1672,6 +1310,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def trigger(self) -> Optional[SessionTrigger]:
         field = self.get_field(SessionTriggerField.ID)
@@ -1680,6 +1320,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @trigger.setter
     def trigger(self, value: SessionTrigger):
@@ -1692,6 +1334,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def nec_lat(self) -> Optional[float]:
         field = self.get_field(SessionNecLatField.ID)
@@ -1700,6 +1344,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @nec_lat.setter
     def nec_lat(self, value: float):
@@ -1712,6 +1358,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def nec_long(self) -> Optional[float]:
         field = self.get_field(SessionNecLongField.ID)
@@ -1720,6 +1368,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @nec_long.setter
     def nec_long(self, value: float):
@@ -1732,6 +1382,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def swc_lat(self) -> Optional[float]:
         field = self.get_field(SessionSwcLatField.ID)
@@ -1740,6 +1392,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @swc_lat.setter
     def swc_lat(self, value: float):
@@ -1752,6 +1406,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def swc_long(self) -> Optional[float]:
         field = self.get_field(SessionSwcLongField.ID)
@@ -1760,6 +1416,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @swc_long.setter
     def swc_long(self, value: float):
@@ -1772,6 +1430,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def num_lengths(self) -> Optional[int]:
         field = self.get_field(SessionNumLengthsField.ID)
@@ -1780,6 +1440,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @num_lengths.setter
     def num_lengths(self, value: int):
@@ -1792,6 +1454,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def normalized_power(self) -> Optional[int]:
         field = self.get_field(SessionNormalizedPowerField.ID)
@@ -1800,6 +1464,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @normalized_power.setter
     def normalized_power(self, value: int):
@@ -1812,6 +1478,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def training_stress_score(self) -> Optional[float]:
         field = self.get_field(SessionTrainingStressScoreField.ID)
@@ -1820,6 +1488,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @training_stress_score.setter
     def training_stress_score(self, value: float):
@@ -1832,6 +1502,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def intensity_factor(self) -> Optional[float]:
         field = self.get_field(SessionIntensityFactorField.ID)
@@ -1840,6 +1512,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @intensity_factor.setter
     def intensity_factor(self, value: float):
@@ -1852,6 +1526,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def left_right_balance(self) -> Optional[int]:
         field = self.get_field(SessionLeftRightBalanceField.ID)
@@ -1860,6 +1536,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @left_right_balance.setter
     def left_right_balance(self, value: int):
@@ -1872,6 +1550,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_position_lat(self) -> Optional[float]:
         field = self.get_field(SessionEndPositionLatField.ID)
@@ -1880,6 +1560,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_position_lat.setter
     def end_position_lat(self, value: float):
@@ -1892,6 +1574,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_position_long(self) -> Optional[float]:
         field = self.get_field(SessionEndPositionLongField.ID)
@@ -1900,6 +1584,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_position_long.setter
     def end_position_long(self, value: float):
@@ -1912,6 +1598,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_stroke_count(self) -> Optional[float]:
         field = self.get_field(SessionAvgStrokeCountField.ID)
@@ -1920,6 +1608,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_stroke_count.setter
     def avg_stroke_count(self, value: float):
@@ -1932,6 +1622,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_stroke_distance(self) -> Optional[float]:
         field = self.get_field(SessionAvgStrokeDistanceField.ID)
@@ -1940,6 +1632,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_stroke_distance.setter
     def avg_stroke_distance(self, value: float):
@@ -1952,6 +1646,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def swim_stroke(self) -> Optional[SwimStroke]:
         field = self.get_field(SessionSwimStrokeField.ID)
@@ -1960,6 +1656,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @swim_stroke.setter
     def swim_stroke(self, value: SwimStroke):
@@ -1972,6 +1670,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def pool_length(self) -> Optional[float]:
         field = self.get_field(SessionPoolLengthField.ID)
@@ -1980,6 +1680,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @pool_length.setter
     def pool_length(self, value: float):
@@ -1992,6 +1694,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def threshold_power(self) -> Optional[int]:
         field = self.get_field(SessionThresholdPowerField.ID)
@@ -2000,6 +1704,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @threshold_power.setter
     def threshold_power(self, value: int):
@@ -2012,6 +1718,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def pool_length_unit(self) -> Optional[DisplayMeasure]:
         field = self.get_field(SessionPoolLengthUnitField.ID)
@@ -2020,6 +1728,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @pool_length_unit.setter
     def pool_length_unit(self, value: DisplayMeasure):
@@ -2032,6 +1742,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def num_active_lengths(self) -> Optional[int]:
         field = self.get_field(SessionNumActiveLengthsField.ID)
@@ -2040,6 +1752,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @num_active_lengths.setter
     def num_active_lengths(self, value: int):
@@ -2052,6 +1766,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_work(self) -> Optional[int]:
         field = self.get_field(SessionTotalWorkField.ID)
@@ -2060,6 +1776,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_work.setter
     def total_work(self, value: int):
@@ -2072,6 +1790,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_altitude(self) -> Optional[float]:
         field = self.get_field(SessionAvgAltitudeField.ID)
@@ -2080,6 +1800,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_altitude.setter
     def avg_altitude(self, value: float):
@@ -2092,6 +1814,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_altitude(self) -> Optional[float]:
         field = self.get_field(SessionMaxAltitudeField.ID)
@@ -2100,6 +1824,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_altitude.setter
     def max_altitude(self, value: float):
@@ -2112,6 +1838,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def gps_accuracy(self) -> Optional[int]:
         field = self.get_field(SessionGpsAccuracyField.ID)
@@ -2120,6 +1848,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @gps_accuracy.setter
     def gps_accuracy(self, value: int):
@@ -2132,6 +1862,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_grade(self) -> Optional[float]:
         field = self.get_field(SessionAvgGradeField.ID)
@@ -2140,6 +1872,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_grade.setter
     def avg_grade(self, value: float):
@@ -2152,6 +1886,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_pos_grade(self) -> Optional[float]:
         field = self.get_field(SessionAvgPosGradeField.ID)
@@ -2160,6 +1896,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_pos_grade.setter
     def avg_pos_grade(self, value: float):
@@ -2172,6 +1910,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_neg_grade(self) -> Optional[float]:
         field = self.get_field(SessionAvgNegGradeField.ID)
@@ -2180,6 +1920,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_neg_grade.setter
     def avg_neg_grade(self, value: float):
@@ -2192,6 +1934,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_pos_grade(self) -> Optional[float]:
         field = self.get_field(SessionMaxPosGradeField.ID)
@@ -2200,6 +1944,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_pos_grade.setter
     def max_pos_grade(self, value: float):
@@ -2212,6 +1958,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_neg_grade(self) -> Optional[float]:
         field = self.get_field(SessionMaxNegGradeField.ID)
@@ -2220,6 +1968,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_neg_grade.setter
     def max_neg_grade(self, value: float):
@@ -2232,6 +1982,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_temperature(self) -> Optional[int]:
         field = self.get_field(SessionAvgTemperatureField.ID)
@@ -2240,6 +1992,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_temperature.setter
     def avg_temperature(self, value: int):
@@ -2252,6 +2006,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_temperature(self) -> Optional[int]:
         field = self.get_field(SessionMaxTemperatureField.ID)
@@ -2260,6 +2016,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_temperature.setter
     def max_temperature(self, value: int):
@@ -2272,6 +2030,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_moving_time(self) -> Optional[float]:
         field = self.get_field(SessionTotalMovingTimeField.ID)
@@ -2280,6 +2040,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_moving_time.setter
     def total_moving_time(self, value: float):
@@ -2292,6 +2054,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_pos_vertical_speed(self) -> Optional[float]:
         field = self.get_field(SessionAvgPosVerticalSpeedField.ID)
@@ -2300,6 +2064,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_pos_vertical_speed.setter
     def avg_pos_vertical_speed(self, value: float):
@@ -2312,6 +2078,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_neg_vertical_speed(self) -> Optional[float]:
         field = self.get_field(SessionAvgNegVerticalSpeedField.ID)
@@ -2320,6 +2088,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_neg_vertical_speed.setter
     def avg_neg_vertical_speed(self, value: float):
@@ -2332,6 +2102,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_pos_vertical_speed(self) -> Optional[float]:
         field = self.get_field(SessionMaxPosVerticalSpeedField.ID)
@@ -2340,6 +2112,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_pos_vertical_speed.setter
     def max_pos_vertical_speed(self, value: float):
@@ -2352,6 +2126,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_neg_vertical_speed(self) -> Optional[float]:
         field = self.get_field(SessionMaxNegVerticalSpeedField.ID)
@@ -2360,6 +2136,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_neg_vertical_speed.setter
     def max_neg_vertical_speed(self, value: float):
@@ -2372,6 +2150,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def min_heart_rate(self) -> Optional[int]:
         field = self.get_field(SessionMinHeartRateField.ID)
@@ -2380,6 +2160,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @min_heart_rate.setter
     def min_heart_rate(self, value: int):
@@ -2392,6 +2174,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def time_in_hr_zone(self) -> Optional[list[float]]:
         field = self.get_field(SessionTimeInHrZoneField.ID)
@@ -2399,6 +2183,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time_in_hr_zone.setter
     def time_in_hr_zone(self, value: list[float]):
@@ -2410,6 +2196,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def time_in_speed_zone(self) -> Optional[list[float]]:
         field = self.get_field(SessionTimeInSpeedZoneField.ID)
@@ -2417,6 +2205,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time_in_speed_zone.setter
     def time_in_speed_zone(self, value: list[float]):
@@ -2428,6 +2218,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def time_in_cadence_zone(self) -> Optional[list[float]]:
         field = self.get_field(SessionTimeInCadenceZoneField.ID)
@@ -2435,6 +2227,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time_in_cadence_zone.setter
     def time_in_cadence_zone(self, value: list[float]):
@@ -2446,6 +2240,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def time_in_power_zone(self) -> Optional[list[float]]:
         field = self.get_field(SessionTimeInPowerZoneField.ID)
@@ -2453,6 +2249,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @time_in_power_zone.setter
     def time_in_power_zone(self, value: list[float]):
@@ -2464,6 +2262,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def avg_lap_time(self) -> Optional[float]:
         field = self.get_field(SessionAvgLapTimeField.ID)
@@ -2472,6 +2272,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_lap_time.setter
     def avg_lap_time(self, value: float):
@@ -2484,6 +2286,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def best_lap_index(self) -> Optional[int]:
         field = self.get_field(SessionBestLapIndexField.ID)
@@ -2492,6 +2296,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @best_lap_index.setter
     def best_lap_index(self, value: int):
@@ -2504,6 +2310,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def min_altitude(self) -> Optional[float]:
         field = self.get_field(SessionMinAltitudeField.ID)
@@ -2512,6 +2320,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @min_altitude.setter
     def min_altitude(self, value: float):
@@ -2524,6 +2334,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def player_score(self) -> Optional[int]:
         field = self.get_field(SessionPlayerScoreField.ID)
@@ -2532,6 +2344,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @player_score.setter
     def player_score(self, value: int):
@@ -2544,6 +2358,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def opponent_score(self) -> Optional[int]:
         field = self.get_field(SessionOpponentScoreField.ID)
@@ -2552,6 +2368,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @opponent_score.setter
     def opponent_score(self, value: int):
@@ -2564,6 +2382,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def opponent_name(self) -> Optional[str]:
         field = self.get_field(SessionOpponentNameField.ID)
@@ -2572,6 +2392,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @opponent_name.setter
     def opponent_name(self, value: str):
@@ -2584,6 +2406,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def stroke_count(self) -> Optional[list[int]]:
         field = self.get_field(SessionStrokeCountField.ID)
@@ -2591,6 +2415,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @stroke_count.setter
     def stroke_count(self, value: list[int]):
@@ -2602,6 +2428,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def zone_count(self) -> Optional[list[int]]:
         field = self.get_field(SessionZoneCountField.ID)
@@ -2609,6 +2437,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @zone_count.setter
     def zone_count(self, value: list[int]):
@@ -2620,6 +2450,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def max_ball_speed(self) -> Optional[float]:
         field = self.get_field(SessionMaxBallSpeedField.ID)
@@ -2628,6 +2460,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_ball_speed.setter
     def max_ball_speed(self, value: float):
@@ -2640,6 +2474,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_ball_speed(self) -> Optional[float]:
         field = self.get_field(SessionAvgBallSpeedField.ID)
@@ -2648,6 +2484,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_ball_speed.setter
     def avg_ball_speed(self, value: float):
@@ -2660,6 +2498,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_vertical_oscillation(self) -> Optional[float]:
         field = self.get_field(SessionAvgVerticalOscillationField.ID)
@@ -2668,6 +2508,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_vertical_oscillation.setter
     def avg_vertical_oscillation(self, value: float):
@@ -2680,6 +2522,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_stance_time_percent(self) -> Optional[float]:
         field = self.get_field(SessionAvgStanceTimePercentField.ID)
@@ -2688,6 +2532,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_stance_time_percent.setter
     def avg_stance_time_percent(self, value: float):
@@ -2700,6 +2546,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_stance_time(self) -> Optional[float]:
         field = self.get_field(SessionAvgStanceTimeField.ID)
@@ -2708,6 +2556,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_stance_time.setter
     def avg_stance_time(self, value: float):
@@ -2720,6 +2570,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_fractional_cadence(self) -> Optional[float]:
         field = self.get_field(SessionAvgFractionalCadenceField.ID)
@@ -2728,6 +2580,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_fractional_cadence.setter
     def avg_fractional_cadence(self, value: float):
@@ -2740,6 +2594,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_fractional_cadence(self) -> Optional[float]:
         field = self.get_field(SessionMaxFractionalCadenceField.ID)
@@ -2748,6 +2604,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_fractional_cadence.setter
     def max_fractional_cadence(self, value: float):
@@ -2760,6 +2618,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_fractional_cycles(self) -> Optional[float]:
         field = self.get_field(SessionTotalFractionalCyclesField.ID)
@@ -2768,6 +2628,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_fractional_cycles.setter
     def total_fractional_cycles(self, value: float):
@@ -2780,6 +2642,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_total_hemoglobin_conc(self) -> Optional[list[float]]:
         field = self.get_field(SessionAvgTotalHemoglobinConcField.ID)
@@ -2787,6 +2651,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @avg_total_hemoglobin_conc.setter
     def avg_total_hemoglobin_conc(self, value: list[float]):
@@ -2798,6 +2664,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def min_total_hemoglobin_conc(self) -> Optional[list[float]]:
         field = self.get_field(SessionMinTotalHemoglobinConcField.ID)
@@ -2805,6 +2673,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @min_total_hemoglobin_conc.setter
     def min_total_hemoglobin_conc(self, value: list[float]):
@@ -2816,6 +2686,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def max_total_hemoglobin_conc(self) -> Optional[list[float]]:
         field = self.get_field(SessionMaxTotalHemoglobinConcField.ID)
@@ -2823,6 +2695,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @max_total_hemoglobin_conc.setter
     def max_total_hemoglobin_conc(self, value: list[float]):
@@ -2834,6 +2708,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def avg_saturated_hemoglobin_percent(self) -> Optional[list[float]]:
         field = self.get_field(SessionAvgSaturatedHemoglobinPercentField.ID)
@@ -2841,6 +2717,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @avg_saturated_hemoglobin_percent.setter
     def avg_saturated_hemoglobin_percent(self, value: list[float]):
@@ -2852,6 +2730,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def min_saturated_hemoglobin_percent(self) -> Optional[list[float]]:
         field = self.get_field(SessionMinSaturatedHemoglobinPercentField.ID)
@@ -2859,6 +2739,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @min_saturated_hemoglobin_percent.setter
     def min_saturated_hemoglobin_percent(self, value: list[float]):
@@ -2870,6 +2752,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def max_saturated_hemoglobin_percent(self) -> Optional[list[float]]:
         field = self.get_field(SessionMaxSaturatedHemoglobinPercentField.ID)
@@ -2877,6 +2761,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @max_saturated_hemoglobin_percent.setter
     def max_saturated_hemoglobin_percent(self, value: list[float]):
@@ -2888,6 +2774,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def avg_left_torque_effectiveness(self) -> Optional[float]:
         field = self.get_field(SessionAvgLeftTorqueEffectivenessField.ID)
@@ -2896,6 +2784,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_left_torque_effectiveness.setter
     def avg_left_torque_effectiveness(self, value: float):
@@ -2908,6 +2798,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_right_torque_effectiveness(self) -> Optional[float]:
         field = self.get_field(SessionAvgRightTorqueEffectivenessField.ID)
@@ -2916,6 +2808,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_right_torque_effectiveness.setter
     def avg_right_torque_effectiveness(self, value: float):
@@ -2928,6 +2822,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_left_pedal_smoothness(self) -> Optional[float]:
         field = self.get_field(SessionAvgLeftPedalSmoothnessField.ID)
@@ -2936,6 +2832,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_left_pedal_smoothness.setter
     def avg_left_pedal_smoothness(self, value: float):
@@ -2948,6 +2846,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_right_pedal_smoothness(self) -> Optional[float]:
         field = self.get_field(SessionAvgRightPedalSmoothnessField.ID)
@@ -2956,6 +2856,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_right_pedal_smoothness.setter
     def avg_right_pedal_smoothness(self, value: float):
@@ -2968,6 +2870,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_combined_pedal_smoothness(self) -> Optional[float]:
         field = self.get_field(SessionAvgCombinedPedalSmoothnessField.ID)
@@ -2976,6 +2880,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_combined_pedal_smoothness.setter
     def avg_combined_pedal_smoothness(self, value: float):
@@ -2988,6 +2894,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sport_profile_name(self) -> Optional[str]:
         field = self.get_field(SessionSportProfileNameField.ID)
@@ -2996,6 +2904,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sport_profile_name.setter
     def sport_profile_name(self, value: str):
@@ -3008,6 +2918,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sport_index(self) -> Optional[int]:
         field = self.get_field(SessionSportIndexField.ID)
@@ -3016,6 +2928,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sport_index.setter
     def sport_index(self, value: int):
@@ -3028,6 +2942,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def time_standing(self) -> Optional[float]:
         field = self.get_field(SessionTimeStandingField.ID)
@@ -3036,6 +2952,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @time_standing.setter
     def time_standing(self, value: float):
@@ -3048,6 +2966,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def stand_count(self) -> Optional[int]:
         field = self.get_field(SessionStandCountField.ID)
@@ -3056,6 +2976,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @stand_count.setter
     def stand_count(self, value: int):
@@ -3068,6 +2990,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_left_pco(self) -> Optional[int]:
         field = self.get_field(SessionAvgLeftPcoField.ID)
@@ -3076,6 +3000,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_left_pco.setter
     def avg_left_pco(self, value: int):
@@ -3088,6 +3014,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_right_pco(self) -> Optional[int]:
         field = self.get_field(SessionAvgRightPcoField.ID)
@@ -3096,6 +3024,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_right_pco.setter
     def avg_right_pco(self, value: int):
@@ -3108,6 +3038,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_left_power_phase(self) -> Optional[list[float]]:
         field = self.get_field(SessionAvgLeftPowerPhaseField.ID)
@@ -3115,6 +3047,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @avg_left_power_phase.setter
     def avg_left_power_phase(self, value: list[float]):
@@ -3126,6 +3060,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def avg_left_power_phase_peak(self) -> Optional[list[float]]:
         field = self.get_field(SessionAvgLeftPowerPhasePeakField.ID)
@@ -3133,6 +3069,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @avg_left_power_phase_peak.setter
     def avg_left_power_phase_peak(self, value: list[float]):
@@ -3144,6 +3082,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def avg_right_power_phase(self) -> Optional[list[float]]:
         field = self.get_field(SessionAvgRightPowerPhaseField.ID)
@@ -3151,6 +3091,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @avg_right_power_phase.setter
     def avg_right_power_phase(self, value: list[float]):
@@ -3162,6 +3104,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def avg_right_power_phase_peak(self) -> Optional[list[float]]:
         field = self.get_field(SessionAvgRightPowerPhasePeakField.ID)
@@ -3169,6 +3113,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @avg_right_power_phase_peak.setter
     def avg_right_power_phase_peak(self, value: list[float]):
@@ -3180,6 +3126,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def avg_power_position(self) -> Optional[list[int]]:
         field = self.get_field(SessionAvgPowerPositionField.ID)
@@ -3187,6 +3135,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @avg_power_position.setter
     def avg_power_position(self, value: list[int]):
@@ -3198,6 +3148,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def max_power_position(self) -> Optional[list[int]]:
         field = self.get_field(SessionMaxPowerPositionField.ID)
@@ -3205,6 +3157,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @max_power_position.setter
     def max_power_position(self, value: list[int]):
@@ -3216,6 +3170,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def avg_cadence_position(self) -> Optional[list[int]]:
         field = self.get_field(SessionAvgCadencePositionField.ID)
@@ -3223,6 +3179,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @avg_cadence_position.setter
     def avg_cadence_position(self, value: list[int]):
@@ -3234,6 +3192,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def max_cadence_position(self) -> Optional[list[int]]:
         field = self.get_field(SessionMaxCadencePositionField.ID)
@@ -3241,6 +3201,8 @@ class SessionMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @max_cadence_position.setter
     def max_cadence_position(self, value: list[int]):
@@ -3252,6 +3214,8 @@ class SessionMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def enhanced_avg_speed(self) -> Optional[float]:
         field = self.get_field(SessionEnhancedAvgSpeedField.ID)
@@ -3260,6 +3224,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_avg_speed.setter
     def enhanced_avg_speed(self, value: float):
@@ -3272,6 +3238,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_max_speed(self) -> Optional[float]:
         field = self.get_field(SessionEnhancedMaxSpeedField.ID)
@@ -3280,6 +3248,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_max_speed.setter
     def enhanced_max_speed(self, value: float):
@@ -3292,6 +3262,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_avg_altitude(self) -> Optional[float]:
         field = self.get_field(SessionEnhancedAvgAltitudeField.ID)
@@ -3300,6 +3272,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_avg_altitude.setter
     def enhanced_avg_altitude(self, value: float):
@@ -3312,6 +3286,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_min_altitude(self) -> Optional[float]:
         field = self.get_field(SessionEnhancedMinAltitudeField.ID)
@@ -3320,6 +3296,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_min_altitude.setter
     def enhanced_min_altitude(self, value: float):
@@ -3332,6 +3310,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_max_altitude(self) -> Optional[float]:
         field = self.get_field(SessionEnhancedMaxAltitudeField.ID)
@@ -3340,6 +3320,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_max_altitude.setter
     def enhanced_max_altitude(self, value: float):
@@ -3352,6 +3334,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_lev_motor_power(self) -> Optional[int]:
         field = self.get_field(SessionAvgLevMotorPowerField.ID)
@@ -3360,6 +3344,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_lev_motor_power.setter
     def avg_lev_motor_power(self, value: int):
@@ -3372,6 +3358,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_lev_motor_power(self) -> Optional[int]:
         field = self.get_field(SessionMaxLevMotorPowerField.ID)
@@ -3380,6 +3368,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_lev_motor_power.setter
     def max_lev_motor_power(self, value: int):
@@ -3392,6 +3382,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def lev_battery_consumption(self) -> Optional[float]:
         field = self.get_field(SessionLevBatteryConsumptionField.ID)
@@ -3400,6 +3392,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @lev_battery_consumption.setter
     def lev_battery_consumption(self, value: float):
@@ -3412,6 +3406,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_vertical_ratio(self) -> Optional[float]:
         field = self.get_field(SessionAvgVerticalRatioField.ID)
@@ -3420,6 +3416,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_vertical_ratio.setter
     def avg_vertical_ratio(self, value: float):
@@ -3432,6 +3430,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_stance_time_balance(self) -> Optional[float]:
         field = self.get_field(SessionAvgStanceTimeBalanceField.ID)
@@ -3440,6 +3440,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_stance_time_balance.setter
     def avg_stance_time_balance(self, value: float):
@@ -3452,6 +3454,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_step_length(self) -> Optional[float]:
         field = self.get_field(SessionAvgStepLengthField.ID)
@@ -3460,6 +3464,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_step_length.setter
     def avg_step_length(self, value: float):
@@ -3472,6 +3478,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_anaerobic_training_effect(self) -> Optional[float]:
         field = self.get_field(SessionTotalAnaerobicTrainingEffectField.ID)
@@ -3480,6 +3488,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_anaerobic_training_effect.setter
     def total_anaerobic_training_effect(self, value: float):
@@ -3492,6 +3502,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_vam(self) -> Optional[float]:
         field = self.get_field(SessionAvgVamField.ID)
@@ -3500,6 +3512,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_vam.setter
     def avg_vam(self, value: float):
@@ -3512,6 +3526,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_depth(self) -> Optional[float]:
         field = self.get_field(SessionAvgDepthField.ID)
@@ -3520,6 +3536,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_depth.setter
     def avg_depth(self, value: float):
@@ -3532,6 +3550,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_depth(self) -> Optional[float]:
         field = self.get_field(SessionMaxDepthField.ID)
@@ -3540,6 +3560,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_depth.setter
     def max_depth(self, value: float):
@@ -3552,6 +3574,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def surface_interval(self) -> Optional[int]:
         field = self.get_field(SessionSurfaceIntervalField.ID)
@@ -3560,6 +3584,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @surface_interval.setter
     def surface_interval(self, value: int):
@@ -3572,6 +3598,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_cns(self) -> Optional[int]:
         field = self.get_field(SessionStartCnsField.ID)
@@ -3580,6 +3608,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_cns.setter
     def start_cns(self, value: int):
@@ -3592,6 +3622,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_cns(self) -> Optional[int]:
         field = self.get_field(SessionEndCnsField.ID)
@@ -3600,6 +3632,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_cns.setter
     def end_cns(self, value: int):
@@ -3612,6 +3646,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_n2(self) -> Optional[int]:
         field = self.get_field(SessionStartN2Field.ID)
@@ -3620,6 +3656,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_n2.setter
     def start_n2(self, value: int):
@@ -3632,6 +3670,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_n2(self) -> Optional[int]:
         field = self.get_field(SessionEndN2Field.ID)
@@ -3640,6 +3680,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_n2.setter
     def end_n2(self, value: int):
@@ -3652,6 +3694,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_respiration_rate(self) -> Optional[int]:
         field = self.get_field(SessionAvgRespirationRateField.ID)
@@ -3660,6 +3704,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_respiration_rate.setter
     def avg_respiration_rate(self, value: int):
@@ -3672,6 +3718,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_respiration_rate(self) -> Optional[int]:
         field = self.get_field(SessionMaxRespirationRateField.ID)
@@ -3680,6 +3728,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_respiration_rate.setter
     def max_respiration_rate(self, value: int):
@@ -3692,6 +3742,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def min_respiration_rate(self) -> Optional[int]:
         field = self.get_field(SessionMinRespirationRateField.ID)
@@ -3700,6 +3752,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @min_respiration_rate.setter
     def min_respiration_rate(self, value: int):
@@ -3712,6 +3766,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def min_temperature(self) -> Optional[int]:
         field = self.get_field(SessionMinTemperatureField.ID)
@@ -3720,6 +3776,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @min_temperature.setter
     def min_temperature(self, value: int):
@@ -3732,6 +3790,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def o2_toxicity(self) -> Optional[int]:
         field = self.get_field(SessionO2ToxicityField.ID)
@@ -3740,6 +3800,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @o2_toxicity.setter
     def o2_toxicity(self, value: int):
@@ -3752,6 +3814,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def dive_number(self) -> Optional[int]:
         field = self.get_field(SessionDiveNumberField.ID)
@@ -3760,6 +3824,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @dive_number.setter
     def dive_number(self, value: int):
@@ -3772,6 +3838,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def training_load_peak(self) -> Optional[float]:
         field = self.get_field(SessionTrainingLoadPeakField.ID)
@@ -3780,6 +3848,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @training_load_peak.setter
     def training_load_peak(self, value: float):
@@ -3792,6 +3862,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_avg_respiration_rate(self) -> Optional[float]:
         field = self.get_field(SessionEnhancedAvgRespirationRateField.ID)
@@ -3800,6 +3872,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_avg_respiration_rate.setter
     def enhanced_avg_respiration_rate(self, value: float):
@@ -3812,6 +3886,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_max_respiration_rate(self) -> Optional[float]:
         field = self.get_field(SessionEnhancedMaxRespirationRateField.ID)
@@ -3820,6 +3896,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_max_respiration_rate.setter
     def enhanced_max_respiration_rate(self, value: float):
@@ -3832,6 +3910,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def enhanced_min_respiration_rate(self) -> Optional[float]:
         field = self.get_field(SessionEnhancedMinRespirationRateField.ID)
@@ -3840,6 +3920,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @enhanced_min_respiration_rate.setter
     def enhanced_min_respiration_rate(self, value: float):
@@ -3852,6 +3934,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_grit(self) -> Optional[float]:
         field = self.get_field(SessionTotalGritField.ID)
@@ -3860,6 +3944,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_grit.setter
     def total_grit(self, value: float):
@@ -3872,6 +3958,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_flow(self) -> Optional[float]:
         field = self.get_field(SessionTotalFlowField.ID)
@@ -3880,6 +3968,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_flow.setter
     def total_flow(self, value: float):
@@ -3892,6 +3982,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def jump_count(self) -> Optional[int]:
         field = self.get_field(SessionJumpCountField.ID)
@@ -3900,6 +3992,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @jump_count.setter
     def jump_count(self, value: int):
@@ -3912,6 +4006,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_grit(self) -> Optional[float]:
         field = self.get_field(SessionAvgGritField.ID)
@@ -3920,6 +4016,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_grit.setter
     def avg_grit(self, value: float):
@@ -3932,6 +4030,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_flow(self) -> Optional[float]:
         field = self.get_field(SessionAvgFlowField.ID)
@@ -3940,6 +4040,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_flow.setter
     def avg_flow(self, value: float):
@@ -3952,6 +4054,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def workout_feel(self) -> Optional[int]:
         field = self.get_field(SessionWorkoutFeelField.ID)
@@ -3960,6 +4064,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @workout_feel.setter
     def workout_feel(self, value: int):
@@ -3972,6 +4078,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def workout_rpe(self) -> Optional[int]:
         field = self.get_field(SessionWorkoutRpeField.ID)
@@ -3980,6 +4088,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @workout_rpe.setter
     def workout_rpe(self, value: int):
@@ -3992,6 +4102,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_spo2(self) -> Optional[int]:
         field = self.get_field(SessionAvgSpo2Field.ID)
@@ -4000,6 +4112,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_spo2.setter
     def avg_spo2(self, value: int):
@@ -4012,6 +4126,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_stress(self) -> Optional[int]:
         field = self.get_field(SessionAvgStressField.ID)
@@ -4020,6 +4136,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_stress.setter
     def avg_stress(self, value: int):
@@ -4032,6 +4150,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sdrr_hrv(self) -> Optional[int]:
         field = self.get_field(SessionSdrrHrvField.ID)
@@ -4040,6 +4160,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sdrr_hrv.setter
     def sdrr_hrv(self, value: int):
@@ -4052,6 +4174,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def rmssd_hrv(self) -> Optional[int]:
         field = self.get_field(SessionRmssdHrvField.ID)
@@ -4060,6 +4184,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @rmssd_hrv.setter
     def rmssd_hrv(self, value: int):
@@ -4072,6 +4198,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_fractional_ascent(self) -> Optional[float]:
         field = self.get_field(SessionTotalFractionalAscentField.ID)
@@ -4080,6 +4208,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_fractional_ascent.setter
     def total_fractional_ascent(self, value: float):
@@ -4092,6 +4222,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def total_fractional_descent(self) -> Optional[float]:
         field = self.get_field(SessionTotalFractionalDescentField.ID)
@@ -4100,6 +4232,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @total_fractional_descent.setter
     def total_fractional_descent(self, value: float):
@@ -4112,6 +4246,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_core_temperature(self) -> Optional[float]:
         field = self.get_field(SessionAvgCoreTemperatureField.ID)
@@ -4120,6 +4256,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_core_temperature.setter
     def avg_core_temperature(self, value: float):
@@ -4132,6 +4270,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def min_core_temperature(self) -> Optional[float]:
         field = self.get_field(SessionMinCoreTemperatureField.ID)
@@ -4140,6 +4280,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @min_core_temperature.setter
     def min_core_temperature(self, value: float):
@@ -4152,6 +4294,8 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_core_temperature(self) -> Optional[float]:
         field = self.get_field(SessionMaxCoreTemperatureField.ID)
@@ -4160,6 +4304,8 @@ class SessionMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_core_temperature.setter
     def max_core_temperature(self, value: float):
@@ -4172,20 +4318,26 @@ class SessionMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class MessageIndexField(Field):
     ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="message_index",
+            name='message_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4194,16 +4346,17 @@ class TimestampField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4212,14 +4365,15 @@ class SessionEventField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="event",
+            name='event',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4228,14 +4382,15 @@ class SessionEventTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="event_type",
+            name='event_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4244,16 +4399,17 @@ class SessionStartTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_time",
+            name='start_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4262,16 +4418,17 @@ class SessionStartPositionLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_position_lat",
+            name='start_position_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4280,16 +4437,17 @@ class SessionStartPositionLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_position_long",
+            name='start_position_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4298,14 +4456,15 @@ class SessionSportField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sport",
+            name='sport',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4314,14 +4473,15 @@ class SessionSubSportField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sub_sport",
+            name='sub_sport',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4330,16 +4490,17 @@ class SessionTotalElapsedTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_elapsed_time",
+            name='total_elapsed_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4348,16 +4509,17 @@ class SessionTotalTimerTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_timer_time",
+            name='total_timer_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4366,16 +4528,17 @@ class SessionTotalDistanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_distance",
+            name='total_distance',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4384,33 +4547,35 @@ class SessionTotalCyclesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_cycles",
+            name='total_cycles',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="cycles",
-            type_name="",
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="total_strides",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="strides",
-                    reference_map={SessionSportField.ID: [1, 11]},
-                ),
-                SubField(
-                    name="total_strokes",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="strokes",
-                    reference_map={SessionSportField.ID: [2, 5, 15, 37]},
-                ),
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'cycles',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='total_strides',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'strides',
+        reference_map = {
+        SessionSportField.ID: [1, 11]
+        }), 
+        SubField(
+            name='total_strokes',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'strokes',
+        reference_map = {
+        SessionSportField.ID: [2, 5, 15, 37]
+        })
+        ]
         )
 
 
@@ -4419,16 +4584,17 @@ class SessionTotalCaloriesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_calories",
+            name='total_calories',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kcal",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kcal',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4437,16 +4603,17 @@ class SessionTotalFatCaloriesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_fat_calories",
+            name='total_fat_calories',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kcal",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kcal',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4455,16 +4622,17 @@ class SessionAvgSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_speed",
+            name='avg_speed',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4473,16 +4641,17 @@ class SessionMaxSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_speed",
+            name='max_speed',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4491,16 +4660,17 @@ class SessionAvgHeartRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_heart_rate",
+            name='avg_heart_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="bpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'bpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4509,16 +4679,17 @@ class SessionMaxHeartRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_heart_rate",
+            name='max_heart_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="bpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'bpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4527,25 +4698,26 @@ class SessionAvgCadenceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_cadence",
+            name='avg_cadence',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="avg_running_cadence",
-                    base_type=BaseType.UINT8,
-                    scale=1,
-                    offset=0,
-                    units="strides/min",
-                    reference_map={SessionSportField.ID: [1]},
-                )
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='avg_running_cadence',
+            base_type=BaseType.UINT8,
+        scale = 1,
+                offset = 0,
+        units = 'strides/min',
+        reference_map = {
+        SessionSportField.ID: [1]
+        })
+        ]
         )
 
 
@@ -4554,25 +4726,26 @@ class SessionMaxCadenceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_cadence",
+            name='max_cadence',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="max_running_cadence",
-                    base_type=BaseType.UINT8,
-                    scale=1,
-                    offset=0,
-                    units="strides/min",
-                    reference_map={SessionSportField.ID: [1]},
-                )
-            ],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='max_running_cadence',
+            base_type=BaseType.UINT8,
+        scale = 1,
+                offset = 0,
+        units = 'strides/min',
+        reference_map = {
+        SessionSportField.ID: [1]
+        })
+        ]
         )
 
 
@@ -4581,16 +4754,17 @@ class SessionAvgPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_power",
+            name='avg_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4599,16 +4773,17 @@ class SessionMaxPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_power",
+            name='max_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4617,16 +4792,17 @@ class SessionTotalAscentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_ascent",
+            name='total_ascent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4635,16 +4811,17 @@ class SessionTotalDescentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_descent",
+            name='total_descent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4653,14 +4830,15 @@ class SessionTotalTrainingEffectField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_training_effect",
+            name='total_training_effect',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=10,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4669,14 +4847,15 @@ class SessionFirstLapIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="first_lap_index",
+            name='first_lap_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4685,14 +4864,15 @@ class SessionNumLapsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="num_laps",
+            name='num_laps',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4701,14 +4881,15 @@ class SessionEventGroupField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="event_group",
+            name='event_group',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4717,14 +4898,15 @@ class SessionTriggerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="trigger",
+            name='trigger',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4733,16 +4915,17 @@ class SessionNecLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="nec_lat",
+            name='nec_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4751,16 +4934,17 @@ class SessionNecLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="nec_long",
+            name='nec_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4769,16 +4953,17 @@ class SessionSwcLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="swc_lat",
+            name='swc_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4787,16 +4972,17 @@ class SessionSwcLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="swc_long",
+            name='swc_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4805,16 +4991,17 @@ class SessionNumLengthsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="num_lengths",
+            name='num_lengths',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="lengths",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'lengths',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4823,16 +5010,17 @@ class SessionNormalizedPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="normalized_power",
+            name='normalized_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4841,16 +5029,17 @@ class SessionTrainingStressScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="training_stress_score",
+            name='training_stress_score',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="tss",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'tss',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4859,16 +5048,17 @@ class SessionIntensityFactorField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="intensity_factor",
+            name='intensity_factor',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="if",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'if',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4877,14 +5067,15 @@ class SessionLeftRightBalanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="left_right_balance",
+            name='left_right_balance',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4893,16 +5084,17 @@ class SessionEndPositionLatField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_position_lat",
+            name='end_position_lat',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4911,16 +5103,17 @@ class SessionEndPositionLongField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_position_long",
+            name='end_position_long',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=11930464.711111112,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 11930464.711111112,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4929,16 +5122,17 @@ class SessionAvgStrokeCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_stroke_count",
+            name='avg_stroke_count',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=10,
-            size=size,
-            units="strokes/lap",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'strokes/lap',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4947,16 +5141,17 @@ class SessionAvgStrokeDistanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_stroke_distance",
+            name='avg_stroke_distance',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4965,16 +5160,17 @@ class SessionSwimStrokeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="swim_stroke",
+            name='swim_stroke',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            units="swim_stroke",
-            type_name="swim_stroke",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'swim_stroke',
+        type_name = 'swim_stroke',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -4983,16 +5179,17 @@ class SessionPoolLengthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="pool_length",
+            name='pool_length',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5001,16 +5198,17 @@ class SessionThresholdPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="threshold_power",
+            name='threshold_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5019,14 +5217,15 @@ class SessionPoolLengthUnitField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="pool_length_unit",
+            name='pool_length_unit',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5035,16 +5234,17 @@ class SessionNumActiveLengthsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="num_active_lengths",
+            name='num_active_lengths',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="lengths",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'lengths',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5053,16 +5253,17 @@ class SessionTotalWorkField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_work",
+            name='total_work',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="J",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'J',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5071,16 +5272,17 @@ class SessionAvgAltitudeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_altitude",
+            name='avg_altitude',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5089,16 +5291,17 @@ class SessionMaxAltitudeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_altitude",
+            name='max_altitude',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5107,16 +5310,17 @@ class SessionGpsAccuracyField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="gps_accuracy",
+            name='gps_accuracy',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5125,16 +5329,17 @@ class SessionAvgGradeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_grade",
+            name='avg_grade',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5143,16 +5348,17 @@ class SessionAvgPosGradeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_pos_grade",
+            name='avg_pos_grade',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5161,16 +5367,17 @@ class SessionAvgNegGradeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_neg_grade",
+            name='avg_neg_grade',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5179,16 +5386,17 @@ class SessionMaxPosGradeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_pos_grade",
+            name='max_pos_grade',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5197,16 +5405,17 @@ class SessionMaxNegGradeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_neg_grade",
+            name='max_neg_grade',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5215,16 +5424,17 @@ class SessionAvgTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_temperature",
+            name='avg_temperature',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5233,16 +5443,17 @@ class SessionMaxTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_temperature",
+            name='max_temperature',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5251,16 +5462,17 @@ class SessionTotalMovingTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_moving_time",
+            name='total_moving_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5269,16 +5481,17 @@ class SessionAvgPosVerticalSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_pos_vertical_speed",
+            name='avg_pos_vertical_speed',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5287,16 +5500,17 @@ class SessionAvgNegVerticalSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_neg_vertical_speed",
+            name='avg_neg_vertical_speed',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5305,16 +5519,17 @@ class SessionMaxPosVerticalSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_pos_vertical_speed",
+            name='max_pos_vertical_speed',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5323,16 +5538,17 @@ class SessionMaxNegVerticalSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_neg_vertical_speed",
+            name='max_neg_vertical_speed',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5341,16 +5557,17 @@ class SessionMinHeartRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="min_heart_rate",
+            name='min_heart_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="bpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'bpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5359,16 +5576,17 @@ class SessionTimeInHrZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_in_hr_zone",
+            name='time_in_hr_zone',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5377,16 +5595,17 @@ class SessionTimeInSpeedZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_in_speed_zone",
+            name='time_in_speed_zone',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5395,16 +5614,17 @@ class SessionTimeInCadenceZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_in_cadence_zone",
+            name='time_in_cadence_zone',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5413,16 +5633,17 @@ class SessionTimeInPowerZoneField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_in_power_zone",
+            name='time_in_power_zone',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5431,16 +5652,17 @@ class SessionAvgLapTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_lap_time",
+            name='avg_lap_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5449,14 +5671,15 @@ class SessionBestLapIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="best_lap_index",
+            name='best_lap_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5465,16 +5688,17 @@ class SessionMinAltitudeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="min_altitude",
+            name='min_altitude',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5483,14 +5707,15 @@ class SessionPlayerScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="player_score",
+            name='player_score',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5499,14 +5724,15 @@ class SessionOpponentScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="opponent_score",
+            name='opponent_score',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5515,14 +5741,15 @@ class SessionOpponentNameField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="opponent_name",
+            name='opponent_name',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5531,16 +5758,17 @@ class SessionStrokeCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="stroke_count",
+            name='stroke_count',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="counts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'counts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5549,16 +5777,17 @@ class SessionZoneCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="zone_count",
+            name='zone_count',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="counts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'counts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5567,16 +5796,17 @@ class SessionMaxBallSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_ball_speed",
+            name='max_ball_speed',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5585,16 +5815,17 @@ class SessionAvgBallSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_ball_speed",
+            name='avg_ball_speed',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5603,16 +5834,17 @@ class SessionAvgVerticalOscillationField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_vertical_oscillation",
+            name='avg_vertical_oscillation',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="mm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'mm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5621,16 +5853,17 @@ class SessionAvgStanceTimePercentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_stance_time_percent",
+            name='avg_stance_time_percent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5639,16 +5872,17 @@ class SessionAvgStanceTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_stance_time",
+            name='avg_stance_time',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5657,16 +5891,17 @@ class SessionAvgFractionalCadenceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_fractional_cadence",
+            name='avg_fractional_cadence',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=128,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5675,16 +5910,17 @@ class SessionMaxFractionalCadenceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_fractional_cadence",
+            name='max_fractional_cadence',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=128,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5693,16 +5929,17 @@ class SessionTotalFractionalCyclesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_fractional_cycles",
+            name='total_fractional_cycles',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=128,
-            size=size,
-            units="cycles",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'cycles',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5711,16 +5948,17 @@ class SessionAvgTotalHemoglobinConcField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_total_hemoglobin_conc",
+            name='avg_total_hemoglobin_conc',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="g/dL",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'g/dL',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5729,16 +5967,17 @@ class SessionMinTotalHemoglobinConcField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="min_total_hemoglobin_conc",
+            name='min_total_hemoglobin_conc',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="g/dL",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'g/dL',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5747,16 +5986,17 @@ class SessionMaxTotalHemoglobinConcField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_total_hemoglobin_conc",
+            name='max_total_hemoglobin_conc',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="g/dL",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'g/dL',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5765,16 +6005,17 @@ class SessionAvgSaturatedHemoglobinPercentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_saturated_hemoglobin_percent",
+            name='avg_saturated_hemoglobin_percent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5783,16 +6024,17 @@ class SessionMinSaturatedHemoglobinPercentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="min_saturated_hemoglobin_percent",
+            name='min_saturated_hemoglobin_percent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5801,16 +6043,17 @@ class SessionMaxSaturatedHemoglobinPercentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_saturated_hemoglobin_percent",
+            name='max_saturated_hemoglobin_percent',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="%",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5819,16 +6062,17 @@ class SessionAvgLeftTorqueEffectivenessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_left_torque_effectiveness",
+            name='avg_left_torque_effectiveness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5837,16 +6081,17 @@ class SessionAvgRightTorqueEffectivenessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_right_torque_effectiveness",
+            name='avg_right_torque_effectiveness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5855,16 +6100,17 @@ class SessionAvgLeftPedalSmoothnessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_left_pedal_smoothness",
+            name='avg_left_pedal_smoothness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5873,16 +6119,17 @@ class SessionAvgRightPedalSmoothnessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_right_pedal_smoothness",
+            name='avg_right_pedal_smoothness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5891,16 +6138,17 @@ class SessionAvgCombinedPedalSmoothnessField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_combined_pedal_smoothness",
+            name='avg_combined_pedal_smoothness',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5909,14 +6157,15 @@ class SessionSportProfileNameField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sport_profile_name",
+            name='sport_profile_name',
             field_id=self.ID,
             base_type=BaseType.STRING,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5925,14 +6174,15 @@ class SessionSportIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sport_index",
+            name='sport_index',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5941,16 +6191,17 @@ class SessionTimeStandingField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="time_standing",
+            name='time_standing',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5959,14 +6210,15 @@ class SessionStandCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="stand_count",
+            name='stand_count',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5975,16 +6227,17 @@ class SessionAvgLeftPcoField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_left_pco",
+            name='avg_left_pco',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="mm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'mm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -5993,16 +6246,17 @@ class SessionAvgRightPcoField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_right_pco",
+            name='avg_right_pco',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="mm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'mm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6011,16 +6265,17 @@ class SessionAvgLeftPowerPhaseField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_left_power_phase",
+            name='avg_left_power_phase',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=0.7111111,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 0.7111111,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6029,16 +6284,17 @@ class SessionAvgLeftPowerPhasePeakField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_left_power_phase_peak",
+            name='avg_left_power_phase_peak',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=0.7111111,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 0.7111111,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6047,16 +6303,17 @@ class SessionAvgRightPowerPhaseField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_right_power_phase",
+            name='avg_right_power_phase',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=0.7111111,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 0.7111111,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6065,16 +6322,17 @@ class SessionAvgRightPowerPhasePeakField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_right_power_phase_peak",
+            name='avg_right_power_phase_peak',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=0.7111111,
-            size=size,
-            units="degrees",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 0.7111111,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6083,16 +6341,17 @@ class SessionAvgPowerPositionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_power_position",
+            name='avg_power_position',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6101,16 +6360,17 @@ class SessionMaxPowerPositionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_power_position",
+            name='max_power_position',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6119,16 +6379,17 @@ class SessionAvgCadencePositionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_cadence_position",
+            name='avg_cadence_position',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6137,16 +6398,17 @@ class SessionMaxCadencePositionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_cadence_position",
+            name='max_cadence_position',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="rpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'rpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6155,16 +6417,17 @@ class SessionEnhancedAvgSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_avg_speed",
+            name='enhanced_avg_speed',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6173,16 +6436,17 @@ class SessionEnhancedMaxSpeedField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_max_speed",
+            name='enhanced_max_speed',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6191,16 +6455,17 @@ class SessionEnhancedAvgAltitudeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_avg_altitude",
+            name='enhanced_avg_altitude',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6209,16 +6474,17 @@ class SessionEnhancedMinAltitudeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_min_altitude",
+            name='enhanced_min_altitude',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6227,16 +6493,17 @@ class SessionEnhancedMaxAltitudeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_max_altitude",
+            name='enhanced_max_altitude',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=500,
-            scale=5,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 500,
+                 scale = 5,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6245,16 +6512,17 @@ class SessionAvgLevMotorPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_lev_motor_power",
+            name='avg_lev_motor_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6263,16 +6531,17 @@ class SessionMaxLevMotorPowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_lev_motor_power",
+            name='max_lev_motor_power',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="watts",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'watts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6281,16 +6550,17 @@ class SessionLevBatteryConsumptionField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="lev_battery_consumption",
+            name='lev_battery_consumption',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=2,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6299,16 +6569,17 @@ class SessionAvgVerticalRatioField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_vertical_ratio",
+            name='avg_vertical_ratio',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6317,16 +6588,17 @@ class SessionAvgStanceTimeBalanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_stance_time_balance",
+            name='avg_stance_time_balance',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6335,16 +6607,17 @@ class SessionAvgStepLengthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_step_length",
+            name='avg_step_length',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=10,
-            size=size,
-            units="mm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = 'mm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6353,14 +6626,15 @@ class SessionTotalAnaerobicTrainingEffectField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_anaerobic_training_effect",
+            name='total_anaerobic_training_effect',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=10,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6369,16 +6643,17 @@ class SessionAvgVamField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_vam",
+            name='avg_vam',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6387,16 +6662,17 @@ class SessionAvgDepthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_depth",
+            name='avg_depth',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6405,16 +6681,17 @@ class SessionMaxDepthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_depth",
+            name='max_depth',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6423,16 +6700,17 @@ class SessionSurfaceIntervalField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="surface_interval",
+            name='surface_interval',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6441,16 +6719,17 @@ class SessionStartCnsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_cns",
+            name='start_cns',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6459,16 +6738,17 @@ class SessionEndCnsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_cns",
+            name='end_cns',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6477,16 +6757,17 @@ class SessionStartN2Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_n2",
+            name='start_n2',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6495,16 +6776,17 @@ class SessionEndN2Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_n2",
+            name='end_n2',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6513,14 +6795,15 @@ class SessionAvgRespirationRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_respiration_rate",
+            name='avg_respiration_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6529,14 +6812,15 @@ class SessionMaxRespirationRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_respiration_rate",
+            name='max_respiration_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6545,14 +6829,15 @@ class SessionMinRespirationRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="min_respiration_rate",
+            name='min_respiration_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6561,16 +6846,17 @@ class SessionMinTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="min_temperature",
+            name='min_temperature',
             field_id=self.ID,
             base_type=BaseType.SINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6579,16 +6865,17 @@ class SessionO2ToxicityField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="o2_toxicity",
+            name='o2_toxicity',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="OTUs",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'OTUs',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6597,14 +6884,15 @@ class SessionDiveNumberField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="dive_number",
+            name='dive_number',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6613,14 +6901,15 @@ class SessionTrainingLoadPeakField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="training_load_peak",
+            name='training_load_peak',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=65536,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 65536,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6629,16 +6918,17 @@ class SessionEnhancedAvgRespirationRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_avg_respiration_rate",
+            name='enhanced_avg_respiration_rate',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="Breaths/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'Breaths/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6647,16 +6937,17 @@ class SessionEnhancedMaxRespirationRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_max_respiration_rate",
+            name='enhanced_max_respiration_rate',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="Breaths/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'Breaths/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6665,14 +6956,15 @@ class SessionEnhancedMinRespirationRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="enhanced_min_respiration_rate",
+            name='enhanced_min_respiration_rate',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6681,16 +6973,17 @@ class SessionTotalGritField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_grit",
+            name='total_grit',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kGrit",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kGrit',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6699,16 +6992,17 @@ class SessionTotalFlowField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_flow",
+            name='total_flow',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="Flow",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'Flow',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6717,14 +7011,15 @@ class SessionJumpCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="jump_count",
+            name='jump_count',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6733,16 +7028,17 @@ class SessionAvgGritField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_grit",
+            name='avg_grit',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kGrit",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kGrit',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6751,16 +7047,17 @@ class SessionAvgFlowField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_flow",
+            name='avg_flow',
             field_id=self.ID,
             base_type=BaseType.FLOAT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="Flow",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'Flow',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6769,14 +7066,15 @@ class SessionWorkoutFeelField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="workout_feel",
+            name='workout_feel',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6785,14 +7083,15 @@ class SessionWorkoutRpeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="workout_rpe",
+            name='workout_rpe',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6801,16 +7100,17 @@ class SessionAvgSpo2Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_spo2",
+            name='avg_spo2',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6819,16 +7119,17 @@ class SessionAvgStressField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_stress",
+            name='avg_stress',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6837,16 +7138,17 @@ class SessionSdrrHrvField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sdrr_hrv",
+            name='sdrr_hrv',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="mS",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'mS',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6855,16 +7157,17 @@ class SessionRmssdHrvField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="rmssd_hrv",
+            name='rmssd_hrv',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="mS",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'mS',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6873,16 +7176,17 @@ class SessionTotalFractionalAscentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_fractional_ascent",
+            name='total_fractional_ascent',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6891,16 +7195,17 @@ class SessionTotalFractionalDescentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="total_fractional_descent",
+            name='total_fractional_descent',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6909,16 +7214,17 @@ class SessionAvgCoreTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_core_temperature",
+            name='avg_core_temperature',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6927,16 +7233,17 @@ class SessionMinCoreTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="min_core_temperature",
+            name='min_core_temperature',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -6945,14 +7252,15 @@ class SessionMaxCoreTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_core_temperature",
+            name='max_core_temperature',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

@@ -12,11 +12,12 @@ from fit_tool.field import Field
 from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class MonitoringMessage(DataMessage):
     ID = 55
-    NAME = "monitoring"
+    NAME = 'monitoring'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -28,214 +29,116 @@ class MonitoringMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=MonitoringMessage.NAME,
-            global_id=MonitoringMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                MonitoringDeviceIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringDeviceIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringCaloriesField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringCaloriesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringDistanceField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringDistanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringCyclesField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringCyclesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringActiveTimeField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringActiveTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringActivityTypeField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringActivityTypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringActivitySubtypeField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringActivitySubtypeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringActivityLevelField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringActivityLevelField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringDistance16Field(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringDistance16Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringCycles16Field(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringCycles16Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringActiveTime16Field(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringActiveTime16Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringLocalTimestampField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringLocalTimestampField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringTemperatureField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringTemperatureField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringTemperatureMinField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringTemperatureMinField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringTemperatureMaxField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringTemperatureMaxField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringActivityTimeField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringActivityTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringActiveCaloriesField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringActiveCaloriesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringCurrentActivityTypeIntensityField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        MonitoringCurrentActivityTypeIntensityField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringTimestampMin8Field(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringTimestampMin8Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringTimestamp16Field(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringTimestamp16Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringHeartRateField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringHeartRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringIntensityField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringIntensityField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringDurationMinField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringDurationMinField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringDurationField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringDurationField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringAscentField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringAscentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringDescentField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringDescentField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringModerateActivityMinutesField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringModerateActivityMinutesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                MonitoringVigorousActivityMinutesField(
-                    size=self.__get_field_size(
-                        definition_message, MonitoringVigorousActivityMinutesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=MonitoringMessage.NAME,
+                         global_id=MonitoringMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        MonitoringDeviceIndexField(
+            size=self.__get_field_size(definition_message, MonitoringDeviceIndexField.ID),
+            growable=definition_message is None), 
+        MonitoringCaloriesField(
+            size=self.__get_field_size(definition_message, MonitoringCaloriesField.ID),
+            growable=definition_message is None), 
+        MonitoringDistanceField(
+            size=self.__get_field_size(definition_message, MonitoringDistanceField.ID),
+            growable=definition_message is None), 
+        MonitoringCyclesField(
+            size=self.__get_field_size(definition_message, MonitoringCyclesField.ID),
+            growable=definition_message is None), 
+        MonitoringActiveTimeField(
+            size=self.__get_field_size(definition_message, MonitoringActiveTimeField.ID),
+            growable=definition_message is None), 
+        MonitoringActivityTypeField(
+            size=self.__get_field_size(definition_message, MonitoringActivityTypeField.ID),
+            growable=definition_message is None), 
+        MonitoringActivitySubtypeField(
+            size=self.__get_field_size(definition_message, MonitoringActivitySubtypeField.ID),
+            growable=definition_message is None), 
+        MonitoringActivityLevelField(
+            size=self.__get_field_size(definition_message, MonitoringActivityLevelField.ID),
+            growable=definition_message is None), 
+        MonitoringDistance16Field(
+            size=self.__get_field_size(definition_message, MonitoringDistance16Field.ID),
+            growable=definition_message is None), 
+        MonitoringCycles16Field(
+            size=self.__get_field_size(definition_message, MonitoringCycles16Field.ID),
+            growable=definition_message is None), 
+        MonitoringActiveTime16Field(
+            size=self.__get_field_size(definition_message, MonitoringActiveTime16Field.ID),
+            growable=definition_message is None), 
+        MonitoringLocalTimestampField(
+            size=self.__get_field_size(definition_message, MonitoringLocalTimestampField.ID),
+            growable=definition_message is None), 
+        MonitoringTemperatureField(
+            size=self.__get_field_size(definition_message, MonitoringTemperatureField.ID),
+            growable=definition_message is None), 
+        MonitoringTemperatureMinField(
+            size=self.__get_field_size(definition_message, MonitoringTemperatureMinField.ID),
+            growable=definition_message is None), 
+        MonitoringTemperatureMaxField(
+            size=self.__get_field_size(definition_message, MonitoringTemperatureMaxField.ID),
+            growable=definition_message is None), 
+        MonitoringActivityTimeField(
+            size=self.__get_field_size(definition_message, MonitoringActivityTimeField.ID),
+            growable=definition_message is None), 
+        MonitoringActiveCaloriesField(
+            size=self.__get_field_size(definition_message, MonitoringActiveCaloriesField.ID),
+            growable=definition_message is None), 
+        MonitoringCurrentActivityTypeIntensityField(
+            size=self.__get_field_size(definition_message, MonitoringCurrentActivityTypeIntensityField.ID),
+            growable=definition_message is None), 
+        MonitoringTimestampMin8Field(
+            size=self.__get_field_size(definition_message, MonitoringTimestampMin8Field.ID),
+            growable=definition_message is None), 
+        MonitoringTimestamp16Field(
+            size=self.__get_field_size(definition_message, MonitoringTimestamp16Field.ID),
+            growable=definition_message is None), 
+        MonitoringHeartRateField(
+            size=self.__get_field_size(definition_message, MonitoringHeartRateField.ID),
+            growable=definition_message is None), 
+        MonitoringIntensityField(
+            size=self.__get_field_size(definition_message, MonitoringIntensityField.ID),
+            growable=definition_message is None), 
+        MonitoringDurationMinField(
+            size=self.__get_field_size(definition_message, MonitoringDurationMinField.ID),
+            growable=definition_message is None), 
+        MonitoringDurationField(
+            size=self.__get_field_size(definition_message, MonitoringDurationField.ID),
+            growable=definition_message is None), 
+        MonitoringAscentField(
+            size=self.__get_field_size(definition_message, MonitoringAscentField.ID),
+            growable=definition_message is None), 
+        MonitoringDescentField(
+            size=self.__get_field_size(definition_message, MonitoringDescentField.ID),
+            growable=definition_message is None), 
+        MonitoringModerateActivityMinutesField(
+            size=self.__get_field_size(definition_message, MonitoringModerateActivityMinutesField.ID),
+            growable=definition_message is None), 
+        MonitoringVigorousActivityMinutesField(
+            size=self.__get_field_size(definition_message, MonitoringVigorousActivityMinutesField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -245,6 +148,7 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -259,6 +163,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def device_index(self) -> Optional[int]:
         field = self.get_field(MonitoringDeviceIndexField.ID)
@@ -267,6 +173,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @device_index.setter
     def device_index(self, value: int):
@@ -279,6 +187,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def calories(self) -> Optional[int]:
         field = self.get_field(MonitoringCaloriesField.ID)
@@ -287,6 +197,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @calories.setter
     def calories(self, value: int):
@@ -299,6 +211,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def distance(self) -> Optional[float]:
         field = self.get_field(MonitoringDistanceField.ID)
@@ -307,6 +221,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @distance.setter
     def distance(self, value: float):
@@ -319,6 +235,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def cycles(self) -> Optional[float]:
         field = self.get_field(MonitoringCyclesField.ID)
@@ -327,6 +245,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @cycles.setter
     def cycles(self, value: float):
@@ -338,6 +258,9 @@ class MonitoringMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
+    
+
 
     @property
     def steps(self) -> Optional[int]:
@@ -360,6 +283,7 @@ class MonitoringMessage(DataMessage):
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
+
 
     @property
     def strokes(self) -> Optional[float]:
@@ -392,6 +316,8 @@ class MonitoringMessage(DataMessage):
         else:
             return None
 
+
+
     @active_time.setter
     def active_time(self, value: float):
         field = self.get_field(MonitoringActiveTimeField.ID)
@@ -403,6 +329,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def activity_type(self) -> Optional[ActivityType]:
         field = self.get_field(MonitoringActivityTypeField.ID)
@@ -411,6 +339,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @activity_type.setter
     def activity_type(self, value: ActivityType):
@@ -423,6 +353,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def activity_subtype(self) -> Optional[ActivitySubtype]:
         field = self.get_field(MonitoringActivitySubtypeField.ID)
@@ -431,6 +363,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @activity_subtype.setter
     def activity_subtype(self, value: ActivitySubtype):
@@ -443,6 +377,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def activity_level(self) -> Optional[ActivityLevel]:
         field = self.get_field(MonitoringActivityLevelField.ID)
@@ -451,6 +387,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @activity_level.setter
     def activity_level(self, value: ActivityLevel):
@@ -463,6 +401,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def distance_16(self) -> Optional[int]:
         field = self.get_field(MonitoringDistance16Field.ID)
@@ -471,6 +411,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @distance_16.setter
     def distance_16(self, value: int):
@@ -483,6 +425,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def cycles_16(self) -> Optional[int]:
         field = self.get_field(MonitoringCycles16Field.ID)
@@ -491,6 +435,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @cycles_16.setter
     def cycles_16(self, value: int):
@@ -503,6 +449,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def active_time_16(self) -> Optional[int]:
         field = self.get_field(MonitoringActiveTime16Field.ID)
@@ -511,6 +459,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @active_time_16.setter
     def active_time_16(self, value: int):
@@ -523,6 +473,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def local_timestamp(self) -> Optional[int]:
         field = self.get_field(MonitoringLocalTimestampField.ID)
@@ -531,6 +483,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @local_timestamp.setter
     def local_timestamp(self, value: int):
@@ -543,6 +497,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def temperature(self) -> Optional[float]:
         field = self.get_field(MonitoringTemperatureField.ID)
@@ -551,6 +507,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @temperature.setter
     def temperature(self, value: float):
@@ -563,6 +521,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def temperature_min(self) -> Optional[float]:
         field = self.get_field(MonitoringTemperatureMinField.ID)
@@ -571,6 +531,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @temperature_min.setter
     def temperature_min(self, value: float):
@@ -583,6 +545,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def temperature_max(self) -> Optional[float]:
         field = self.get_field(MonitoringTemperatureMaxField.ID)
@@ -591,6 +555,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @temperature_max.setter
     def temperature_max(self, value: float):
@@ -603,6 +569,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def activity_time(self) -> Optional[list[int]]:
         field = self.get_field(MonitoringActivityTimeField.ID)
@@ -610,6 +578,8 @@ class MonitoringMessage(DataMessage):
             return field.get_values()
         else:
             return None
+
+
 
     @activity_time.setter
     def activity_time(self, value: list[int]):
@@ -621,6 +591,8 @@ class MonitoringMessage(DataMessage):
             else:
                 field.set_values(value)
 
+    
+
     @property
     def active_calories(self) -> Optional[int]:
         field = self.get_field(MonitoringActiveCaloriesField.ID)
@@ -629,6 +601,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @active_calories.setter
     def active_calories(self, value: int):
@@ -641,6 +615,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def current_activity_type_intensity(self) -> Optional[int]:
         field = self.get_field(MonitoringCurrentActivityTypeIntensityField.ID)
@@ -649,6 +625,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @current_activity_type_intensity.setter
     def current_activity_type_intensity(self, value: int):
@@ -661,6 +639,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def timestamp_min_8(self) -> Optional[int]:
         field = self.get_field(MonitoringTimestampMin8Field.ID)
@@ -669,6 +649,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @timestamp_min_8.setter
     def timestamp_min_8(self, value: int):
@@ -681,6 +663,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def timestamp_16(self) -> Optional[int]:
         field = self.get_field(MonitoringTimestamp16Field.ID)
@@ -689,6 +673,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @timestamp_16.setter
     def timestamp_16(self, value: int):
@@ -701,6 +687,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def heart_rate(self) -> Optional[int]:
         field = self.get_field(MonitoringHeartRateField.ID)
@@ -709,6 +697,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @heart_rate.setter
     def heart_rate(self, value: int):
@@ -721,6 +711,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def intensity(self) -> Optional[float]:
         field = self.get_field(MonitoringIntensityField.ID)
@@ -729,6 +721,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @intensity.setter
     def intensity(self, value: float):
@@ -741,6 +735,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def duration_min(self) -> Optional[int]:
         field = self.get_field(MonitoringDurationMinField.ID)
@@ -749,6 +745,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @duration_min.setter
     def duration_min(self, value: int):
@@ -761,6 +759,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def duration(self) -> Optional[int]:
         field = self.get_field(MonitoringDurationField.ID)
@@ -769,6 +769,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @duration.setter
     def duration(self, value: int):
@@ -781,6 +783,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ascent(self) -> Optional[float]:
         field = self.get_field(MonitoringAscentField.ID)
@@ -789,6 +793,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ascent.setter
     def ascent(self, value: float):
@@ -801,6 +807,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def descent(self) -> Optional[float]:
         field = self.get_field(MonitoringDescentField.ID)
@@ -809,6 +817,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @descent.setter
     def descent(self, value: float):
@@ -821,6 +831,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def moderate_activity_minutes(self) -> Optional[int]:
         field = self.get_field(MonitoringModerateActivityMinutesField.ID)
@@ -829,6 +841,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @moderate_activity_minutes.setter
     def moderate_activity_minutes(self, value: int):
@@ -841,6 +855,8 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def vigorous_activity_minutes(self) -> Optional[int]:
         field = self.get_field(MonitoringVigorousActivityMinutesField.ID)
@@ -849,6 +865,8 @@ class MonitoringMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @vigorous_activity_minutes.setter
     def vigorous_activity_minutes(self, value: int):
@@ -861,22 +879,28 @@ class MonitoringMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -885,14 +909,15 @@ class MonitoringDeviceIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="device_index",
+            name='device_index',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -901,16 +926,17 @@ class MonitoringCaloriesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="calories",
+            name='calories',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kcal",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kcal',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -919,16 +945,17 @@ class MonitoringDistanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="distance",
+            name='distance',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=100,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -937,33 +964,35 @@ class MonitoringCyclesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cycles",
+            name='cycles',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=2,
-            size=size,
-            units="cycles",
-            type_name="",
-            growable=growable,
-            sub_fields=[
-                SubField(
-                    name="steps",
-                    base_type=BaseType.UINT32,
-                    scale=1,
-                    offset=0,
-                    units="steps",
-                    reference_map={MonitoringActivityTypeField.ID: [6, 1]},
-                ),
-                SubField(
-                    name="strokes",
-                    base_type=BaseType.UINT32,
-                    scale=2,
-                    offset=0,
-                    units="strokes",
-                    reference_map={MonitoringActivityTypeField.ID: [2, 5]},
-                ),
-            ],
+        offset = 0,
+                 scale = 2,
+                         size = size,
+        units = 'cycles',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='steps',
+            base_type=BaseType.UINT32,
+        scale = 1,
+                offset = 0,
+        units = 'steps',
+        reference_map = {
+        MonitoringActivityTypeField.ID: [6, 1]
+        }), 
+        SubField(
+            name='strokes',
+            base_type=BaseType.UINT32,
+        scale = 2,
+                offset = 0,
+        units = 'strokes',
+        reference_map = {
+        MonitoringActivityTypeField.ID: [2, 5]
+        })
+        ]
         )
 
 
@@ -972,16 +1001,17 @@ class MonitoringActiveTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="active_time",
+            name='active_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -990,14 +1020,15 @@ class MonitoringActivityTypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="activity_type",
+            name='activity_type',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1006,14 +1037,15 @@ class MonitoringActivitySubtypeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="activity_subtype",
+            name='activity_subtype',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1022,14 +1054,15 @@ class MonitoringActivityLevelField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="activity_level",
+            name='activity_level',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1038,16 +1071,17 @@ class MonitoringDistance16Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="distance_16",
+            name='distance_16',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="100 * m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = '100 * m',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1056,16 +1090,17 @@ class MonitoringCycles16Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="cycles_16",
+            name='cycles_16',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="2 * cycles (steps)",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = '2 * cycles (steps)',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1074,16 +1109,17 @@ class MonitoringActiveTime16Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="active_time_16",
+            name='active_time_16',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1092,14 +1128,15 @@ class MonitoringLocalTimestampField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="local_timestamp",
+            name='local_timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1108,16 +1145,17 @@ class MonitoringTemperatureField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="temperature",
+            name='temperature',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1126,16 +1164,17 @@ class MonitoringTemperatureMinField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="temperature_min",
+            name='temperature_min',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1144,16 +1183,17 @@ class MonitoringTemperatureMaxField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="temperature_max",
+            name='temperature_max',
             field_id=self.ID,
             base_type=BaseType.SINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="C",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'C',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1162,16 +1202,17 @@ class MonitoringActivityTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="activity_time",
+            name='activity_time',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="minutes",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'minutes',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1180,16 +1221,17 @@ class MonitoringActiveCaloriesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="active_calories",
+            name='active_calories',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kcal",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kcal',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1198,14 +1240,15 @@ class MonitoringCurrentActivityTypeIntensityField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="current_activity_type_intensity",
+            name='current_activity_type_intensity',
             field_id=self.ID,
             base_type=BaseType.BYTE,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1214,16 +1257,17 @@ class MonitoringTimestampMin8Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp_min_8",
+            name='timestamp_min_8',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1232,16 +1276,17 @@ class MonitoringTimestamp16Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp_16",
+            name='timestamp_16',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1250,16 +1295,17 @@ class MonitoringHeartRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="heart_rate",
+            name='heart_rate',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="bpm",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'bpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1268,14 +1314,15 @@ class MonitoringIntensityField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="intensity",
+            name='intensity',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=10,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1284,16 +1331,17 @@ class MonitoringDurationMinField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="duration_min",
+            name='duration_min',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1302,16 +1350,17 @@ class MonitoringDurationField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="duration",
+            name='duration',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1320,16 +1369,17 @@ class MonitoringAscentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ascent",
+            name='ascent',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1338,16 +1388,17 @@ class MonitoringDescentField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="descent",
+            name='descent',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1356,16 +1407,17 @@ class MonitoringModerateActivityMinutesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="moderate_activity_minutes",
+            name='moderate_activity_minutes',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="minutes",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'minutes',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1374,14 +1426,15 @@ class MonitoringVigorousActivityMinutesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="vigorous_activity_minutes",
+            name='vigorous_activity_minutes',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="minutes",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'minutes',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class SleepAssessmentMessage(DataMessage):
     ID = 346
-    NAME = "sleep_assessment"
+    NAME = 'sleep_assessment'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,125 +29,70 @@ class SleepAssessmentMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=SleepAssessmentMessage.NAME,
-            global_id=SleepAssessmentMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                SleepAssessmentCombinedAwakeScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentCombinedAwakeScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentAwakeTimeScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentAwakeTimeScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentAwakeningsCountScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentAwakeningsCountScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentDeepSleepScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentDeepSleepScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentSleepDurationScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentSleepDurationScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentLightSleepScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentLightSleepScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentOverallSleepScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentOverallSleepScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentSleepQualityScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentSleepQualityScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentSleepRecoveryScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentSleepRecoveryScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentRemSleepScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentRemSleepScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentSleepRestlessnessScoreField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        SleepAssessmentSleepRestlessnessScoreField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentAwakeningsCountField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentAwakeningsCountField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentInterruptionsScoreField(
-                    size=self.__get_field_size(
-                        definition_message, SleepAssessmentInterruptionsScoreField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                SleepAssessmentAverageStressDuringSleepField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        SleepAssessmentAverageStressDuringSleepField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=SleepAssessmentMessage.NAME,
+                         global_id=SleepAssessmentMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        SleepAssessmentCombinedAwakeScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentCombinedAwakeScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentAwakeTimeScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentAwakeTimeScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentAwakeningsCountScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentAwakeningsCountScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentDeepSleepScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentDeepSleepScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentSleepDurationScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentSleepDurationScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentLightSleepScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentLightSleepScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentOverallSleepScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentOverallSleepScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentSleepQualityScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentSleepQualityScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentSleepRecoveryScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentSleepRecoveryScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentRemSleepScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentRemSleepScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentSleepRestlessnessScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentSleepRestlessnessScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentAwakeningsCountField(
+            size=self.__get_field_size(definition_message, SleepAssessmentAwakeningsCountField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentInterruptionsScoreField(
+            size=self.__get_field_size(definition_message, SleepAssessmentInterruptionsScoreField.ID),
+            growable=definition_message is None), 
+        SleepAssessmentAverageStressDuringSleepField(
+            size=self.__get_field_size(definition_message, SleepAssessmentAverageStressDuringSleepField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def combined_awake_score(self) -> Optional[int]:
@@ -155,6 +102,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @combined_awake_score.setter
     def combined_awake_score(self, value: int):
@@ -167,6 +116,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def awake_time_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentAwakeTimeScoreField.ID)
@@ -175,6 +126,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @awake_time_score.setter
     def awake_time_score(self, value: int):
@@ -187,6 +140,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def awakenings_count_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentAwakeningsCountScoreField.ID)
@@ -195,6 +150,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @awakenings_count_score.setter
     def awakenings_count_score(self, value: int):
@@ -207,6 +164,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def deep_sleep_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentDeepSleepScoreField.ID)
@@ -215,6 +174,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @deep_sleep_score.setter
     def deep_sleep_score(self, value: int):
@@ -227,6 +188,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sleep_duration_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentSleepDurationScoreField.ID)
@@ -235,6 +198,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sleep_duration_score.setter
     def sleep_duration_score(self, value: int):
@@ -247,6 +212,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def light_sleep_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentLightSleepScoreField.ID)
@@ -255,6 +222,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @light_sleep_score.setter
     def light_sleep_score(self, value: int):
@@ -267,6 +236,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def overall_sleep_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentOverallSleepScoreField.ID)
@@ -275,6 +246,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @overall_sleep_score.setter
     def overall_sleep_score(self, value: int):
@@ -287,6 +260,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sleep_quality_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentSleepQualityScoreField.ID)
@@ -295,6 +270,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sleep_quality_score.setter
     def sleep_quality_score(self, value: int):
@@ -307,6 +284,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sleep_recovery_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentSleepRecoveryScoreField.ID)
@@ -315,6 +294,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sleep_recovery_score.setter
     def sleep_recovery_score(self, value: int):
@@ -327,6 +308,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def rem_sleep_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentRemSleepScoreField.ID)
@@ -335,6 +318,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @rem_sleep_score.setter
     def rem_sleep_score(self, value: int):
@@ -347,6 +332,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sleep_restlessness_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentSleepRestlessnessScoreField.ID)
@@ -355,6 +342,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sleep_restlessness_score.setter
     def sleep_restlessness_score(self, value: int):
@@ -367,6 +356,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def awakenings_count(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentAwakeningsCountField.ID)
@@ -375,6 +366,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @awakenings_count.setter
     def awakenings_count(self, value: int):
@@ -387,6 +380,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def interruptions_score(self) -> Optional[int]:
         field = self.get_field(SleepAssessmentInterruptionsScoreField.ID)
@@ -395,6 +390,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @interruptions_score.setter
     def interruptions_score(self, value: int):
@@ -407,6 +404,8 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def average_stress_during_sleep(self) -> Optional[float]:
         field = self.get_field(SleepAssessmentAverageStressDuringSleepField.ID)
@@ -415,6 +414,8 @@ class SleepAssessmentMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @average_stress_during_sleep.setter
     def average_stress_during_sleep(self, value: float):
@@ -427,20 +428,26 @@ class SleepAssessmentMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class SleepAssessmentCombinedAwakeScoreField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="combined_awake_score",
+            name='combined_awake_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -449,14 +456,15 @@ class SleepAssessmentAwakeTimeScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="awake_time_score",
+            name='awake_time_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -465,14 +473,15 @@ class SleepAssessmentAwakeningsCountScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="awakenings_count_score",
+            name='awakenings_count_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -481,14 +490,15 @@ class SleepAssessmentDeepSleepScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="deep_sleep_score",
+            name='deep_sleep_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -497,14 +507,15 @@ class SleepAssessmentSleepDurationScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sleep_duration_score",
+            name='sleep_duration_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -513,14 +524,15 @@ class SleepAssessmentLightSleepScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="light_sleep_score",
+            name='light_sleep_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -529,14 +541,15 @@ class SleepAssessmentOverallSleepScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="overall_sleep_score",
+            name='overall_sleep_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -545,14 +558,15 @@ class SleepAssessmentSleepQualityScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sleep_quality_score",
+            name='sleep_quality_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -561,14 +575,15 @@ class SleepAssessmentSleepRecoveryScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sleep_recovery_score",
+            name='sleep_recovery_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -577,14 +592,15 @@ class SleepAssessmentRemSleepScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="rem_sleep_score",
+            name='rem_sleep_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -593,14 +609,15 @@ class SleepAssessmentSleepRestlessnessScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sleep_restlessness_score",
+            name='sleep_restlessness_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -609,14 +626,15 @@ class SleepAssessmentAwakeningsCountField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="awakenings_count",
+            name='awakenings_count',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -625,14 +643,15 @@ class SleepAssessmentInterruptionsScoreField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="interruptions_score",
+            name='interruptions_score',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -641,12 +660,13 @@ class SleepAssessmentAverageStressDuringSleepField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="average_stress_during_sleep",
+            name='average_stress_during_sleep',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

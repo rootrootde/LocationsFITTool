@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class DiveSummaryMessage(DataMessage):
     ID = 268
-    NAME = "dive_summary"
+    NAME = 'dive_summary'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,177 +29,98 @@ class DiveSummaryMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=DiveSummaryMessage.NAME,
-            global_id=DiveSummaryMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryReferenceMesgField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryReferenceMesgField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryReferenceIndexField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryReferenceIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryAvgDepthField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryAvgDepthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryMaxDepthField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryMaxDepthField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummarySurfaceIntervalField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummarySurfaceIntervalField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryStartCnsField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryStartCnsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryEndCnsField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryEndCnsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryStartN2Field(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryStartN2Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryEndN2Field(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryEndN2Field.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryO2ToxicityField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryO2ToxicityField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryDiveNumberField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryDiveNumberField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryBottomTimeField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryBottomTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryAvgPressureSacField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryAvgPressureSacField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryAvgVolumeSacField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryAvgVolumeSacField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryAvgRmvField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryAvgRmvField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryDescentTimeField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryDescentTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryAscentTimeField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryAscentTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryAvgAscentRateField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryAvgAscentRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryAvgDescentRateField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryAvgDescentRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryMaxAscentRateField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryMaxAscentRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryMaxDescentRateField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryMaxDescentRateField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                DiveSummaryHangTimeField(
-                    size=self.__get_field_size(
-                        definition_message, DiveSummaryHangTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=DiveSummaryMessage.NAME,
+                         global_id=DiveSummaryMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        DiveSummaryReferenceMesgField(
+            size=self.__get_field_size(definition_message, DiveSummaryReferenceMesgField.ID),
+            growable=definition_message is None), 
+        DiveSummaryReferenceIndexField(
+            size=self.__get_field_size(definition_message, DiveSummaryReferenceIndexField.ID),
+            growable=definition_message is None), 
+        DiveSummaryAvgDepthField(
+            size=self.__get_field_size(definition_message, DiveSummaryAvgDepthField.ID),
+            growable=definition_message is None), 
+        DiveSummaryMaxDepthField(
+            size=self.__get_field_size(definition_message, DiveSummaryMaxDepthField.ID),
+            growable=definition_message is None), 
+        DiveSummarySurfaceIntervalField(
+            size=self.__get_field_size(definition_message, DiveSummarySurfaceIntervalField.ID),
+            growable=definition_message is None), 
+        DiveSummaryStartCnsField(
+            size=self.__get_field_size(definition_message, DiveSummaryStartCnsField.ID),
+            growable=definition_message is None), 
+        DiveSummaryEndCnsField(
+            size=self.__get_field_size(definition_message, DiveSummaryEndCnsField.ID),
+            growable=definition_message is None), 
+        DiveSummaryStartN2Field(
+            size=self.__get_field_size(definition_message, DiveSummaryStartN2Field.ID),
+            growable=definition_message is None), 
+        DiveSummaryEndN2Field(
+            size=self.__get_field_size(definition_message, DiveSummaryEndN2Field.ID),
+            growable=definition_message is None), 
+        DiveSummaryO2ToxicityField(
+            size=self.__get_field_size(definition_message, DiveSummaryO2ToxicityField.ID),
+            growable=definition_message is None), 
+        DiveSummaryDiveNumberField(
+            size=self.__get_field_size(definition_message, DiveSummaryDiveNumberField.ID),
+            growable=definition_message is None), 
+        DiveSummaryBottomTimeField(
+            size=self.__get_field_size(definition_message, DiveSummaryBottomTimeField.ID),
+            growable=definition_message is None), 
+        DiveSummaryAvgPressureSacField(
+            size=self.__get_field_size(definition_message, DiveSummaryAvgPressureSacField.ID),
+            growable=definition_message is None), 
+        DiveSummaryAvgVolumeSacField(
+            size=self.__get_field_size(definition_message, DiveSummaryAvgVolumeSacField.ID),
+            growable=definition_message is None), 
+        DiveSummaryAvgRmvField(
+            size=self.__get_field_size(definition_message, DiveSummaryAvgRmvField.ID),
+            growable=definition_message is None), 
+        DiveSummaryDescentTimeField(
+            size=self.__get_field_size(definition_message, DiveSummaryDescentTimeField.ID),
+            growable=definition_message is None), 
+        DiveSummaryAscentTimeField(
+            size=self.__get_field_size(definition_message, DiveSummaryAscentTimeField.ID),
+            growable=definition_message is None), 
+        DiveSummaryAvgAscentRateField(
+            size=self.__get_field_size(definition_message, DiveSummaryAvgAscentRateField.ID),
+            growable=definition_message is None), 
+        DiveSummaryAvgDescentRateField(
+            size=self.__get_field_size(definition_message, DiveSummaryAvgDescentRateField.ID),
+            growable=definition_message is None), 
+        DiveSummaryMaxAscentRateField(
+            size=self.__get_field_size(definition_message, DiveSummaryMaxAscentRateField.ID),
+            growable=definition_message is None), 
+        DiveSummaryMaxDescentRateField(
+            size=self.__get_field_size(definition_message, DiveSummaryMaxDescentRateField.ID),
+            growable=definition_message is None), 
+        DiveSummaryHangTimeField(
+            size=self.__get_field_size(definition_message, DiveSummaryHangTimeField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -207,6 +130,7 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -221,6 +145,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def reference_mesg(self) -> Optional[int]:
         field = self.get_field(DiveSummaryReferenceMesgField.ID)
@@ -229,6 +155,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @reference_mesg.setter
     def reference_mesg(self, value: int):
@@ -241,6 +169,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def reference_index(self) -> Optional[int]:
         field = self.get_field(DiveSummaryReferenceIndexField.ID)
@@ -249,6 +179,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @reference_index.setter
     def reference_index(self, value: int):
@@ -261,6 +193,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_depth(self) -> Optional[float]:
         field = self.get_field(DiveSummaryAvgDepthField.ID)
@@ -269,6 +203,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_depth.setter
     def avg_depth(self, value: float):
@@ -281,6 +217,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_depth(self) -> Optional[float]:
         field = self.get_field(DiveSummaryMaxDepthField.ID)
@@ -289,6 +227,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_depth.setter
     def max_depth(self, value: float):
@@ -301,6 +241,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def surface_interval(self) -> Optional[int]:
         field = self.get_field(DiveSummarySurfaceIntervalField.ID)
@@ -309,6 +251,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @surface_interval.setter
     def surface_interval(self, value: int):
@@ -321,6 +265,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_cns(self) -> Optional[int]:
         field = self.get_field(DiveSummaryStartCnsField.ID)
@@ -329,6 +275,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_cns.setter
     def start_cns(self, value: int):
@@ -341,6 +289,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_cns(self) -> Optional[int]:
         field = self.get_field(DiveSummaryEndCnsField.ID)
@@ -349,6 +299,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_cns.setter
     def end_cns(self, value: int):
@@ -361,6 +313,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def start_n2(self) -> Optional[int]:
         field = self.get_field(DiveSummaryStartN2Field.ID)
@@ -369,6 +323,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @start_n2.setter
     def start_n2(self, value: int):
@@ -381,6 +337,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def end_n2(self) -> Optional[int]:
         field = self.get_field(DiveSummaryEndN2Field.ID)
@@ -389,6 +347,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @end_n2.setter
     def end_n2(self, value: int):
@@ -401,6 +361,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def o2_toxicity(self) -> Optional[int]:
         field = self.get_field(DiveSummaryO2ToxicityField.ID)
@@ -409,6 +371,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @o2_toxicity.setter
     def o2_toxicity(self, value: int):
@@ -421,6 +385,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def dive_number(self) -> Optional[int]:
         field = self.get_field(DiveSummaryDiveNumberField.ID)
@@ -429,6 +395,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @dive_number.setter
     def dive_number(self, value: int):
@@ -441,6 +409,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def bottom_time(self) -> Optional[float]:
         field = self.get_field(DiveSummaryBottomTimeField.ID)
@@ -449,6 +419,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @bottom_time.setter
     def bottom_time(self, value: float):
@@ -461,6 +433,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_pressure_sac(self) -> Optional[float]:
         field = self.get_field(DiveSummaryAvgPressureSacField.ID)
@@ -469,6 +443,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_pressure_sac.setter
     def avg_pressure_sac(self, value: float):
@@ -481,6 +457,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_volume_sac(self) -> Optional[float]:
         field = self.get_field(DiveSummaryAvgVolumeSacField.ID)
@@ -489,6 +467,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_volume_sac.setter
     def avg_volume_sac(self, value: float):
@@ -501,6 +481,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_rmv(self) -> Optional[float]:
         field = self.get_field(DiveSummaryAvgRmvField.ID)
@@ -509,6 +491,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_rmv.setter
     def avg_rmv(self, value: float):
@@ -521,6 +505,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def descent_time(self) -> Optional[float]:
         field = self.get_field(DiveSummaryDescentTimeField.ID)
@@ -529,6 +515,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @descent_time.setter
     def descent_time(self, value: float):
@@ -541,6 +529,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def ascent_time(self) -> Optional[float]:
         field = self.get_field(DiveSummaryAscentTimeField.ID)
@@ -549,6 +539,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @ascent_time.setter
     def ascent_time(self, value: float):
@@ -561,6 +553,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_ascent_rate(self) -> Optional[float]:
         field = self.get_field(DiveSummaryAvgAscentRateField.ID)
@@ -569,6 +563,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_ascent_rate.setter
     def avg_ascent_rate(self, value: float):
@@ -581,6 +577,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def avg_descent_rate(self) -> Optional[float]:
         field = self.get_field(DiveSummaryAvgDescentRateField.ID)
@@ -589,6 +587,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @avg_descent_rate.setter
     def avg_descent_rate(self, value: float):
@@ -601,6 +601,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_ascent_rate(self) -> Optional[float]:
         field = self.get_field(DiveSummaryMaxAscentRateField.ID)
@@ -609,6 +611,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_ascent_rate.setter
     def max_ascent_rate(self, value: float):
@@ -621,6 +625,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def max_descent_rate(self) -> Optional[float]:
         field = self.get_field(DiveSummaryMaxDescentRateField.ID)
@@ -629,6 +635,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @max_descent_rate.setter
     def max_descent_rate(self, value: float):
@@ -641,6 +649,8 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def hang_time(self) -> Optional[float]:
         field = self.get_field(DiveSummaryHangTimeField.ID)
@@ -649,6 +659,8 @@ class DiveSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @hang_time.setter
     def hang_time(self, value: float):
@@ -661,22 +673,28 @@ class DiveSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -685,14 +703,15 @@ class DiveSummaryReferenceMesgField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="reference_mesg",
+            name='reference_mesg',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -701,14 +720,15 @@ class DiveSummaryReferenceIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="reference_index",
+            name='reference_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -717,16 +737,17 @@ class DiveSummaryAvgDepthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_depth",
+            name='avg_depth',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -735,16 +756,17 @@ class DiveSummaryMaxDepthField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_depth",
+            name='max_depth',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -753,16 +775,17 @@ class DiveSummarySurfaceIntervalField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="surface_interval",
+            name='surface_interval',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -771,16 +794,17 @@ class DiveSummaryStartCnsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_cns",
+            name='start_cns',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -789,16 +813,17 @@ class DiveSummaryEndCnsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_cns",
+            name='end_cns',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -807,16 +832,17 @@ class DiveSummaryStartN2Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="start_n2",
+            name='start_n2',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -825,16 +851,17 @@ class DiveSummaryEndN2Field(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="end_n2",
+            name='end_n2',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="percent",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'percent',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -843,16 +870,17 @@ class DiveSummaryO2ToxicityField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="o2_toxicity",
+            name='o2_toxicity',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            units="OTUs",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'OTUs',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -861,14 +889,15 @@ class DiveSummaryDiveNumberField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="dive_number",
+            name='dive_number',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -877,16 +906,17 @@ class DiveSummaryBottomTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="bottom_time",
+            name='bottom_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -895,16 +925,17 @@ class DiveSummaryAvgPressureSacField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_pressure_sac",
+            name='avg_pressure_sac',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="bar/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'bar/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -913,16 +944,17 @@ class DiveSummaryAvgVolumeSacField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_volume_sac",
+            name='avg_volume_sac',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="L/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'L/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -931,16 +963,17 @@ class DiveSummaryAvgRmvField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_rmv",
+            name='avg_rmv',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=100,
-            size=size,
-            units="L/min",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'L/min',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -949,16 +982,17 @@ class DiveSummaryDescentTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="descent_time",
+            name='descent_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -967,16 +1001,17 @@ class DiveSummaryAscentTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="ascent_time",
+            name='ascent_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -985,16 +1020,17 @@ class DiveSummaryAvgAscentRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_ascent_rate",
+            name='avg_ascent_rate',
             field_id=self.ID,
             base_type=BaseType.SINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1003,16 +1039,17 @@ class DiveSummaryAvgDescentRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="avg_descent_rate",
+            name='avg_descent_rate',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1021,16 +1058,17 @@ class DiveSummaryMaxAscentRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_ascent_rate",
+            name='max_ascent_rate',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1039,16 +1077,17 @@ class DiveSummaryMaxDescentRateField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="max_descent_rate",
+            name='max_descent_rate',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="m/s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -1057,14 +1096,15 @@ class DiveSummaryHangTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="hang_time",
+            name='hang_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1000,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )

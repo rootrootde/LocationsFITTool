@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class TotalsMessage(DataMessage):
     ID = 33
-    NAME = "totals"
+    NAME = 'totals'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,95 +29,58 @@ class TotalsMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=TotalsMessage.NAME,
-            global_id=TotalsMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                MessageIndexField(
-                    size=self.__get_field_size(
-                        definition_message, MessageIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                TotalsTimerTimeField(
-                    size=self.__get_field_size(
-                        definition_message, TotalsTimerTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TotalsDistanceField(
-                    size=self.__get_field_size(
-                        definition_message, TotalsDistanceField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TotalsCaloriesField(
-                    size=self.__get_field_size(
-                        definition_message, TotalsCaloriesField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TotalsSportField(
-                    size=self.__get_field_size(definition_message, TotalsSportField.ID),
-                    growable=definition_message is None,
-                ),
-                TotalsElapsedTimeField(
-                    size=self.__get_field_size(
-                        definition_message, TotalsElapsedTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TotalsSessionsField(
-                    size=self.__get_field_size(
-                        definition_message, TotalsSessionsField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TotalsActiveTimeField(
-                    size=self.__get_field_size(
-                        definition_message, TotalsActiveTimeField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                TotalsSportIndexField(
-                    size=self.__get_field_size(
-                        definition_message, TotalsSportIndexField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=TotalsMessage.NAME,
+                         global_id=TotalsMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        MessageIndexField(
+            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+            growable=definition_message is None), 
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        TotalsTimerTimeField(
+            size=self.__get_field_size(definition_message, TotalsTimerTimeField.ID),
+            growable=definition_message is None), 
+        TotalsDistanceField(
+            size=self.__get_field_size(definition_message, TotalsDistanceField.ID),
+            growable=definition_message is None), 
+        TotalsCaloriesField(
+            size=self.__get_field_size(definition_message, TotalsCaloriesField.ID),
+            growable=definition_message is None), 
+        TotalsSportField(
+            size=self.__get_field_size(definition_message, TotalsSportField.ID),
+            growable=definition_message is None), 
+        TotalsElapsedTimeField(
+            size=self.__get_field_size(definition_message, TotalsElapsedTimeField.ID),
+            growable=definition_message is None), 
+        TotalsSessionsField(
+            size=self.__get_field_size(definition_message, TotalsSessionsField.ID),
+            growable=definition_message is None), 
+        TotalsActiveTimeField(
+            size=self.__get_field_size(definition_message, TotalsActiveTimeField.ID),
+            growable=definition_message is None), 
+        TotalsSportIndexField(
+            size=self.__get_field_size(definition_message, TotalsSportIndexField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
+
+
+
 
     @property
     def message_index(self) -> Optional[int]:
@@ -125,6 +90,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @message_index.setter
     def message_index(self, value: int):
@@ -137,7 +104,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -147,6 +115,7 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -161,6 +130,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def timer_time(self) -> Optional[int]:
         field = self.get_field(TotalsTimerTimeField.ID)
@@ -169,6 +140,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @timer_time.setter
     def timer_time(self, value: int):
@@ -181,6 +154,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def distance(self) -> Optional[int]:
         field = self.get_field(TotalsDistanceField.ID)
@@ -189,6 +164,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @distance.setter
     def distance(self, value: int):
@@ -201,6 +178,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def calories(self) -> Optional[int]:
         field = self.get_field(TotalsCaloriesField.ID)
@@ -209,6 +188,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @calories.setter
     def calories(self, value: int):
@@ -221,6 +202,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sport(self) -> Optional[Sport]:
         field = self.get_field(TotalsSportField.ID)
@@ -229,6 +212,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sport.setter
     def sport(self, value: Sport):
@@ -241,6 +226,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def elapsed_time(self) -> Optional[int]:
         field = self.get_field(TotalsElapsedTimeField.ID)
@@ -249,6 +236,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @elapsed_time.setter
     def elapsed_time(self, value: int):
@@ -261,6 +250,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sessions(self) -> Optional[int]:
         field = self.get_field(TotalsSessionsField.ID)
@@ -269,6 +260,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sessions.setter
     def sessions(self, value: int):
@@ -281,6 +274,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def active_time(self) -> Optional[int]:
         field = self.get_field(TotalsActiveTimeField.ID)
@@ -289,6 +284,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @active_time.setter
     def active_time(self, value: int):
@@ -301,6 +298,8 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def sport_index(self) -> Optional[int]:
         field = self.get_field(TotalsSportIndexField.ID)
@@ -309,6 +308,8 @@ class TotalsMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @sport_index.setter
     def sport_index(self, value: int):
@@ -321,20 +322,26 @@ class TotalsMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class MessageIndexField(Field):
     ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="message_index",
+            name='message_index',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -343,16 +350,17 @@ class TimestampField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -361,16 +369,17 @@ class TotalsTimerTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timer_time",
+            name='timer_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -379,16 +388,17 @@ class TotalsDistanceField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="distance",
+            name='distance',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="m",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -397,16 +407,17 @@ class TotalsCaloriesField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="calories",
+            name='calories',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="kcal",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kcal',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -415,14 +426,15 @@ class TotalsSportField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sport",
+            name='sport',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -431,16 +443,17 @@ class TotalsElapsedTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="elapsed_time",
+            name='elapsed_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -449,14 +462,15 @@ class TotalsSessionsField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sessions",
+            name='sessions',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -465,16 +479,17 @@ class TotalsActiveTimeField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="active_time",
+            name='active_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=0,
-            scale=1,
-            size=size,
-            units="s",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -483,12 +498,13 @@ class TotalsSportIndexField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="sport_index",
+            name='sport_index',
             field_id=self.ID,
             base_type=BaseType.UINT8,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )

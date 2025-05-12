@@ -9,13 +9,15 @@ from fit_tool.definition_message import DefinitionMessage
 from fit_tool.developer_field import DeveloperField
 from fit_tool.endian import Endian
 from fit_tool.field import Field
+from fit_tool.sub_field import SubField
 from fit_tool.profile.profile_type import *
 from typing import List as list
+from typing import Dict as dict
 
 
 class HrvStatusSummaryMessage(DataMessage):
     ID = 370
-    NAME = "hrv_status_summary"
+    NAME = 'hrv_status_summary'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -27,89 +29,53 @@ class HrvStatusSummaryMessage(DataMessage):
 
         return size
 
-    def __init__(
-        self,
-        definition_message=None,
-        developer_fields=None,
-        local_id: int = 0,
-        endian: Endian = Endian.LITTLE,
-    ):
-        super().__init__(
-            name=HrvStatusSummaryMessage.NAME,
-            global_id=HrvStatusSummaryMessage.ID,
-            local_id=definition_message.local_id if definition_message else local_id,
-            endian=definition_message.endian if definition_message else endian,
-            definition_message=definition_message,
-            developer_fields=developer_fields,
-            fields=[
-                TimestampField(
-                    size=self.__get_field_size(definition_message, TimestampField.ID),
-                    growable=definition_message is None,
-                ),
-                HrvStatusSummaryWeeklyAverageField(
-                    size=self.__get_field_size(
-                        definition_message, HrvStatusSummaryWeeklyAverageField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HrvStatusSummaryLastNightAverageField(
-                    size=self.__get_field_size(
-                        definition_message, HrvStatusSummaryLastNightAverageField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HrvStatusSummaryLastNight5MinHighField(
-                    size=self.__get_field_size(
-                        definition_message, HrvStatusSummaryLastNight5MinHighField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HrvStatusSummaryBaselineLowUpperField(
-                    size=self.__get_field_size(
-                        definition_message, HrvStatusSummaryBaselineLowUpperField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-                HrvStatusSummaryBaselineBalancedLowerField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        HrvStatusSummaryBaselineBalancedLowerField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                HrvStatusSummaryBaselineBalancedUpperField(
-                    size=self.__get_field_size(
-                        definition_message,
-                        HrvStatusSummaryBaselineBalancedUpperField.ID,
-                    ),
-                    growable=definition_message is None,
-                ),
-                HrvStatusSummaryStatusField(
-                    size=self.__get_field_size(
-                        definition_message, HrvStatusSummaryStatusField.ID
-                    ),
-                    growable=definition_message is None,
-                ),
-            ],
-        )
+    def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
+                 endian: Endian = Endian.LITTLE):
+        super().__init__(name=HrvStatusSummaryMessage.NAME,
+                         global_id=HrvStatusSummaryMessage.ID,
+                         local_id=definition_message.local_id if definition_message else local_id,
+                         endian=definition_message.endian if definition_message else endian,
+                         definition_message=definition_message,
+                         developer_fields=developer_fields,
+                         fields=[
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        HrvStatusSummaryWeeklyAverageField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryWeeklyAverageField.ID),
+            growable=definition_message is None), 
+        HrvStatusSummaryLastNightAverageField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryLastNightAverageField.ID),
+            growable=definition_message is None), 
+        HrvStatusSummaryLastNight5MinHighField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryLastNight5MinHighField.ID),
+            growable=definition_message is None), 
+        HrvStatusSummaryBaselineLowUpperField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryBaselineLowUpperField.ID),
+            growable=definition_message is None), 
+        HrvStatusSummaryBaselineBalancedLowerField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryBaselineBalancedLowerField.ID),
+            growable=definition_message is None), 
+        HrvStatusSummaryBaselineBalancedUpperField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryBaselineBalancedUpperField.ID),
+            growable=definition_message is None), 
+        HrvStatusSummaryStatusField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryStatusField.ID),
+            growable=definition_message is None)
+        ])
 
         self.growable = self.definition_message is None
 
     @classmethod
-    def from_bytes(
-        cls,
-        definition_message: DefinitionMessage,
-        developer_fields: list[DeveloperField],
-        bytes_buffer: bytes,
-        offset: int = 0,
-    ):
-        message = cls(
-            definition_message=definition_message, developer_fields=developer_fields
-        )
+    def from_bytes(cls, definition_message: DefinitionMessage, developer_fields: list[DeveloperField],
+                   bytes_buffer: bytes, offset: int = 0):
+        message = cls(definition_message=definition_message, developer_fields=developer_fields)
         message.read_from_bytes(bytes_buffer, offset)
         return message
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
     def timestamp(self) -> Optional[int]:
@@ -119,6 +85,7 @@ class HrvStatusSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
@@ -133,6 +100,8 @@ class HrvStatusSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def weekly_average(self) -> Optional[float]:
         field = self.get_field(HrvStatusSummaryWeeklyAverageField.ID)
@@ -141,6 +110,8 @@ class HrvStatusSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @weekly_average.setter
     def weekly_average(self, value: float):
@@ -153,6 +124,8 @@ class HrvStatusSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def last_night_average(self) -> Optional[float]:
         field = self.get_field(HrvStatusSummaryLastNightAverageField.ID)
@@ -161,6 +134,8 @@ class HrvStatusSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @last_night_average.setter
     def last_night_average(self, value: float):
@@ -173,6 +148,8 @@ class HrvStatusSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def last_night_5_min_high(self) -> Optional[float]:
         field = self.get_field(HrvStatusSummaryLastNight5MinHighField.ID)
@@ -181,6 +158,8 @@ class HrvStatusSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @last_night_5_min_high.setter
     def last_night_5_min_high(self, value: float):
@@ -193,6 +172,8 @@ class HrvStatusSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def baseline_low_upper(self) -> Optional[float]:
         field = self.get_field(HrvStatusSummaryBaselineLowUpperField.ID)
@@ -201,6 +182,8 @@ class HrvStatusSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @baseline_low_upper.setter
     def baseline_low_upper(self, value: float):
@@ -213,6 +196,8 @@ class HrvStatusSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def baseline_balanced_lower(self) -> Optional[float]:
         field = self.get_field(HrvStatusSummaryBaselineBalancedLowerField.ID)
@@ -221,6 +206,8 @@ class HrvStatusSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @baseline_balanced_lower.setter
     def baseline_balanced_lower(self, value: float):
@@ -233,6 +220,8 @@ class HrvStatusSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def baseline_balanced_upper(self) -> Optional[float]:
         field = self.get_field(HrvStatusSummaryBaselineBalancedUpperField.ID)
@@ -241,6 +230,8 @@ class HrvStatusSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @baseline_balanced_upper.setter
     def baseline_balanced_upper(self, value: float):
@@ -253,6 +244,8 @@ class HrvStatusSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
     @property
     def status(self) -> Optional[HrvStatus]:
         field = self.get_field(HrvStatusSummaryStatusField.ID)
@@ -261,6 +254,8 @@ class HrvStatusSummaryMessage(DataMessage):
             return field.get_value(sub_field=sub_field)
         else:
             return None
+
+
 
     @status.setter
     def status(self, value: HrvStatus):
@@ -273,22 +268,28 @@ class HrvStatusSummaryMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
+    
+
+
+
+
 
 class TimestampField(Field):
     ID = 253
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="timestamp",
+            name='timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
-            offset=-631065600000,
-            scale=0.001,
-            size=size,
-            units="ms",
-            type_name="date_time",
-            growable=growable,
-            sub_fields=[],
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -297,16 +298,17 @@ class HrvStatusSummaryWeeklyAverageField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="weekly_average",
+            name='weekly_average',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=128,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -315,16 +317,17 @@ class HrvStatusSummaryLastNightAverageField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="last_night_average",
+            name='last_night_average',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=128,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -333,16 +336,17 @@ class HrvStatusSummaryLastNight5MinHighField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="last_night_5_min_high",
+            name='last_night_5_min_high',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=128,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -351,16 +355,17 @@ class HrvStatusSummaryBaselineLowUpperField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="baseline_low_upper",
+            name='baseline_low_upper',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=128,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -369,16 +374,17 @@ class HrvStatusSummaryBaselineBalancedLowerField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="baseline_balanced_lower",
+            name='baseline_balanced_lower',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=128,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -387,16 +393,17 @@ class HrvStatusSummaryBaselineBalancedUpperField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="baseline_balanced_upper",
+            name='baseline_balanced_upper',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-            offset=0,
-            scale=128,
-            size=size,
-            units="ms",
-            type_name="",
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
         )
 
 
@@ -405,12 +412,13 @@ class HrvStatusSummaryStatusField(Field):
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name="status",
+            name='status',
             field_id=self.ID,
             base_type=BaseType.ENUM,
-            offset=0,
-            scale=1,
-            size=size,
-            growable=growable,
-            sub_fields=[],
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
         )
