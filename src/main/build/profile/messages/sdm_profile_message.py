@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class SdmProfileMessage(DataMessage):
+    ID = 5
+    NAME = 'sdm_profile'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,8 +31,8 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=SdmProfileMessage.NAME,
+                         global_id=SdmProfileMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
@@ -41,26 +41,26 @@ class LocationMessage(DataMessage):
         MessageIndexField(
             size=self.__get_field_size(definition_message, MessageIndexField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        SdmProfileEnabledField(
+            size=self.__get_field_size(definition_message, SdmProfileEnabledField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        SdmProfileSdmAntIdField(
+            size=self.__get_field_size(definition_message, SdmProfileSdmAntIdField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        SdmProfileSdmCalFactorField(
+            size=self.__get_field_size(definition_message, SdmProfileSdmCalFactorField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        SdmProfileOdometerField(
+            size=self.__get_field_size(definition_message, SdmProfileOdometerField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        SdmProfileSpeedSourceField(
+            size=self.__get_field_size(definition_message, SdmProfileSpeedSourceField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        SdmProfileSdmAntIdTransTypeField(
+            size=self.__get_field_size(definition_message, SdmProfileSdmAntIdTransTypeField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        SdmProfileOdometerRolloverField(
+            size=self.__get_field_size(definition_message, SdmProfileOdometerRolloverField.ID),
             growable=definition_message is None)
         ])
 
@@ -99,11 +99,10 @@ class LocationMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
     
-# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+    def enabled(self) -> Optional[bool]:
+        field = self.get_field(SdmProfileEnabledField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -111,11 +110,10 @@ class LocationMessage(DataMessage):
             return None
 
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
+    @enabled.setter
+    def enabled(self, value: bool):
+        field = self.get_field(SdmProfileEnabledField.ID)
 
         if field:
             if value is None:
@@ -127,8 +125,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def sdm_ant_id(self) -> Optional[int]:
+        field = self.get_field(SdmProfileSdmAntIdField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +135,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @sdm_ant_id.setter
+    def sdm_ant_id(self, value: int):
+        field = self.get_field(SdmProfileSdmAntIdField.ID)
 
         if field:
             if value is None:
@@ -151,8 +149,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def sdm_cal_factor(self) -> Optional[float]:
+        field = self.get_field(SdmProfileSdmCalFactorField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +159,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @sdm_cal_factor.setter
+    def sdm_cal_factor(self, value: float):
+        field = self.get_field(SdmProfileSdmCalFactorField.ID)
 
         if field:
             if value is None:
@@ -175,8 +173,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def odometer(self) -> Optional[float]:
+        field = self.get_field(SdmProfileOdometerField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +183,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @odometer.setter
+    def odometer(self, value: float):
+        field = self.get_field(SdmProfileOdometerField.ID)
 
         if field:
             if value is None:
@@ -199,8 +197,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def speed_source(self) -> Optional[bool]:
+        field = self.get_field(SdmProfileSpeedSourceField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +207,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @speed_source.setter
+    def speed_source(self, value: bool):
+        field = self.get_field(SdmProfileSpeedSourceField.ID)
 
         if field:
             if value is None:
@@ -223,8 +221,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def sdm_ant_id_trans_type(self) -> Optional[int]:
+        field = self.get_field(SdmProfileSdmAntIdTransTypeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,9 +231,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @sdm_ant_id_trans_type.setter
+    def sdm_ant_id_trans_type(self, value: int):
+        field = self.get_field(SdmProfileSdmAntIdTransTypeField.ID)
 
         if field:
             if value is None:
@@ -247,8 +245,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def odometer_rollover(self) -> Optional[int]:
+        field = self.get_field(SdmProfileOdometerRolloverField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +255,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @odometer_rollover.setter
+    def odometer_rollover(self, value: int):
+        field = self.get_field(SdmProfileOdometerRolloverField.ID)
 
         if field:
             if value is None:
@@ -291,33 +289,14 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='timestamp',
-            field_id=self.ID,
-            base_type=BaseType.UINT32,
-        offset = -631065600000,
-                 scale = 0.001,
-                         size = size,
-        units = 'ms',
-        type_name = 'date_time',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationNameField(Field):
+class SdmProfileEnabledField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='enabled',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT8,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -327,52 +306,14 @@ class LocationNameField(Field):
         )
 
 
-class LocationPositionLatField(Field):
+class SdmProfileSdmAntIdField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='sdm_ant_id',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLongField(Field):
-    ID = 2
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_long',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.UINT16Z,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -382,16 +323,35 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
-    ID = 4
+class SdmProfileSdmCalFactorField(Field):
+    ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='sdm_cal_factor',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+        offset = 0,
+                 scale = 10,
+                         size = size,
+        units = '%',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SdmProfileOdometerField(Field):
+    ID = 3
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='odometer',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 100,
                          size = size,
         units = 'm',
         type_name = '',
@@ -401,14 +361,48 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
-    ID = 6
+class SdmProfileSpeedSourceField(Field):
+    ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='speed_source',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT8,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SdmProfileSdmAntIdTransTypeField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='sdm_ant_id_trans_type',
+            field_id=self.ID,
+            base_type=BaseType.UINT8Z,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SdmProfileOdometerRolloverField(Field):
+    ID = 7
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='odometer_rollover',
+            field_id=self.ID,
+            base_type=BaseType.UINT8,
         offset = 0,
                  scale = 1,
                          size = size,

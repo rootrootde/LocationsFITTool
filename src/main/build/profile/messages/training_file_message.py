@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class TrainingFileMessage(DataMessage):
+    ID = 72
+    NAME = 'training_file'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,30 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=TrainingFileMessage.NAME,
+                         global_id=TrainingFileMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        TrainingFileTypeField(
+            size=self.__get_field_size(definition_message, TrainingFileTypeField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        TrainingFileManufacturerField(
+            size=self.__get_field_size(definition_message, TrainingFileManufacturerField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        TrainingFileProductField(
+            size=self.__get_field_size(definition_message, TrainingFileProductField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        TrainingFileSerialNumberField(
+            size=self.__get_field_size(definition_message, TrainingFileSerialNumberField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        TrainingFileTimeCreatedField(
+            size=self.__get_field_size(definition_message, TrainingFileTimeCreatedField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +69,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +97,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def type(self) -> Optional[FileType]:
+        field = self.get_field(TrainingFileTypeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +107,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @type.setter
+    def type(self, value: FileType):
+        field = self.get_field(TrainingFileTypeField.ID)
 
         if field:
             if value is None:
@@ -151,8 +121,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def manufacturer(self) -> Optional[int]:
+        field = self.get_field(TrainingFileManufacturerField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +131,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @manufacturer.setter
+    def manufacturer(self, value: int):
+        field = self.get_field(TrainingFileManufacturerField.ID)
 
         if field:
             if value is None:
@@ -175,8 +145,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def product(self) -> Optional[int]:
+        field = self.get_field(TrainingFileProductField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +155,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @product.setter
+    def product(self, value: int):
+        field = self.get_field(TrainingFileProductField.ID)
 
         if field:
             if value is None:
@@ -197,22 +167,23 @@ class LocationMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
     
+
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
-        if field and field.is_valid():
+    def favero_product(self) -> Optional[int]:
+        field = self.get_field(TrainingFileProductField.ID)
+        type_field = self.get_field(TrainingFileManufacturerField.ID)
+
+        is_sub_field_valid = type_field and type_field.get_value() in [263]
+        if field and field.is_valid() and is_sub_field_valid:
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
         else:
             return None
 
-
-
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
-
+    @favero_product.setter
+    def favero_product(self, value: int):
+        field = self.get_field(TrainingFileProductField.ID)
         if field:
             if value is None:
                 field.clear()
@@ -220,35 +191,32 @@ class LocationMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
-        if field and field.is_valid():
+    def garmin_product(self) -> Optional[int]:
+        field = self.get_field(TrainingFileProductField.ID)
+        type_field = self.get_field(TrainingFileManufacturerField.ID)
+
+        is_sub_field_valid = type_field and type_field.get_value() in [1, 15, 13, 89]
+        if field and field.is_valid() and is_sub_field_valid:
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
         else:
             return None
 
-
-
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
+    @garmin_product.setter
+    def garmin_product(self, value: int):
+        field = self.get_field(TrainingFileProductField.ID)
         if field:
             if value is None:
                 field.clear()
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
-
-    
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def serial_number(self) -> Optional[int]:
+        field = self.get_field(TrainingFileSerialNumberField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +225,35 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @serial_number.setter
+    def serial_number(self, value: int):
+        field = self.get_field(TrainingFileSerialNumberField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def time_created(self) -> Optional[int]:
+        field = self.get_field(TrainingFileTimeCreatedField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @time_created.setter
+    def time_created(self, value: int):
+        field = self.get_field(TrainingFileTimeCreatedField.ID)
 
         if field:
             if value is None:
@@ -272,23 +266,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,14 +287,14 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class TrainingFileTypeField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='type',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -327,52 +304,64 @@ class LocationNameField(Field):
         )
 
 
-class LocationPositionLatField(Field):
+class TrainingFileManufacturerField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='manufacturer',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLongField(Field):
+class TrainingFileProductField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='product',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
-        type_name = '',
         growable = growable,
                    sub_fields = [
+        SubField(
+            name='favero_product',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        TrainingFileManufacturerField.ID: [263]
+        }), 
+        SubField(
+            name='garmin_product',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        TrainingFileManufacturerField.ID: [1, 15, 13, 89]
+        })
         ]
         )
 
 
-class LocationSymbolField(Field):
+class TrainingFileSerialNumberField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='serial_number',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.UINT32Z,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -382,36 +371,19 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
+class TrainingFileTimeCreatedField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='time_created',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
                          size = size,
-        units = 'm',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationDescriptionField(Field):
-    ID = 6
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='description',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
-                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
         growable = growable,
                    sub_fields = [
         ]

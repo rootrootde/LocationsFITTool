@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class MesgCapabilitiesMessage(DataMessage):
+    ID = 38
+    NAME = 'mesg_capabilities'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,8 +31,8 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=MesgCapabilitiesMessage.NAME,
+                         global_id=MesgCapabilitiesMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
@@ -41,26 +41,17 @@ class LocationMessage(DataMessage):
         MessageIndexField(
             size=self.__get_field_size(definition_message, MessageIndexField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        MesgCapabilitiesFileField(
+            size=self.__get_field_size(definition_message, MesgCapabilitiesFileField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        MesgCapabilitiesMesgNumField(
+            size=self.__get_field_size(definition_message, MesgCapabilitiesMesgNumField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        MesgCapabilitiesCountTypeField(
+            size=self.__get_field_size(definition_message, MesgCapabilitiesCountTypeField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
-            growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
-            growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        MesgCapabilitiesCountField(
+            size=self.__get_field_size(definition_message, MesgCapabilitiesCountField.ID),
             growable=definition_message is None)
         ])
 
@@ -99,11 +90,10 @@ class LocationMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
     
-# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+    def file(self) -> Optional[FileType]:
+        field = self.get_field(MesgCapabilitiesFileField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -111,11 +101,10 @@ class LocationMessage(DataMessage):
             return None
 
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
+    @file.setter
+    def file(self, value: FileType):
+        field = self.get_field(MesgCapabilitiesFileField.ID)
 
         if field:
             if value is None:
@@ -127,8 +116,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def mesg_num(self) -> Optional[int]:
+        field = self.get_field(MesgCapabilitiesMesgNumField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +126,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @mesg_num.setter
+    def mesg_num(self, value: int):
+        field = self.get_field(MesgCapabilitiesMesgNumField.ID)
 
         if field:
             if value is None:
@@ -151,8 +140,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def count_type(self) -> Optional[MesgCount]:
+        field = self.get_field(MesgCapabilitiesCountTypeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +150,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @count_type.setter
+    def count_type(self, value: MesgCount):
+        field = self.get_field(MesgCapabilitiesCountTypeField.ID)
 
         if field:
             if value is None:
@@ -175,8 +164,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def count(self) -> Optional[int]:
+        field = self.get_field(MesgCapabilitiesCountField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +174,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @count.setter
+    def count(self, value: int):
+        field = self.get_field(MesgCapabilitiesCountField.ID)
 
         if field:
             if value is None:
@@ -197,22 +186,23 @@ class LocationMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
     
+
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
-        if field and field.is_valid():
+    def num_per_file(self) -> Optional[int]:
+        field = self.get_field(MesgCapabilitiesCountField.ID)
+        type_field = self.get_field(MesgCapabilitiesCountTypeField.ID)
+
+        is_sub_field_valid = type_field and type_field.get_value() in [0]
+        if field and field.is_valid() and is_sub_field_valid:
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
         else:
             return None
 
-
-
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
-
+    @num_per_file.setter
+    def num_per_file(self, value: int):
+        field = self.get_field(MesgCapabilitiesCountField.ID)
         if field:
             if value is None:
                 field.clear()
@@ -220,23 +210,22 @@ class LocationMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
-        if field and field.is_valid():
+    def max_per_file(self) -> Optional[int]:
+        field = self.get_field(MesgCapabilitiesCountField.ID)
+        type_field = self.get_field(MesgCapabilitiesCountTypeField.ID)
+
+        is_sub_field_valid = type_field and type_field.get_value() in [1]
+        if field and field.is_valid() and is_sub_field_valid:
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
         else:
             return None
 
-
-
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
+    @max_per_file.setter
+    def max_per_file(self, value: int):
+        field = self.get_field(MesgCapabilitiesCountField.ID)
         if field:
             if value is None:
                 field.clear()
@@ -244,31 +233,28 @@ class LocationMessage(DataMessage):
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
 
-    
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
+    def max_per_file_type(self) -> Optional[int]:
+        field = self.get_field(MesgCapabilitiesCountField.ID)
+        type_field = self.get_field(MesgCapabilitiesCountTypeField.ID)
+
+        is_sub_field_valid = type_field and type_field.get_value() in [2]
+        if field and field.is_valid() and is_sub_field_valid:
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
         else:
             return None
 
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
-
+    @max_per_file_type.setter
+    def max_per_file_type(self, value: int):
+        field = self.get_field(MesgCapabilitiesCountField.ID)
         if field:
             if value is None:
                 field.clear()
             else:
                 sub_field = field.get_valid_sub_field(self.fields)
                 field.set_value(0, value, sub_field)
-
-    
 
 
 
@@ -291,33 +277,14 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='timestamp',
-            field_id=self.ID,
-            base_type=BaseType.UINT32,
-        offset = -631065600000,
-                 scale = 0.001,
-                         size = size,
-        units = 'ms',
-        type_name = 'date_time',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationNameField(Field):
+class MesgCapabilitiesFileField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='file',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -327,50 +294,46 @@ class LocationNameField(Field):
         )
 
 
-class LocationPositionLatField(Field):
+class MesgCapabilitiesMesgNumField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='mesg_num',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLongField(Field):
+class MesgCapabilitiesCountTypeField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='count_type',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.ENUM,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationSymbolField(Field):
+class MesgCapabilitiesCountField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='count',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
@@ -378,41 +341,29 @@ class LocationSymbolField(Field):
                          size = size,
         growable = growable,
                    sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
-    ID = 4
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='altitude',
-            field_id=self.ID,
+        SubField(
+            name='num_per_file',
             base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
-                         size = size,
-        units = 'm',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationDescriptionField(Field):
-    ID = 6
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='description',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        MesgCapabilitiesCountTypeField.ID: [0]
+        }), 
+        SubField(
+            name='max_per_file',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        MesgCapabilitiesCountTypeField.ID: [1]
+        }), 
+        SubField(
+            name='max_per_file_type',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        MesgCapabilitiesCountTypeField.ID: [2]
+        })
         ]
         )

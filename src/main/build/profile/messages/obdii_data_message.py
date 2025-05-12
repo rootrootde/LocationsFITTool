@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class ObdiiDataMessage(DataMessage):
+    ID = 174
+    NAME = 'obdii_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,39 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=ObdiiDataMessage.NAME,
+                         global_id=ObdiiDataMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        ObdiiDataTimestampMsField(
+            size=self.__get_field_size(definition_message, ObdiiDataTimestampMsField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        ObdiiDataTimeOffsetField(
+            size=self.__get_field_size(definition_message, ObdiiDataTimeOffsetField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        ObdiiDataPidField(
+            size=self.__get_field_size(definition_message, ObdiiDataPidField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        ObdiiDataRawDataField(
+            size=self.__get_field_size(definition_message, ObdiiDataRawDataField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        ObdiiDataPidDataSizeField(
+            size=self.__get_field_size(definition_message, ObdiiDataPidDataSizeField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        ObdiiDataSystemTimeField(
+            size=self.__get_field_size(definition_message, ObdiiDataSystemTimeField.ID),
+            growable=definition_message is None), 
+        ObdiiDataStartTimestampField(
+            size=self.__get_field_size(definition_message, ObdiiDataStartTimestampField.ID),
+            growable=definition_message is None), 
+        ObdiiDataStartTimestampMsField(
+            size=self.__get_field_size(definition_message, ObdiiDataStartTimestampMsField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +78,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +106,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(ObdiiDataTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +116,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @timestamp_ms.setter
+    def timestamp_ms(self, value: int):
+        field = self.get_field(ObdiiDataTimestampMsField.ID)
 
         if field:
             if value is None:
@@ -151,8 +130,30 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def time_offset(self) -> Optional[list[int]]:
+        field = self.get_field(ObdiiDataTimeOffsetField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @time_offset.setter
+    def time_offset(self, value: list[int]):
+        field = self.get_field(ObdiiDataTimeOffsetField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def pid(self) -> Optional[int]:
+        field = self.get_field(ObdiiDataPidField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +162,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @pid.setter
+    def pid(self, value: int):
+        field = self.get_field(ObdiiDataPidField.ID)
 
         if field:
             if value is None:
@@ -175,8 +176,75 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def raw_data(self) -> Optional[bytes]:
+        field = self.get_field(ObdiiDataRawDataField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @raw_data.setter
+    def raw_data(self, value: bytes):
+        field = self.get_field(ObdiiDataRawDataField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def pid_data_size(self) -> Optional[list[int]]:
+        field = self.get_field(ObdiiDataPidDataSizeField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @pid_data_size.setter
+    def pid_data_size(self, value: list[int]):
+        field = self.get_field(ObdiiDataPidDataSizeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def system_time(self) -> Optional[list[int]]:
+        field = self.get_field(ObdiiDataSystemTimeField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @system_time.setter
+    def system_time(self, value: list[int]):
+        field = self.get_field(ObdiiDataSystemTimeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def start_timestamp(self) -> Optional[int]:
+        field = self.get_field(ObdiiDataStartTimestampField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -184,10 +252,11 @@ class LocationMessage(DataMessage):
             return None
 
 
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @start_timestamp.setter
+    def start_timestamp(self, value: int):
+        field = self.get_field(ObdiiDataStartTimestampField.ID)
 
         if field:
             if value is None:
@@ -199,8 +268,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def start_timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(ObdiiDataStartTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,57 +278,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @start_timestamp_ms.setter
+    def start_timestamp_ms(self, value: int):
+        field = self.get_field(ObdiiDataStartTimestampMsField.ID)
 
         if field:
             if value is None:
@@ -272,23 +293,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,35 +314,37 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class ObdiiDataTimestampMsField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='timestamp_ms',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'ms',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class ObdiiDataTimeOffsetField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='time_offset',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
+        units = 'ms',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -346,33 +352,31 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
+class ObdiiDataPidField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='pid',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.BYTE,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationSymbolField(Field):
+class ObdiiDataRawDataField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='raw_data',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.BYTE,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -382,36 +386,72 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
+class ObdiiDataPidDataSizeField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='pid_data_size',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+            base_type=BaseType.UINT8,
+        offset = 0,
+                 scale = 1,
                          size = size,
-        units = 'm',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationDescriptionField(Field):
+class ObdiiDataSystemTimeField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='system_time',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class ObdiiDataStartTimestampField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='start_timestamp',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class ObdiiDataStartTimestampMsField(Field):
+    ID = 7
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='start_timestamp_ms',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'ms',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

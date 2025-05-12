@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class SegmentPointMessage(DataMessage):
+    ID = 150
+    NAME = 'segment_point'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,8 +31,8 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=SegmentPointMessage.NAME,
+                         global_id=SegmentPointMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
@@ -41,26 +41,23 @@ class LocationMessage(DataMessage):
         MessageIndexField(
             size=self.__get_field_size(definition_message, MessageIndexField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        SegmentPointPositionLatField(
+            size=self.__get_field_size(definition_message, SegmentPointPositionLatField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        SegmentPointPositionLongField(
+            size=self.__get_field_size(definition_message, SegmentPointPositionLongField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        SegmentPointDistanceField(
+            size=self.__get_field_size(definition_message, SegmentPointDistanceField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        SegmentPointAltitudeField(
+            size=self.__get_field_size(definition_message, SegmentPointAltitudeField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        SegmentPointLeaderTimeField(
+            size=self.__get_field_size(definition_message, SegmentPointLeaderTimeField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        SegmentPointEnhancedAltitudeField(
+            size=self.__get_field_size(definition_message, SegmentPointEnhancedAltitudeField.ID),
             growable=definition_message is None)
         ])
 
@@ -99,60 +96,10 @@ class LocationMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
     
-# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
-
-    @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
-
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 
     @property
     def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+        field = self.get_field(SegmentPointPositionLatField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -163,7 +110,7 @@ class LocationMessage(DataMessage):
 
     @position_lat.setter
     def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+        field = self.get_field(SegmentPointPositionLatField.ID)
 
         if field:
             if value is None:
@@ -176,7 +123,7 @@ class LocationMessage(DataMessage):
 
     @property
     def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+        field = self.get_field(SegmentPointPositionLongField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -187,7 +134,7 @@ class LocationMessage(DataMessage):
 
     @position_long.setter
     def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+        field = self.get_field(SegmentPointPositionLongField.ID)
 
         if field:
             if value is None:
@@ -199,8 +146,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def distance(self) -> Optional[float]:
+        field = self.get_field(SegmentPointDistanceField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +156,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @distance.setter
+    def distance(self, value: float):
+        field = self.get_field(SegmentPointDistanceField.ID)
 
         if field:
             if value is None:
@@ -224,7 +171,7 @@ class LocationMessage(DataMessage):
 
     @property
     def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+        field = self.get_field(SegmentPointAltitudeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -235,7 +182,7 @@ class LocationMessage(DataMessage):
 
     @altitude.setter
     def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+        field = self.get_field(SegmentPointAltitudeField.ID)
 
         if field:
             if value is None:
@@ -247,8 +194,30 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def leader_time(self) -> Optional[list[float]]:
+        field = self.get_field(SegmentPointLeaderTimeField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @leader_time.setter
+    def leader_time(self, value: list[float]):
+        field = self.get_field(SegmentPointLeaderTimeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def enhanced_altitude(self) -> Optional[float]:
+        field = self.get_field(SegmentPointEnhancedAltitudeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +226,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @enhanced_altitude.setter
+    def enhanced_altitude(self, value: float):
+        field = self.get_field(SegmentPointEnhancedAltitudeField.ID)
 
         if field:
             if value is None:
@@ -291,43 +260,7 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='timestamp',
-            field_id=self.ID,
-            base_type=BaseType.UINT32,
-        offset = -631065600000,
-                 scale = 0.001,
-                         size = size,
-        units = 'ms',
-        type_name = 'date_time',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationNameField(Field):
-    ID = 0
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='name',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLatField(Field):
+class SegmentPointPositionLatField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
@@ -346,7 +279,7 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
+class SegmentPointPositionLongField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
@@ -365,24 +298,26 @@ class LocationPositionLongField(Field):
         )
 
 
-class LocationSymbolField(Field):
+class SegmentPointDistanceField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='distance',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.UINT32,
         offset = 0,
-                 scale = 1,
+                 scale = 100,
                          size = size,
+        units = 'm',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationAltitudeField(Field):
+class SegmentPointAltitudeField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
@@ -401,17 +336,38 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
+class SegmentPointLeaderTimeField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='leader_time',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SegmentPointEnhancedAltitudeField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='enhanced_altitude',
             field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
+            base_type=BaseType.UINT32,
+        offset = 500,
+                 scale = 5,
                          size = size,
+        units = 'm',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

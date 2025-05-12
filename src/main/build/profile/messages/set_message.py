@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class SetMessage(DataMessage):
+    ID = 225
+    NAME = 'set'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,45 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=SetMessage.NAME,
+                         global_id=SetMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        SetDurationField(
+            size=self.__get_field_size(definition_message, SetDurationField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        SetRepetitionsField(
+            size=self.__get_field_size(definition_message, SetRepetitionsField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        SetWeightField(
+            size=self.__get_field_size(definition_message, SetWeightField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        SetSetTypeField(
+            size=self.__get_field_size(definition_message, SetSetTypeField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        SetStartTimeField(
+            size=self.__get_field_size(definition_message, SetStartTimeField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        SetCategoryField(
+            size=self.__get_field_size(definition_message, SetCategoryField.ID),
+            growable=definition_message is None), 
+        SetCategorySubtypeField(
+            size=self.__get_field_size(definition_message, SetCategorySubtypeField.ID),
+            growable=definition_message is None), 
+        SetWeightDisplayUnitField(
+            size=self.__get_field_size(definition_message, SetWeightDisplayUnitField.ID),
+            growable=definition_message is None), 
+        SetMessageIndexField(
+            size=self.__get_field_size(definition_message, SetMessageIndexField.ID),
+            growable=definition_message is None), 
+        SetWorkoutStepIndexField(
+            size=self.__get_field_size(definition_message, SetWorkoutStepIndexField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +84,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +112,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def duration(self) -> Optional[float]:
+        field = self.get_field(SetDurationField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +122,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @duration.setter
+    def duration(self, value: float):
+        field = self.get_field(SetDurationField.ID)
 
         if field:
             if value is None:
@@ -151,8 +136,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def repetitions(self) -> Optional[int]:
+        field = self.get_field(SetRepetitionsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +146,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @repetitions.setter
+    def repetitions(self, value: int):
+        field = self.get_field(SetRepetitionsField.ID)
 
         if field:
             if value is None:
@@ -175,8 +160,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def weight(self) -> Optional[float]:
+        field = self.get_field(SetWeightField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +170,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @weight.setter
+    def weight(self, value: float):
+        field = self.get_field(SetWeightField.ID)
 
         if field:
             if value is None:
@@ -199,8 +184,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def set_type(self) -> Optional[int]:
+        field = self.get_field(SetSetTypeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +194,35 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @set_type.setter
+    def set_type(self, value: int):
+        field = self.get_field(SetSetTypeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def start_time(self) -> Optional[int]:
+        field = self.get_field(SetStartTimeField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @start_time.setter
+    def start_time(self, value: int):
+        field = self.get_field(SetStartTimeField.ID)
 
         if field:
             if value is None:
@@ -223,8 +234,52 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def category(self) -> Optional[list[int]]:
+        field = self.get_field(SetCategoryField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @category.setter
+    def category(self, value: list[int]):
+        field = self.get_field(SetCategoryField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def category_subtype(self) -> Optional[list[int]]:
+        field = self.get_field(SetCategorySubtypeField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @category_subtype.setter
+    def category_subtype(self, value: list[int]):
+        field = self.get_field(SetCategorySubtypeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def weight_display_unit(self) -> Optional[int]:
+        field = self.get_field(SetWeightDisplayUnitField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,9 +288,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @weight_display_unit.setter
+    def weight_display_unit(self, value: int):
+        field = self.get_field(SetWeightDisplayUnitField.ID)
 
         if field:
             if value is None:
@@ -247,8 +302,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def message_index(self) -> Optional[int]:
+        field = self.get_field(SetMessageIndexField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +312,33 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @message_index.setter
+    def message_index(self, value: int):
+        field = self.get_field(SetMessageIndexField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def workout_step_index(self) -> Optional[int]:
+        field = self.get_field(SetWorkoutStepIndexField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @workout_step_index.setter
+    def workout_step_index(self, value: int):
+        field = self.get_field(SetWorkoutStepIndexField.ID)
 
         if field:
             if value is None:
@@ -272,27 +351,10 @@ class LocationMessage(DataMessage):
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
-    ID = 253
+    ID = 254
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
@@ -310,35 +372,18 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class SetDurationField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='duration',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT32,
         offset = 0,
-                 scale = 1,
+                 scale = 1000,
                          size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLatField(Field):
-    ID = 1
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_lat',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
+        units = 's',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -346,31 +391,12 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
-    ID = 2
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_long',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
+class SetRepetitionsField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='repetitions',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
@@ -382,18 +408,18 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
+class SetWeightField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='weight',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+        offset = 0,
+                 scale = 16,
                          size = size,
-        units = 'm',
+        units = 'kg',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -401,14 +427,118 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
+class SetSetTypeField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='set_type',
+            field_id=self.ID,
+            base_type=BaseType.UINT8,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SetStartTimeField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='start_time',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SetCategoryField(Field):
+    ID = 7
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='category',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SetCategorySubtypeField(Field):
+    ID = 8
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='category_subtype',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SetWeightDisplayUnitField(Field):
+    ID = 9
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='weight_display_unit',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SetMessageIndexField(Field):
+    ID = 10
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='message_index',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SetWorkoutStepIndexField(Field):
+    ID = 11
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='wkt_step_index',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,

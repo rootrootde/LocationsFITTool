@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class MagnetometerDataMessage(DataMessage):
+    ID = 208
+    NAME = 'magnetometer_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,39 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=MagnetometerDataMessage.NAME,
+                         global_id=MagnetometerDataMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        MagnetometerDataTimestampMsField(
+            size=self.__get_field_size(definition_message, MagnetometerDataTimestampMsField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        MagnetometerDataSampleTimeOffsetField(
+            size=self.__get_field_size(definition_message, MagnetometerDataSampleTimeOffsetField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        MagnetometerDataMagXField(
+            size=self.__get_field_size(definition_message, MagnetometerDataMagXField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        MagnetometerDataMagYField(
+            size=self.__get_field_size(definition_message, MagnetometerDataMagYField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        MagnetometerDataMagZField(
+            size=self.__get_field_size(definition_message, MagnetometerDataMagZField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        MagnetometerDataCalibratedMagXField(
+            size=self.__get_field_size(definition_message, MagnetometerDataCalibratedMagXField.ID),
+            growable=definition_message is None), 
+        MagnetometerDataCalibratedMagYField(
+            size=self.__get_field_size(definition_message, MagnetometerDataCalibratedMagYField.ID),
+            growable=definition_message is None), 
+        MagnetometerDataCalibratedMagZField(
+            size=self.__get_field_size(definition_message, MagnetometerDataCalibratedMagZField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +78,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +106,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(MagnetometerDataTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +116,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @timestamp_ms.setter
+    def timestamp_ms(self, value: int):
+        field = self.get_field(MagnetometerDataTimestampMsField.ID)
 
         if field:
             if value is None:
@@ -151,144 +130,161 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def sample_time_offset(self) -> Optional[list[int]]:
+        field = self.get_field(MagnetometerDataSampleTimeOffsetField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @sample_time_offset.setter
+    def sample_time_offset(self, value: list[int]):
+        field = self.get_field(MagnetometerDataSampleTimeOffsetField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def mag_x(self) -> Optional[list[int]]:
+        field = self.get_field(MagnetometerDataMagXField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @mag_x.setter
+    def mag_x(self, value: list[int]):
+        field = self.get_field(MagnetometerDataMagXField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def mag_y(self) -> Optional[list[int]]:
+        field = self.get_field(MagnetometerDataMagYField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @mag_y.setter
+    def mag_y(self, value: list[int]):
+        field = self.get_field(MagnetometerDataMagYField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def mag_z(self) -> Optional[list[int]]:
+        field = self.get_field(MagnetometerDataMagZField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @mag_z.setter
+    def mag_z(self, value: list[int]):
+        field = self.get_field(MagnetometerDataMagZField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def calibrated_mag_x(self) -> Optional[list[float]]:
+        field = self.get_field(MagnetometerDataCalibratedMagXField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @calibrated_mag_x.setter
+    def calibrated_mag_x(self, value: list[float]):
+        field = self.get_field(MagnetometerDataCalibratedMagXField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
+
+    
+
+    @property
+    def calibrated_mag_y(self) -> Optional[list[float]]:
+        field = self.get_field(MagnetometerDataCalibratedMagYField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @calibrated_mag_y.setter
+    def calibrated_mag_y(self, value: list[float]):
+        field = self.get_field(MagnetometerDataCalibratedMagYField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def calibrated_mag_z(self) -> Optional[list[float]]:
+        field = self.get_field(MagnetometerDataCalibratedMagZField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @calibrated_mag_z.setter
+    def calibrated_mag_z(self, value: list[float]):
+        field = self.get_field(MagnetometerDataCalibratedMagZField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
 
     
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,35 +306,37 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class MagnetometerDataTimestampMsField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='timestamp_ms',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'ms',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class MagnetometerDataSampleTimeOffsetField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='sample_time_offset',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
+        units = 'ms',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -346,18 +344,18 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
+class MagnetometerDataMagXField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='mag_x',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
+        units = 'counts',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -365,35 +363,18 @@ class LocationPositionLongField(Field):
         )
 
 
-class LocationSymbolField(Field):
+class MagnetometerDataMagYField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='mag_y',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
-    ID = 4
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='altitude',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
-                         size = size,
-        units = 'm',
+        units = 'counts',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -401,17 +382,76 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
+class MagnetometerDataMagZField(Field):
+    ID = 4
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='mag_z',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'counts',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class MagnetometerDataCalibratedMagXField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='calibrated_mag_x',
+            field_id=self.ID,
+            base_type=BaseType.FLOAT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'G',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class MagnetometerDataCalibratedMagYField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='calibrated_mag_y',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.FLOAT32,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'G',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class MagnetometerDataCalibratedMagZField(Field):
+    ID = 7
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='calibrated_mag_z',
+            field_id=self.ID,
+            base_type=BaseType.FLOAT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'G',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

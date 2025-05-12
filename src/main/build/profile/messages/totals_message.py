@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class TotalsMessage(DataMessage):
+    ID = 33
+    NAME = 'totals'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,8 +31,8 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=TotalsMessage.NAME,
+                         global_id=TotalsMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
@@ -44,23 +44,29 @@ class LocationMessage(DataMessage):
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        TotalsTimerTimeField(
+            size=self.__get_field_size(definition_message, TotalsTimerTimeField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        TotalsDistanceField(
+            size=self.__get_field_size(definition_message, TotalsDistanceField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        TotalsCaloriesField(
+            size=self.__get_field_size(definition_message, TotalsCaloriesField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        TotalsSportField(
+            size=self.__get_field_size(definition_message, TotalsSportField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        TotalsElapsedTimeField(
+            size=self.__get_field_size(definition_message, TotalsElapsedTimeField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        TotalsSessionsField(
+            size=self.__get_field_size(definition_message, TotalsSessionsField.ID),
+            growable=definition_message is None), 
+        TotalsActiveTimeField(
+            size=self.__get_field_size(definition_message, TotalsActiveTimeField.ID),
+            growable=definition_message is None), 
+        TotalsSportIndexField(
+            size=self.__get_field_size(definition_message, TotalsSportIndexField.ID),
             growable=definition_message is None)
         ])
 
@@ -127,8 +133,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def timer_time(self) -> Optional[int]:
+        field = self.get_field(TotalsTimerTimeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +143,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @timer_time.setter
+    def timer_time(self, value: int):
+        field = self.get_field(TotalsTimerTimeField.ID)
 
         if field:
             if value is None:
@@ -151,8 +157,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def distance(self) -> Optional[int]:
+        field = self.get_field(TotalsDistanceField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +167,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @distance.setter
+    def distance(self, value: int):
+        field = self.get_field(TotalsDistanceField.ID)
 
         if field:
             if value is None:
@@ -175,8 +181,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def calories(self) -> Optional[int]:
+        field = self.get_field(TotalsCaloriesField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +191,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @calories.setter
+    def calories(self, value: int):
+        field = self.get_field(TotalsCaloriesField.ID)
 
         if field:
             if value is None:
@@ -199,8 +205,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def sport(self) -> Optional[Sport]:
+        field = self.get_field(TotalsSportField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +215,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @sport.setter
+    def sport(self, value: Sport):
+        field = self.get_field(TotalsSportField.ID)
 
         if field:
             if value is None:
@@ -223,8 +229,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def elapsed_time(self) -> Optional[int]:
+        field = self.get_field(TotalsElapsedTimeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,9 +239,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @elapsed_time.setter
+    def elapsed_time(self, value: int):
+        field = self.get_field(TotalsElapsedTimeField.ID)
 
         if field:
             if value is None:
@@ -247,8 +253,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def sessions(self) -> Optional[int]:
+        field = self.get_field(TotalsSessionsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +263,57 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @sessions.setter
+    def sessions(self, value: int):
+        field = self.get_field(TotalsSessionsField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def active_time(self) -> Optional[int]:
+        field = self.get_field(TotalsActiveTimeField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @active_time.setter
+    def active_time(self, value: int):
+        field = self.get_field(TotalsActiveTimeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def sport_index(self) -> Optional[int]:
+        field = self.get_field(TotalsSportIndexField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @sport_index.setter
+    def sport_index(self, value: int):
+        field = self.get_field(TotalsSportIndexField.ID)
 
         if field:
             if value is None:
@@ -310,88 +364,35 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class TotalsTimerTimeField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='timer_time',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT32,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 's',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class TotalsDistanceField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='distance',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLongField(Field):
-    ID = 2
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_long',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.UINT32,
         offset = 0,
                  scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
-    ID = 4
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='altitude',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
                          size = size,
         units = 'm',
         type_name = '',
@@ -401,14 +402,105 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
+class TotalsCaloriesField(Field):
+    ID = 2
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='calories',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'kcal',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class TotalsSportField(Field):
+    ID = 3
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='sport',
+            field_id=self.ID,
+            base_type=BaseType.ENUM,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class TotalsElapsedTimeField(Field):
+    ID = 4
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='elapsed_time',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class TotalsSessionsField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='sessions',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class TotalsActiveTimeField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='active_time',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class TotalsSportIndexField(Field):
+    ID = 9
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='sport_index',
+            field_id=self.ID,
+            base_type=BaseType.UINT8,
         offset = 0,
                  scale = 1,
                          size = size,

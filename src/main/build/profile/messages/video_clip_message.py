@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class VideoClipMessage(DataMessage):
+    ID = 187
+    NAME = 'video_clip'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,33 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=VideoClipMessage.NAME,
+                         global_id=VideoClipMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+        VideoClipClipNumberField(
+            size=self.__get_field_size(definition_message, VideoClipClipNumberField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        VideoClipStartTimestampField(
+            size=self.__get_field_size(definition_message, VideoClipStartTimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        VideoClipStartTimestampMsField(
+            size=self.__get_field_size(definition_message, VideoClipStartTimestampMsField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        VideoClipEndTimestampField(
+            size=self.__get_field_size(definition_message, VideoClipEndTimestampField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        VideoClipEndTimestampMsField(
+            size=self.__get_field_size(definition_message, VideoClipEndTimestampMsField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        VideoClipClipStartField(
+            size=self.__get_field_size(definition_message, VideoClipClipStartField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        VideoClipClipEndField(
+            size=self.__get_field_size(definition_message, VideoClipClipEndField.ID),
             growable=definition_message is None)
         ])
 
@@ -77,8 +74,8 @@ class LocationMessage(DataMessage):
 
 
     @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
+    def clip_number(self) -> Optional[int]:
+        field = self.get_field(VideoClipClipNumberField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -87,9 +84,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
+    @clip_number.setter
+    def clip_number(self, value: int):
+        field = self.get_field(VideoClipClipNumberField.ID)
 
         if field:
             if value is None:
@@ -102,8 +99,8 @@ class LocationMessage(DataMessage):
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+    def start_timestamp(self) -> Optional[int]:
+        field = self.get_field(VideoClipStartTimestampField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -113,9 +110,9 @@ class LocationMessage(DataMessage):
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
+    @start_timestamp.setter
+    def start_timestamp(self, value: int):
+        field = self.get_field(VideoClipStartTimestampField.ID)
 
         if field:
             if value is None:
@@ -127,8 +124,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def start_timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(VideoClipStartTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +134,35 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @start_timestamp_ms.setter
+    def start_timestamp_ms(self, value: int):
+        field = self.get_field(VideoClipStartTimestampMsField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def end_timestamp(self) -> Optional[int]:
+        field = self.get_field(VideoClipEndTimestampField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @end_timestamp.setter
+    def end_timestamp(self, value: int):
+        field = self.get_field(VideoClipEndTimestampField.ID)
 
         if field:
             if value is None:
@@ -151,8 +174,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def end_timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(VideoClipEndTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +184,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @end_timestamp_ms.setter
+    def end_timestamp_ms(self, value: int):
+        field = self.get_field(VideoClipEndTimestampMsField.ID)
 
         if field:
             if value is None:
@@ -175,8 +198,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def clip_start(self) -> Optional[int]:
+        field = self.get_field(VideoClipClipStartField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +208,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @clip_start.setter
+    def clip_start(self, value: int):
+        field = self.get_field(VideoClipClipStartField.ID)
 
         if field:
             if value is None:
@@ -199,8 +222,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def clip_end(self) -> Optional[int]:
+        field = self.get_field(VideoClipClipEndField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,57 +232,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @clip_end.setter
+    def clip_end(self, value: int):
+        field = self.get_field(VideoClipClipEndField.ID)
 
         if field:
             if value is None:
@@ -274,12 +249,12 @@ class LocationMessage(DataMessage):
 
 
 
-class MessageIndexField(Field):
-    ID = 254
+class VideoClipClipNumberField(Field):
+    ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='message_index',
+            name='clip_number',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
@@ -291,12 +266,12 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
+class VideoClipStartTimestampField(Field):
+    ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='timestamp',
+            name='start_timestamp',
             field_id=self.ID,
             base_type=BaseType.UINT32,
         offset = -631065600000,
@@ -310,67 +285,48 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
-    ID = 0
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='name',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLatField(Field):
-    ID = 1
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_lat',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLongField(Field):
+class VideoClipStartTimestampMsField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='start_timestamp_ms',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationSymbolField(Field):
+class VideoClipEndTimestampField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='end_timestamp',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class VideoClipEndTimestampMsField(Field):
+    ID = 4
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='end_timestamp_ms',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
@@ -382,18 +338,18 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
-    ID = 4
+class VideoClipClipStartField(Field):
+    ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='clip_start',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
                          size = size,
-        units = 'm',
+        units = 'ms',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -401,17 +357,19 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
-    ID = 6
+class VideoClipClipEndField(Field):
+    ID = 7
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='clip_end',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT32,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'ms',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

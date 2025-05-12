@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class WeatherAlertMessage(DataMessage):
+    ID = 129
+    NAME = 'weather_alert'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,30 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=WeatherAlertMessage.NAME,
+                         global_id=WeatherAlertMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        WeatherAlertReportIdField(
+            size=self.__get_field_size(definition_message, WeatherAlertReportIdField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        WeatherAlertIssueTimeField(
+            size=self.__get_field_size(definition_message, WeatherAlertIssueTimeField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        WeatherAlertExpireTimeField(
+            size=self.__get_field_size(definition_message, WeatherAlertExpireTimeField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        WeatherAlertSeverityField(
+            size=self.__get_field_size(definition_message, WeatherAlertSeverityField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        WeatherAlertTypeField(
+            size=self.__get_field_size(definition_message, WeatherAlertTypeField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +69,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +97,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def report_id(self) -> Optional[str]:
+        field = self.get_field(WeatherAlertReportIdField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +107,61 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @report_id.setter
+    def report_id(self, value: str):
+        field = self.get_field(WeatherAlertReportIdField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def issue_time(self) -> Optional[int]:
+        field = self.get_field(WeatherAlertIssueTimeField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @issue_time.setter
+    def issue_time(self, value: int):
+        field = self.get_field(WeatherAlertIssueTimeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def expire_time(self) -> Optional[int]:
+        field = self.get_field(WeatherAlertExpireTimeField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @expire_time.setter
+    def expire_time(self, value: int):
+        field = self.get_field(WeatherAlertExpireTimeField.ID)
 
         if field:
             if value is None:
@@ -151,8 +173,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def severity(self) -> Optional[WeatherSeverity]:
+        field = self.get_field(WeatherAlertSeverityField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +183,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @severity.setter
+    def severity(self, value: WeatherSeverity):
+        field = self.get_field(WeatherAlertSeverityField.ID)
 
         if field:
             if value is None:
@@ -175,8 +197,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def type(self) -> Optional[WeatherSevereType]:
+        field = self.get_field(WeatherAlertTypeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,81 +207,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @type.setter
+    def type(self, value: WeatherSevereType):
+        field = self.get_field(WeatherAlertTypeField.ID)
 
         if field:
             if value is None:
@@ -272,23 +222,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,12 +243,12 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class WeatherAlertReportIdField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='report_id',
             field_id=self.ID,
             base_type=BaseType.STRING,
         offset = 0,
@@ -327,52 +260,52 @@ class LocationNameField(Field):
         )
 
 
-class LocationPositionLatField(Field):
+class WeatherAlertIssueTimeField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='issue_time',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
                          size = size,
-        units = 'degrees',
-        type_name = '',
+        units = 'ms',
+        type_name = 'date_time',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLongField(Field):
+class WeatherAlertExpireTimeField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='expire_time',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
                          size = size,
-        units = 'degrees',
-        type_name = '',
+        units = 'ms',
+        type_name = 'date_time',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationSymbolField(Field):
+class WeatherAlertSeverityField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='severity',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -382,33 +315,14 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
+class WeatherAlertTypeField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='type',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
-                         size = size,
-        units = 'm',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationDescriptionField(Field):
-    ID = 6
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='description',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,

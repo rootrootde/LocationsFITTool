@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class HsaAccelerometerDataMessage(DataMessage):
+    ID = 302
+    NAME = 'hsa_accelerometer_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,33 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=HsaAccelerometerDataMessage.NAME,
+                         global_id=HsaAccelerometerDataMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        HsaAccelerometerDataTimestampMsField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataTimestampMsField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        HsaAccelerometerDataSamplingIntervalField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataSamplingIntervalField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        HsaAccelerometerDataAccelXField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataAccelXField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        HsaAccelerometerDataAccelYField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataAccelYField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        HsaAccelerometerDataAccelZField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataAccelZField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        HsaAccelerometerDataTimestamp32kField(
+            size=self.__get_field_size(definition_message, HsaAccelerometerDataTimestamp32kField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +72,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +100,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(HsaAccelerometerDataTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +110,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @timestamp_ms.setter
+    def timestamp_ms(self, value: int):
+        field = self.get_field(HsaAccelerometerDataTimestampMsField.ID)
 
         if field:
             if value is None:
@@ -151,8 +124,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def sampling_interval(self) -> Optional[int]:
+        field = self.get_field(HsaAccelerometerDataSamplingIntervalField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +134,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @sampling_interval.setter
+    def sampling_interval(self, value: int):
+        field = self.get_field(HsaAccelerometerDataSamplingIntervalField.ID)
 
         if field:
             if value is None:
@@ -175,80 +148,74 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def accel_x(self) -> Optional[list[float]]:
+        field = self.get_field(HsaAccelerometerDataAccelXField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @accel_x.setter
+    def accel_x(self, value: list[float]):
+        field = self.get_field(HsaAccelerometerDataAccelXField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def accel_y(self) -> Optional[list[float]]:
+        field = self.get_field(HsaAccelerometerDataAccelYField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @accel_y.setter
+    def accel_y(self, value: list[float]):
+        field = self.get_field(HsaAccelerometerDataAccelYField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def accel_z(self) -> Optional[list[float]]:
+        field = self.get_field(HsaAccelerometerDataAccelZField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @accel_z.setter
+    def accel_z(self, value: list[float]):
+        field = self.get_field(HsaAccelerometerDataAccelZField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def timestamp_32k(self) -> Optional[int]:
+        field = self.get_field(HsaAccelerometerDataTimestamp32kField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +224,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @timestamp_32k.setter
+    def timestamp_32k(self, value: int):
+        field = self.get_field(HsaAccelerometerDataTimestamp32kField.ID)
 
         if field:
             if value is None:
@@ -272,23 +239,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,90 +260,37 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class HsaAccelerometerDataTimestampMsField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='timestamp_ms',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'ms',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class HsaAccelerometerDataSamplingIntervalField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLongField(Field):
-    ID = 2
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_long',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
+            name='sampling_interval',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
-    ID = 4
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='altitude',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
-                         size = size,
-        units = 'm',
+        units = 'ms',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -401,14 +298,71 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
-    ID = 6
+class HsaAccelerometerDataAccelXField(Field):
+    ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='accel_x',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.SINT16,
+        offset = 0,
+                 scale = 1.024,
+                         size = size,
+        units = 'mG',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class HsaAccelerometerDataAccelYField(Field):
+    ID = 3
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='accel_y',
+            field_id=self.ID,
+            base_type=BaseType.SINT16,
+        offset = 0,
+                 scale = 1.024,
+                         size = size,
+        units = 'mG',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class HsaAccelerometerDataAccelZField(Field):
+    ID = 4
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='accel_z',
+            field_id=self.ID,
+            base_type=BaseType.SINT16,
+        offset = 0,
+                 scale = 1.024,
+                         size = size,
+        units = 'mG',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class HsaAccelerometerDataTimestamp32kField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='timestamp_32k',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
         offset = 0,
                  scale = 1,
                          size = size,

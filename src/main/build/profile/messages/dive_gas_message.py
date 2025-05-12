@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class DiveGasMessage(DataMessage):
+    ID = 259
+    NAME = 'dive_gas'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,8 +31,8 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=DiveGasMessage.NAME,
+                         global_id=DiveGasMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
@@ -41,26 +41,17 @@ class LocationMessage(DataMessage):
         MessageIndexField(
             size=self.__get_field_size(definition_message, MessageIndexField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        DiveGasHeliumContentField(
+            size=self.__get_field_size(definition_message, DiveGasHeliumContentField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        DiveGasOxygenContentField(
+            size=self.__get_field_size(definition_message, DiveGasOxygenContentField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        DiveGasStatusField(
+            size=self.__get_field_size(definition_message, DiveGasStatusField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
-            growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
-            growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        DiveGasModeField(
+            size=self.__get_field_size(definition_message, DiveGasModeField.ID),
             growable=definition_message is None)
         ])
 
@@ -99,11 +90,10 @@ class LocationMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
     
-# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+    def helium_content(self) -> Optional[int]:
+        field = self.get_field(DiveGasHeliumContentField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -111,11 +101,10 @@ class LocationMessage(DataMessage):
             return None
 
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
+    @helium_content.setter
+    def helium_content(self, value: int):
+        field = self.get_field(DiveGasHeliumContentField.ID)
 
         if field:
             if value is None:
@@ -127,8 +116,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def oxygen_content(self) -> Optional[int]:
+        field = self.get_field(DiveGasOxygenContentField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +126,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @oxygen_content.setter
+    def oxygen_content(self, value: int):
+        field = self.get_field(DiveGasOxygenContentField.ID)
 
         if field:
             if value is None:
@@ -151,8 +140,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def status(self) -> Optional[DiveGasStatus]:
+        field = self.get_field(DiveGasStatusField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +150,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @status.setter
+    def status(self, value: DiveGasStatus):
+        field = self.get_field(DiveGasStatusField.ID)
 
         if field:
             if value is None:
@@ -175,8 +164,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def mode(self) -> Optional[DiveGasMode]:
+        field = self.get_field(DiveGasModeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,81 +174,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @mode.setter
+    def mode(self, value: DiveGasMode):
+        field = self.get_field(DiveGasModeField.ID)
 
         if field:
             if value is None:
@@ -291,54 +208,37 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='timestamp',
-            field_id=self.ID,
-            base_type=BaseType.UINT32,
-        offset = -631065600000,
-                 scale = 0.001,
-                         size = size,
-        units = 'ms',
-        type_name = 'date_time',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationNameField(Field):
+class DiveGasHeliumContentField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='helium_content',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT8,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'percent',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class DiveGasOxygenContentField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='oxygen_content',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT8,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 1,
                          size = size,
-        units = 'degrees',
+        units = 'percent',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -346,33 +246,14 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
+class DiveGasStatusField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='status',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -382,33 +263,14 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
-    ID = 4
+class DiveGasModeField(Field):
+    ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='mode',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
-                         size = size,
-        units = 'm',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationDescriptionField(Field):
-    ID = 6
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='description',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,

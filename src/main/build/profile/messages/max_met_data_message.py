@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class MaxMetDataMessage(DataMessage):
+    ID = 229
+    NAME = 'max_met_data'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,36 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=MaxMetDataMessage.NAME,
+                         global_id=MaxMetDataMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+        MaxMetDataUpdateTimeField(
+            size=self.__get_field_size(definition_message, MaxMetDataUpdateTimeField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        MaxMetDataVo2MaxField(
+            size=self.__get_field_size(definition_message, MaxMetDataVo2MaxField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        MaxMetDataSportField(
+            size=self.__get_field_size(definition_message, MaxMetDataSportField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        MaxMetDataSubSportField(
+            size=self.__get_field_size(definition_message, MaxMetDataSubSportField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        MaxMetDataMaxMetCategoryField(
+            size=self.__get_field_size(definition_message, MaxMetDataMaxMetCategoryField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        MaxMetDataCalibratedDataField(
+            size=self.__get_field_size(definition_message, MaxMetDataCalibratedDataField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        MaxMetDataHrSourceField(
+            size=self.__get_field_size(definition_message, MaxMetDataHrSourceField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        MaxMetDataSpeedSourceField(
+            size=self.__get_field_size(definition_message, MaxMetDataSpeedSourceField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,35 +75,11 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+    def update_time(self) -> Optional[int]:
+        field = self.get_field(MaxMetDataUpdateTimeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -113,9 +89,9 @@ class LocationMessage(DataMessage):
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
+    @update_time.setter
+    def update_time(self, value: int):
+        field = self.get_field(MaxMetDataUpdateTimeField.ID)
 
         if field:
             if value is None:
@@ -127,8 +103,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def vo2_max(self) -> Optional[float]:
+        field = self.get_field(MaxMetDataVo2MaxField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +113,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @vo2_max.setter
+    def vo2_max(self, value: float):
+        field = self.get_field(MaxMetDataVo2MaxField.ID)
 
         if field:
             if value is None:
@@ -151,8 +127,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def sport(self) -> Optional[Sport]:
+        field = self.get_field(MaxMetDataSportField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +137,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @sport.setter
+    def sport(self, value: Sport):
+        field = self.get_field(MaxMetDataSportField.ID)
 
         if field:
             if value is None:
@@ -175,8 +151,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def sub_sport(self) -> Optional[SubSport]:
+        field = self.get_field(MaxMetDataSubSportField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +161,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @sub_sport.setter
+    def sub_sport(self, value: SubSport):
+        field = self.get_field(MaxMetDataSubSportField.ID)
 
         if field:
             if value is None:
@@ -199,8 +175,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def max_met_category(self) -> Optional[MaxMetCategory]:
+        field = self.get_field(MaxMetDataMaxMetCategoryField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +185,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @max_met_category.setter
+    def max_met_category(self, value: MaxMetCategory):
+        field = self.get_field(MaxMetDataMaxMetCategoryField.ID)
 
         if field:
             if value is None:
@@ -223,8 +199,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def calibrated_data(self) -> Optional[bool]:
+        field = self.get_field(MaxMetDataCalibratedDataField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,9 +209,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @calibrated_data.setter
+    def calibrated_data(self, value: bool):
+        field = self.get_field(MaxMetDataCalibratedDataField.ID)
 
         if field:
             if value is None:
@@ -247,8 +223,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def hr_source(self) -> Optional[MaxMetHeartRateSource]:
+        field = self.get_field(MaxMetDataHrSourceField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +233,33 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @hr_source.setter
+    def hr_source(self, value: MaxMetHeartRateSource):
+        field = self.get_field(MaxMetDataHrSourceField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def speed_source(self) -> Optional[MaxMetSpeedSource]:
+        field = self.get_field(MaxMetDataSpeedSourceField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @speed_source.setter
+    def speed_source(self, value: MaxMetSpeedSource):
+        field = self.get_field(MaxMetDataSpeedSourceField.ID)
 
         if field:
             if value is None:
@@ -274,29 +274,12 @@ class LocationMessage(DataMessage):
 
 
 
-class MessageIndexField(Field):
-    ID = 254
+class MaxMetDataUpdateTimeField(Field):
+    ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class TimestampField(Field):
-    ID = 253
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='timestamp',
+            name='update_time',
             field_id=self.ID,
             base_type=BaseType.UINT32,
         offset = -631065600000,
@@ -310,54 +293,18 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
-    ID = 0
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='name',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLatField(Field):
-    ID = 1
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_lat',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLongField(Field):
+class MaxMetDataVo2MaxField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='vo2_max',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 10,
                          size = size,
-        units = 'degrees',
+        units = 'mL/kg/min',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -365,14 +312,14 @@ class LocationPositionLongField(Field):
         )
 
 
-class LocationSymbolField(Field):
-    ID = 3
+class MaxMetDataSportField(Field):
+    ID = 5
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='sport',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -382,33 +329,82 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
-    ID = 4
+class MaxMetDataSubSportField(Field):
+    ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='sub_sport',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+            base_type=BaseType.ENUM,
+        offset = 0,
+                 scale = 1,
                          size = size,
-        units = 'm',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationDescriptionField(Field):
-    ID = 6
+class MaxMetDataMaxMetCategoryField(Field):
+    ID = 8
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='max_met_category',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.ENUM,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class MaxMetDataCalibratedDataField(Field):
+    ID = 9
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='calibrated_data',
+            field_id=self.ID,
+            base_type=BaseType.UINT8,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class MaxMetDataHrSourceField(Field):
+    ID = 12
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='hr_source',
+            field_id=self.ID,
+            base_type=BaseType.ENUM,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class MaxMetDataSpeedSourceField(Field):
+    ID = 13
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='speed_source',
+            field_id=self.ID,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,

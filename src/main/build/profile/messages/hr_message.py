@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class HrMessage(DataMessage):
+    ID = 132
+    NAME = 'hr'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,30 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=HrMessage.NAME,
+                         global_id=HrMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        HrFractionalTimestampField(
+            size=self.__get_field_size(definition_message, HrFractionalTimestampField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        HrTime256Field(
+            size=self.__get_field_size(definition_message, HrTime256Field.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        HrFilteredBpmField(
+            size=self.__get_field_size(definition_message, HrFilteredBpmField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        HrEventTimestampField(
+            size=self.__get_field_size(definition_message, HrEventTimestampField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        HrEventTimestamp12Field(
+            size=self.__get_field_size(definition_message, HrEventTimestamp12Field.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +69,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +97,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def fractional_timestamp(self) -> Optional[float]:
+        field = self.get_field(HrFractionalTimestampField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +107,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @fractional_timestamp.setter
+    def fractional_timestamp(self, value: float):
+        field = self.get_field(HrFractionalTimestampField.ID)
 
         if field:
             if value is None:
@@ -151,8 +121,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def time256(self) -> Optional[float]:
+        field = self.get_field(HrTime256Field.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +131,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @time256.setter
+    def time256(self, value: float):
+        field = self.get_field(HrTime256Field.ID)
 
         if field:
             if value is None:
@@ -175,120 +145,73 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def filtered_bpm(self) -> Optional[list[int]]:
+        field = self.get_field(HrFilteredBpmField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @filtered_bpm.setter
+    def filtered_bpm(self, value: list[int]):
+        field = self.get_field(HrFilteredBpmField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def event_timestamp(self) -> Optional[list[float]]:
+        field = self.get_field(HrEventTimestampField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @event_timestamp.setter
+    def event_timestamp(self, value: list[float]):
+        field = self.get_field(HrEventTimestampField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def event_timestamp_12(self) -> Optional[bytes]:
+        field = self.get_field(HrEventTimestamp12Field.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @event_timestamp_12.setter
+    def event_timestamp_12(self, value: bytes):
+        field = self.get_field(HrEventTimestamp12Field.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,35 +233,37 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class HrFractionalTimestampField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='fractional_timestamp',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 1,
+                 scale = 32768,
                          size = size,
+        units = 's',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class HrTime256Field(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='time256',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT8,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 256,
                          size = size,
-        units = 'degrees',
+        units = 's',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -346,72 +271,57 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
-    ID = 2
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_long',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
-    ID = 4
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='altitude',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
-                         size = size,
-        units = 'm',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationDescriptionField(Field):
+class HrFilteredBpmField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='filtered_bpm',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT8,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'bpm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class HrEventTimestampField(Field):
+    ID = 9
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='event_timestamp',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1024,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class HrEventTimestamp12Field(Field):
+    ID = 10
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='event_timestamp_12',
+            field_id=self.ID,
+            base_type=BaseType.BYTE,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

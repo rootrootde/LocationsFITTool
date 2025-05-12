@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class CoursePointMessage(DataMessage):
+    ID = 32
+    NAME = 'course_point'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,8 +31,8 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=CoursePointMessage.NAME,
+                         global_id=CoursePointMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
@@ -41,26 +41,26 @@ class LocationMessage(DataMessage):
         MessageIndexField(
             size=self.__get_field_size(definition_message, MessageIndexField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        CoursePointTimestampField(
+            size=self.__get_field_size(definition_message, CoursePointTimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        CoursePointPositionLatField(
+            size=self.__get_field_size(definition_message, CoursePointPositionLatField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        CoursePointPositionLongField(
+            size=self.__get_field_size(definition_message, CoursePointPositionLongField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        CoursePointDistanceField(
+            size=self.__get_field_size(definition_message, CoursePointDistanceField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        CoursePointTypeField(
+            size=self.__get_field_size(definition_message, CoursePointTypeField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        CoursePointNameField(
+            size=self.__get_field_size(definition_message, CoursePointNameField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        CoursePointFavoriteField(
+            size=self.__get_field_size(definition_message, CoursePointFavoriteField.ID),
             growable=definition_message is None)
         ])
 
@@ -103,7 +103,7 @@ class LocationMessage(DataMessage):
 
     @property
     def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+        field = self.get_field(CoursePointTimestampField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -115,31 +115,7 @@ class LocationMessage(DataMessage):
 
     @timestamp.setter
     def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+        field = self.get_field(CoursePointTimestampField.ID)
 
         if field:
             if value is None:
@@ -152,7 +128,7 @@ class LocationMessage(DataMessage):
 
     @property
     def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+        field = self.get_field(CoursePointPositionLatField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -163,7 +139,7 @@ class LocationMessage(DataMessage):
 
     @position_lat.setter
     def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+        field = self.get_field(CoursePointPositionLatField.ID)
 
         if field:
             if value is None:
@@ -176,7 +152,7 @@ class LocationMessage(DataMessage):
 
     @property
     def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+        field = self.get_field(CoursePointPositionLongField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -187,7 +163,7 @@ class LocationMessage(DataMessage):
 
     @position_long.setter
     def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+        field = self.get_field(CoursePointPositionLongField.ID)
 
         if field:
             if value is None:
@@ -199,8 +175,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def distance(self) -> Optional[float]:
+        field = self.get_field(CoursePointDistanceField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +185,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @distance.setter
+    def distance(self, value: float):
+        field = self.get_field(CoursePointDistanceField.ID)
 
         if field:
             if value is None:
@@ -223,8 +199,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def type(self) -> Optional[CoursePoint]:
+        field = self.get_field(CoursePointTypeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,9 +209,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @type.setter
+    def type(self, value: CoursePoint):
+        field = self.get_field(CoursePointTypeField.ID)
 
         if field:
             if value is None:
@@ -247,8 +223,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def course_point_name(self) -> Optional[str]:
+        field = self.get_field(CoursePointNameField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +233,33 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @course_point_name.setter
+    def course_point_name(self, value: str):
+        field = self.get_field(CoursePointNameField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def favorite(self) -> Optional[bool]:
+        field = self.get_field(CoursePointFavoriteField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @favorite.setter
+    def favorite(self, value: bool):
+        field = self.get_field(CoursePointFavoriteField.ID)
 
         if field:
             if value is None:
@@ -291,8 +291,8 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
+class CoursePointTimestampField(Field):
+    ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
@@ -310,25 +310,8 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
-    ID = 0
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='name',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLatField(Field):
-    ID = 1
+class CoursePointPositionLatField(Field):
+    ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
@@ -346,8 +329,8 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
-    ID = 2
+class CoursePointPositionLongField(Field):
+    ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
@@ -365,33 +348,16 @@ class LocationPositionLongField(Field):
         )
 
 
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
+class CoursePointDistanceField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='distance',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 100,
                          size = size,
         units = 'm',
         type_name = '',
@@ -401,14 +367,48 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
+class CoursePointTypeField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='type',
+            field_id=self.ID,
+            base_type=BaseType.ENUM,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class CoursePointNameField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='name',
             field_id=self.ID,
             base_type=BaseType.STRING,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class CoursePointFavoriteField(Field):
+    ID = 8
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='favorite',
+            field_id=self.ID,
+            base_type=BaseType.UINT8,
         offset = 0,
                  scale = 1,
                          size = size,

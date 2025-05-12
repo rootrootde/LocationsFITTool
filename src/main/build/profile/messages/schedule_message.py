@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class ScheduleMessage(DataMessage):
+    ID = 28
+    NAME = 'schedule'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,33 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=ScheduleMessage.NAME,
+                         global_id=ScheduleMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
+        ScheduleManufacturerField(
+            size=self.__get_field_size(definition_message, ScheduleManufacturerField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        ScheduleProductField(
+            size=self.__get_field_size(definition_message, ScheduleProductField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        ScheduleSerialNumberField(
+            size=self.__get_field_size(definition_message, ScheduleSerialNumberField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        ScheduleTimeCreatedField(
+            size=self.__get_field_size(definition_message, ScheduleTimeCreatedField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        ScheduleCompletedField(
+            size=self.__get_field_size(definition_message, ScheduleCompletedField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        ScheduleTypeField(
+            size=self.__get_field_size(definition_message, ScheduleTypeField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        ScheduleScheduledTimeField(
+            size=self.__get_field_size(definition_message, ScheduleScheduledTimeField.ID),
             growable=definition_message is None)
         ])
 
@@ -77,8 +74,8 @@ class LocationMessage(DataMessage):
 
 
     @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
+    def manufacturer(self) -> Optional[int]:
+        field = self.get_field(ScheduleManufacturerField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -87,9 +84,103 @@ class LocationMessage(DataMessage):
 
 
 
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
+    @manufacturer.setter
+    def manufacturer(self, value: int):
+        field = self.get_field(ScheduleManufacturerField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def product(self) -> Optional[int]:
+        field = self.get_field(ScheduleProductField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @product.setter
+    def product(self, value: int):
+        field = self.get_field(ScheduleProductField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+
+    @property
+    def favero_product(self) -> Optional[int]:
+        field = self.get_field(ScheduleProductField.ID)
+        type_field = self.get_field(ScheduleManufacturerField.ID)
+
+        is_sub_field_valid = type_field and type_field.get_value() in [263]
+        if field and field.is_valid() and is_sub_field_valid:
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+    @favero_product.setter
+    def favero_product(self, value: int):
+        field = self.get_field(ScheduleProductField.ID)
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+
+    @property
+    def garmin_product(self) -> Optional[int]:
+        field = self.get_field(ScheduleProductField.ID)
+        type_field = self.get_field(ScheduleManufacturerField.ID)
+
+        is_sub_field_valid = type_field and type_field.get_value() in [1, 15, 13, 89]
+        if field and field.is_valid() and is_sub_field_valid:
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+    @garmin_product.setter
+    def garmin_product(self, value: int):
+        field = self.get_field(ScheduleProductField.ID)
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    @property
+    def serial_number(self) -> Optional[int]:
+        field = self.get_field(ScheduleSerialNumberField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @serial_number.setter
+    def serial_number(self, value: int):
+        field = self.get_field(ScheduleSerialNumberField.ID)
 
         if field:
             if value is None:
@@ -102,8 +193,8 @@ class LocationMessage(DataMessage):
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+    def time_created(self) -> Optional[int]:
+        field = self.get_field(ScheduleTimeCreatedField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -113,9 +204,9 @@ class LocationMessage(DataMessage):
 
     # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
+    @time_created.setter
+    def time_created(self, value: int):
+        field = self.get_field(ScheduleTimeCreatedField.ID)
 
         if field:
             if value is None:
@@ -127,8 +218,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def completed(self) -> Optional[bool]:
+        field = self.get_field(ScheduleCompletedField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +228,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @completed.setter
+    def completed(self, value: bool):
+        field = self.get_field(ScheduleCompletedField.ID)
 
         if field:
             if value is None:
@@ -151,8 +242,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def type(self) -> Optional[Schedule]:
+        field = self.get_field(ScheduleTypeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +252,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @type.setter
+    def type(self, value: Schedule):
+        field = self.get_field(ScheduleTypeField.ID)
 
         if field:
             if value is None:
@@ -175,8 +266,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def scheduled_time(self) -> Optional[int]:
+        field = self.get_field(ScheduleScheduledTimeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,81 +276,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @scheduled_time.setter
+    def scheduled_time(self, value: int):
+        field = self.get_field(ScheduleScheduledTimeField.ID)
 
         if field:
             if value is None:
@@ -274,12 +293,12 @@ class LocationMessage(DataMessage):
 
 
 
-class MessageIndexField(Field):
-    ID = 254
+class ScheduleManufacturerField(Field):
+    ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='message_index',
+            name='manufacturer',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
@@ -291,12 +310,62 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
+class ScheduleProductField(Field):
+    ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='timestamp',
+            name='product',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        SubField(
+            name='favero_product',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        ScheduleManufacturerField.ID: [263]
+        }), 
+        SubField(
+            name='garmin_product',
+            base_type=BaseType.UINT16,
+        scale = 1,
+                offset = 0,
+        reference_map = {
+        ScheduleManufacturerField.ID: [1, 15, 13, 89]
+        })
+        ]
+        )
+
+
+class ScheduleSerialNumberField(Field):
+    ID = 2
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='serial_number',
+            field_id=self.ID,
+            base_type=BaseType.UINT32Z,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class ScheduleTimeCreatedField(Field):
+    ID = 3
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='time_created',
             field_id=self.ID,
             base_type=BaseType.UINT32,
         offset = -631065600000,
@@ -310,105 +379,48 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
-    ID = 0
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='name',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLatField(Field):
-    ID = 1
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_lat',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLongField(Field):
-    ID = 2
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_long',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
+class ScheduleCompletedField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='completed',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+            base_type=BaseType.UINT8,
+        offset = 0,
+                 scale = 1,
                          size = size,
-        units = 'm',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationDescriptionField(Field):
+class ScheduleTypeField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='type',
+            field_id=self.ID,
+            base_type=BaseType.ENUM,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class ScheduleScheduledTimeField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='scheduled_time',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT32,
         offset = 0,
                  scale = 1,
                          size = size,

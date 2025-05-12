@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class SegmentFileMessage(DataMessage):
+    ID = 151
+    NAME = 'segment_file'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,8 +31,8 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=SegmentFileMessage.NAME,
+                         global_id=SegmentFileMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
@@ -41,26 +41,29 @@ class LocationMessage(DataMessage):
         MessageIndexField(
             size=self.__get_field_size(definition_message, MessageIndexField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        SegmentFileFileUuidField(
+            size=self.__get_field_size(definition_message, SegmentFileFileUuidField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        SegmentFileEnabledField(
+            size=self.__get_field_size(definition_message, SegmentFileEnabledField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        SegmentFileUserProfilePrimaryKeyField(
+            size=self.__get_field_size(definition_message, SegmentFileUserProfilePrimaryKeyField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        SegmentFileLeaderTypeField(
+            size=self.__get_field_size(definition_message, SegmentFileLeaderTypeField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        SegmentFileLeaderGroupPrimaryKeyField(
+            size=self.__get_field_size(definition_message, SegmentFileLeaderGroupPrimaryKeyField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        SegmentFileLeaderActivityIdField(
+            size=self.__get_field_size(definition_message, SegmentFileLeaderActivityIdField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        SegmentFileLeaderActivityIdStringField(
+            size=self.__get_field_size(definition_message, SegmentFileLeaderActivityIdStringField.ID),
+            growable=definition_message is None), 
+        SegmentFileDefaultRaceLeaderField(
+            size=self.__get_field_size(definition_message, SegmentFileDefaultRaceLeaderField.ID),
             growable=definition_message is None)
         ])
 
@@ -99,11 +102,10 @@ class LocationMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
     
-# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+    def file_uuid(self) -> Optional[str]:
+        field = self.get_field(SegmentFileFileUuidField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -111,11 +113,10 @@ class LocationMessage(DataMessage):
             return None
 
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
+    @file_uuid.setter
+    def file_uuid(self, value: str):
+        field = self.get_field(SegmentFileFileUuidField.ID)
 
         if field:
             if value is None:
@@ -127,8 +128,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def enabled(self) -> Optional[bool]:
+        field = self.get_field(SegmentFileEnabledField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +138,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @enabled.setter
+    def enabled(self, value: bool):
+        field = self.get_field(SegmentFileEnabledField.ID)
 
         if field:
             if value is None:
@@ -151,8 +152,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def user_profile_primary_key(self) -> Optional[int]:
+        field = self.get_field(SegmentFileUserProfilePrimaryKeyField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +162,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @user_profile_primary_key.setter
+    def user_profile_primary_key(self, value: int):
+        field = self.get_field(SegmentFileUserProfilePrimaryKeyField.ID)
 
         if field:
             if value is None:
@@ -175,8 +176,74 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def leader_type(self) -> Optional[list[SegmentLeaderboardType]]:
+        field = self.get_field(SegmentFileLeaderTypeField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @leader_type.setter
+    def leader_type(self, value: list[SegmentLeaderboardType]):
+        field = self.get_field(SegmentFileLeaderTypeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def leader_group_primary_key(self) -> Optional[list[int]]:
+        field = self.get_field(SegmentFileLeaderGroupPrimaryKeyField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @leader_group_primary_key.setter
+    def leader_group_primary_key(self, value: list[int]):
+        field = self.get_field(SegmentFileLeaderGroupPrimaryKeyField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def leader_activity_id(self) -> Optional[list[int]]:
+        field = self.get_field(SegmentFileLeaderActivityIdField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
+
+
+
+    @leader_activity_id.setter
+    def leader_activity_id(self, value: list[int]):
+        field = self.get_field(SegmentFileLeaderActivityIdField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
+
+    
+
+    @property
+    def leader_activity_id_string(self) -> Optional[str]:
+        field = self.get_field(SegmentFileLeaderActivityIdStringField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +252,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @leader_activity_id_string.setter
+    def leader_activity_id_string(self, value: str):
+        field = self.get_field(SegmentFileLeaderActivityIdStringField.ID)
 
         if field:
             if value is None:
@@ -199,8 +266,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def default_race_leader(self) -> Optional[int]:
+        field = self.get_field(SegmentFileDefaultRaceLeaderField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,57 +276,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @default_race_leader.setter
+    def default_race_leader(self, value: int):
+        field = self.get_field(SegmentFileDefaultRaceLeaderField.ID)
 
         if field:
             if value is None:
@@ -291,88 +310,14 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='timestamp',
-            field_id=self.ID,
-            base_type=BaseType.UINT32,
-        offset = -631065600000,
-                 scale = 0.001,
-                         size = size,
-        units = 'ms',
-        type_name = 'date_time',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationNameField(Field):
-    ID = 0
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='name',
-            field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLatField(Field):
+class SegmentFileFileUuidField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='file_uuid',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLongField(Field):
-    ID = 2
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_long',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.STRING,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -382,33 +327,116 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
-    ID = 4
+class SegmentFileEnabledField(Field):
+    ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='enabled',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+            base_type=BaseType.UINT8,
+        offset = 0,
+                 scale = 1,
                          size = size,
-        units = 'm',
-        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationDescriptionField(Field):
-    ID = 6
+class SegmentFileUserProfilePrimaryKeyField(Field):
+    ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='user_profile_primary_key',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SegmentFileLeaderTypeField(Field):
+    ID = 7
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='leader_type',
+            field_id=self.ID,
+            base_type=BaseType.ENUM,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SegmentFileLeaderGroupPrimaryKeyField(Field):
+    ID = 8
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='leader_group_primary_key',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SegmentFileLeaderActivityIdField(Field):
+    ID = 9
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='leader_activity_id',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SegmentFileLeaderActivityIdStringField(Field):
+    ID = 10
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='leader_activity_id_string',
             field_id=self.ID,
             base_type=BaseType.STRING,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SegmentFileDefaultRaceLeaderField(Field):
+    ID = 11
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='default_race_leader',
+            field_id=self.ID,
+            base_type=BaseType.UINT8,
         offset = 0,
                  scale = 1,
                          size = size,

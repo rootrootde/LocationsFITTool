@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationSettingsMessage(DataMessage):
-    ID = 189
-    NAME = 'location_settings'
+class RespirationRateMessage(DataMessage):
+    ID = 297
+    NAME = 'respiration_rate'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,15 +31,18 @@ class LocationSettingsMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationSettingsMessage.NAME,
-                         global_id=LocationSettingsMessage.ID,
+        super().__init__(name=RespirationRateMessage.NAME,
+                         global_id=RespirationRateMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        LocationSettingsLocationSettingsField(
-            size=self.__get_field_size(definition_message, LocationSettingsLocationSettingsField.ID),
+        TimestampField(
+            size=self.__get_field_size(definition_message, TimestampField.ID),
+            growable=definition_message is None), 
+        RespirationRateRespirationRateField(
+            size=self.__get_field_size(definition_message, RespirationRateRespirationRateField.ID),
             growable=definition_message is None)
         ])
 
@@ -54,10 +57,36 @@ class LocationSettingsMessage(DataMessage):
 
 
 
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def location_settings(self) -> Optional[LocationSettings]:
-        field = self.get_field(LocationSettingsLocationSettingsField.ID)
+    def timestamp(self) -> Optional[int]:
+        field = self.get_field(TimestampField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @timestamp.setter
+    def timestamp(self, value: int):
+        field = self.get_field(TimestampField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def respiration_rate(self) -> Optional[float]:
+        field = self.get_field(RespirationRateRespirationRateField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -66,9 +95,9 @@ class LocationSettingsMessage(DataMessage):
 
 
 
-    @location_settings.setter
-    def location_settings(self, value: LocationSettings):
-        field = self.get_field(LocationSettingsLocationSettingsField.ID)
+    @respiration_rate.setter
+    def respiration_rate(self, value: float):
+        field = self.get_field(RespirationRateRespirationRateField.ID)
 
         if field:
             if value is None:
@@ -83,17 +112,38 @@ class LocationSettingsMessage(DataMessage):
 
 
 
-class LocationSettingsLocationSettingsField(Field):
+class TimestampField(Field):
+    ID = 253
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='timestamp',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class RespirationRateRespirationRateField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='location_settings',
+            name='respiration_rate',
             field_id=self.ID,
-            base_type=BaseType.ENUM,
+            base_type=BaseType.SINT16,
         offset = 0,
-                 scale = 1,
+                 scale = 100,
                          size = size,
+        units = 'breaths/min',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

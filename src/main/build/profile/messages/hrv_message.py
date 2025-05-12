@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationSettingsMessage(DataMessage):
-    ID = 189
-    NAME = 'location_settings'
+class HrvMessage(DataMessage):
+    ID = 78
+    NAME = 'hrv'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,15 +31,15 @@ class LocationSettingsMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationSettingsMessage.NAME,
-                         global_id=LocationSettingsMessage.ID,
+        super().__init__(name=HrvMessage.NAME,
+                         global_id=HrvMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        LocationSettingsLocationSettingsField(
-            size=self.__get_field_size(definition_message, LocationSettingsLocationSettingsField.ID),
+        HrvTimeField(
+            size=self.__get_field_size(definition_message, HrvTimeField.ID),
             growable=definition_message is None)
         ])
 
@@ -56,26 +56,24 @@ class LocationSettingsMessage(DataMessage):
 
 
     @property
-    def location_settings(self) -> Optional[LocationSettings]:
-        field = self.get_field(LocationSettingsLocationSettingsField.ID)
+    def time(self) -> Optional[list[float]]:
+        field = self.get_field(HrvTimeField.ID)
         if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
+            return field.get_values()
         else:
             return None
 
 
 
-    @location_settings.setter
-    def location_settings(self, value: LocationSettings):
-        field = self.get_field(LocationSettingsLocationSettingsField.ID)
+    @time.setter
+    def time(self, value: list[float]):
+        field = self.get_field(HrvTimeField.ID)
 
         if field:
             if value is None:
                 field.clear()
             else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
+                field.set_values(value)
 
     
 
@@ -83,17 +81,19 @@ class LocationSettingsMessage(DataMessage):
 
 
 
-class LocationSettingsLocationSettingsField(Field):
+class HrvTimeField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='location_settings',
+            name='time',
             field_id=self.ID,
-            base_type=BaseType.ENUM,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 1,
+                 scale = 1000,
                          size = size,
+        units = 's',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

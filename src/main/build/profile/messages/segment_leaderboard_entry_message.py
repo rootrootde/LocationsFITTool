@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class SegmentLeaderboardEntryMessage(DataMessage):
+    ID = 149
+    NAME = 'segment_leaderboard_entry'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,8 +31,8 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=SegmentLeaderboardEntryMessage.NAME,
+                         global_id=SegmentLeaderboardEntryMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
@@ -41,26 +41,23 @@ class LocationMessage(DataMessage):
         MessageIndexField(
             size=self.__get_field_size(definition_message, MessageIndexField.ID),
             growable=definition_message is None), 
-        TimestampField(
-            size=self.__get_field_size(definition_message, TimestampField.ID),
+        SegmentLeaderboardEntryNameField(
+            size=self.__get_field_size(definition_message, SegmentLeaderboardEntryNameField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        SegmentLeaderboardEntryTypeField(
+            size=self.__get_field_size(definition_message, SegmentLeaderboardEntryTypeField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        SegmentLeaderboardEntryGroupPrimaryKeyField(
+            size=self.__get_field_size(definition_message, SegmentLeaderboardEntryGroupPrimaryKeyField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        SegmentLeaderboardEntryActivityIdField(
+            size=self.__get_field_size(definition_message, SegmentLeaderboardEntryActivityIdField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        SegmentLeaderboardEntrySegmentTimeField(
+            size=self.__get_field_size(definition_message, SegmentLeaderboardEntrySegmentTimeField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
-            growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        SegmentLeaderboardEntryActivityIdStringField(
+            size=self.__get_field_size(definition_message, SegmentLeaderboardEntryActivityIdStringField.ID),
             growable=definition_message is None)
         ])
 
@@ -99,11 +96,10 @@ class LocationMessage(DataMessage):
                 field.set_value(0, value, sub_field)
 
     
-# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
-    def timestamp(self) -> Optional[int]:
-        field = self.get_field(TimestampField.ID)
+    def segment_leaderboard_entry_name(self) -> Optional[str]:
+        field = self.get_field(SegmentLeaderboardEntryNameField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -111,11 +107,10 @@ class LocationMessage(DataMessage):
             return None
 
 
-    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
-    @timestamp.setter
-    def timestamp(self, value: int):
-        field = self.get_field(TimestampField.ID)
+    @segment_leaderboard_entry_name.setter
+    def segment_leaderboard_entry_name(self, value: str):
+        field = self.get_field(SegmentLeaderboardEntryNameField.ID)
 
         if field:
             if value is None:
@@ -127,8 +122,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def type(self) -> Optional[SegmentLeaderboardType]:
+        field = self.get_field(SegmentLeaderboardEntryTypeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +132,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @type.setter
+    def type(self, value: SegmentLeaderboardType):
+        field = self.get_field(SegmentLeaderboardEntryTypeField.ID)
 
         if field:
             if value is None:
@@ -151,8 +146,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def group_primary_key(self) -> Optional[int]:
+        field = self.get_field(SegmentLeaderboardEntryGroupPrimaryKeyField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +156,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @group_primary_key.setter
+    def group_primary_key(self, value: int):
+        field = self.get_field(SegmentLeaderboardEntryGroupPrimaryKeyField.ID)
 
         if field:
             if value is None:
@@ -175,8 +170,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def activity_id(self) -> Optional[int]:
+        field = self.get_field(SegmentLeaderboardEntryActivityIdField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +180,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @activity_id.setter
+    def activity_id(self, value: int):
+        field = self.get_field(SegmentLeaderboardEntryActivityIdField.ID)
 
         if field:
             if value is None:
@@ -199,8 +194,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def segment_time(self) -> Optional[float]:
+        field = self.get_field(SegmentLeaderboardEntrySegmentTimeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +204,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @segment_time.setter
+    def segment_time(self, value: float):
+        field = self.get_field(SegmentLeaderboardEntrySegmentTimeField.ID)
 
         if field:
             if value is None:
@@ -223,8 +218,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def activity_id_string(self) -> Optional[str]:
+        field = self.get_field(SegmentLeaderboardEntryActivityIdStringField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,33 +228,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @activity_id_string.setter
+    def activity_id_string(self, value: str):
+        field = self.get_field(SegmentLeaderboardEntryActivityIdStringField.ID)
 
         if field:
             if value is None:
@@ -291,26 +262,7 @@ class MessageIndexField(Field):
         )
 
 
-class TimestampField(Field):
-    ID = 253
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='timestamp',
-            field_id=self.ID,
-            base_type=BaseType.UINT32,
-        offset = -631065600000,
-                 scale = 0.001,
-                         size = size,
-        units = 'ms',
-        type_name = 'date_time',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationNameField(Field):
+class SegmentLeaderboardEntryNameField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
@@ -327,52 +279,14 @@ class LocationNameField(Field):
         )
 
 
-class LocationPositionLatField(Field):
+class SegmentLeaderboardEntryTypeField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='type',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationPositionLongField(Field):
-    ID = 2
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='position_long',
-            field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
-                         size = size,
-        units = 'degrees',
-        type_name = '',
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationSymbolField(Field):
-    ID = 3
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='symbol',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -382,18 +296,52 @@ class LocationSymbolField(Field):
         )
 
 
-class LocationAltitudeField(Field):
+class SegmentLeaderboardEntryGroupPrimaryKeyField(Field):
+    ID = 2
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='group_primary_key',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SegmentLeaderboardEntryActivityIdField(Field):
+    ID = 3
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='activity_id',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class SegmentLeaderboardEntrySegmentTimeField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='segment_time',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1000,
                          size = size,
-        units = 'm',
+        units = 's',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -401,12 +349,12 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
-    ID = 6
+class SegmentLeaderboardEntryActivityIdStringField(Field):
+    ID = 5
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='activity_id_string',
             field_id=self.ID,
             base_type=BaseType.STRING,
         offset = 0,

@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class GpsMetadataMessage(DataMessage):
+    ID = 160
+    NAME = 'gps_metadata'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,39 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=GpsMetadataMessage.NAME,
+                         global_id=GpsMetadataMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        GpsMetadataTimestampMsField(
+            size=self.__get_field_size(definition_message, GpsMetadataTimestampMsField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        GpsMetadataPositionLatField(
+            size=self.__get_field_size(definition_message, GpsMetadataPositionLatField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        GpsMetadataPositionLongField(
+            size=self.__get_field_size(definition_message, GpsMetadataPositionLongField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        GpsMetadataEnhancedAltitudeField(
+            size=self.__get_field_size(definition_message, GpsMetadataEnhancedAltitudeField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        GpsMetadataEnhancedSpeedField(
+            size=self.__get_field_size(definition_message, GpsMetadataEnhancedSpeedField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        GpsMetadataHeadingField(
+            size=self.__get_field_size(definition_message, GpsMetadataHeadingField.ID),
+            growable=definition_message is None), 
+        GpsMetadataUtcTimestampField(
+            size=self.__get_field_size(definition_message, GpsMetadataUtcTimestampField.ID),
+            growable=definition_message is None), 
+        GpsMetadataVelocityField(
+            size=self.__get_field_size(definition_message, GpsMetadataVelocityField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +78,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +106,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(GpsMetadataTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +116,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @timestamp_ms.setter
+    def timestamp_ms(self, value: int):
+        field = self.get_field(GpsMetadataTimestampMsField.ID)
 
         if field:
             if value is None:
@@ -152,7 +131,7 @@ class LocationMessage(DataMessage):
 
     @property
     def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+        field = self.get_field(GpsMetadataPositionLatField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -163,7 +142,7 @@ class LocationMessage(DataMessage):
 
     @position_lat.setter
     def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+        field = self.get_field(GpsMetadataPositionLatField.ID)
 
         if field:
             if value is None:
@@ -176,7 +155,7 @@ class LocationMessage(DataMessage):
 
     @property
     def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+        field = self.get_field(GpsMetadataPositionLongField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -187,7 +166,7 @@ class LocationMessage(DataMessage):
 
     @position_long.setter
     def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+        field = self.get_field(GpsMetadataPositionLongField.ID)
 
         if field:
             if value is None:
@@ -199,8 +178,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def enhanced_altitude(self) -> Optional[float]:
+        field = self.get_field(GpsMetadataEnhancedAltitudeField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +188,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @enhanced_altitude.setter
+    def enhanced_altitude(self, value: float):
+        field = self.get_field(GpsMetadataEnhancedAltitudeField.ID)
 
         if field:
             if value is None:
@@ -223,8 +202,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def enhanced_speed(self) -> Optional[float]:
+        field = self.get_field(GpsMetadataEnhancedSpeedField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,9 +212,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @enhanced_speed.setter
+    def enhanced_speed(self, value: float):
+        field = self.get_field(GpsMetadataEnhancedSpeedField.ID)
 
         if field:
             if value is None:
@@ -247,8 +226,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def heading(self) -> Optional[float]:
+        field = self.get_field(GpsMetadataHeadingField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +236,35 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @heading.setter
+    def heading(self, value: float):
+        field = self.get_field(GpsMetadataHeadingField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def utc_timestamp(self) -> Optional[int]:
+        field = self.get_field(GpsMetadataUtcTimestampField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @utc_timestamp.setter
+    def utc_timestamp(self, value: int):
+        field = self.get_field(GpsMetadataUtcTimestampField.ID)
 
         if field:
             if value is None:
@@ -270,25 +275,30 @@ class LocationMessage(DataMessage):
 
     
 
+    @property
+    def velocity(self) -> Optional[list[float]]:
+        field = self.get_field(GpsMetadataVelocityField.ID)
+        if field and field.is_valid():
+            return field.get_values()
+        else:
+            return None
 
 
 
+    @velocity.setter
+    def velocity(self, value: list[float]):
+        field = self.get_field(GpsMetadataVelocityField.ID)
 
-class MessageIndexField(Field):
-    ID = 254
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                field.set_values(value)
 
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
+    
+
+
+
 
 
 class TimestampField(Field):
@@ -310,24 +320,26 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class GpsMetadataTimestampMsField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='timestamp_ms',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'ms',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class GpsMetadataPositionLatField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
@@ -346,7 +358,7 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
+class GpsMetadataPositionLongField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
@@ -365,31 +377,14 @@ class LocationPositionLongField(Field):
         )
 
 
-class LocationSymbolField(Field):
+class GpsMetadataEnhancedAltitudeField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='enhanced_altitude',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
-    ID = 4
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='altitude',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.UINT32,
         offset = 500,
                  scale = 5,
                          size = size,
@@ -401,17 +396,76 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
+class GpsMetadataEnhancedSpeedField(Field):
+    ID = 4
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='enhanced_speed',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = 0,
+                 scale = 1000,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class GpsMetadataHeadingField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='heading',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'degrees',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class GpsMetadataUtcTimestampField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='utc_timestamp',
             field_id=self.ID,
-            base_type=BaseType.STRING,
-        offset = 0,
-                 scale = 1,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
                          size = size,
+        units = 'ms',
+        type_name = 'date_time',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class GpsMetadataVelocityField(Field):
+    ID = 7
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='velocity',
+            field_id=self.ID,
+            base_type=BaseType.SINT16,
+        offset = 0,
+                 scale = 100,
+                         size = size,
+        units = 'm/s',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

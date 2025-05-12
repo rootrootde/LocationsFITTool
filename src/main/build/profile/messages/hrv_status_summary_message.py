@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class HrvStatusSummaryMessage(DataMessage):
+    ID = 370
+    NAME = 'hrv_status_summary'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,36 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=HrvStatusSummaryMessage.NAME,
+                         global_id=HrvStatusSummaryMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        HrvStatusSummaryWeeklyAverageField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryWeeklyAverageField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        HrvStatusSummaryLastNightAverageField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryLastNightAverageField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        HrvStatusSummaryLastNight5MinHighField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryLastNight5MinHighField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        HrvStatusSummaryBaselineLowUpperField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryBaselineLowUpperField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        HrvStatusSummaryBaselineBalancedLowerField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryBaselineBalancedLowerField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        HrvStatusSummaryBaselineBalancedUpperField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryBaselineBalancedUpperField.ID),
+            growable=definition_message is None), 
+        HrvStatusSummaryStatusField(
+            size=self.__get_field_size(definition_message, HrvStatusSummaryStatusField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +75,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +103,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def weekly_average(self) -> Optional[float]:
+        field = self.get_field(HrvStatusSummaryWeeklyAverageField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +113,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @weekly_average.setter
+    def weekly_average(self, value: float):
+        field = self.get_field(HrvStatusSummaryWeeklyAverageField.ID)
 
         if field:
             if value is None:
@@ -151,8 +127,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def last_night_average(self) -> Optional[float]:
+        field = self.get_field(HrvStatusSummaryLastNightAverageField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +137,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @last_night_average.setter
+    def last_night_average(self, value: float):
+        field = self.get_field(HrvStatusSummaryLastNightAverageField.ID)
 
         if field:
             if value is None:
@@ -175,8 +151,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def last_night_5_min_high(self) -> Optional[float]:
+        field = self.get_field(HrvStatusSummaryLastNight5MinHighField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +161,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @last_night_5_min_high.setter
+    def last_night_5_min_high(self, value: float):
+        field = self.get_field(HrvStatusSummaryLastNight5MinHighField.ID)
 
         if field:
             if value is None:
@@ -199,8 +175,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def baseline_low_upper(self) -> Optional[float]:
+        field = self.get_field(HrvStatusSummaryBaselineLowUpperField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +185,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @baseline_low_upper.setter
+    def baseline_low_upper(self, value: float):
+        field = self.get_field(HrvStatusSummaryBaselineLowUpperField.ID)
 
         if field:
             if value is None:
@@ -223,8 +199,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def baseline_balanced_lower(self) -> Optional[float]:
+        field = self.get_field(HrvStatusSummaryBaselineBalancedLowerField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,9 +209,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
+    @baseline_balanced_lower.setter
+    def baseline_balanced_lower(self, value: float):
+        field = self.get_field(HrvStatusSummaryBaselineBalancedLowerField.ID)
 
         if field:
             if value is None:
@@ -247,8 +223,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
+    def baseline_balanced_upper(self) -> Optional[float]:
+        field = self.get_field(HrvStatusSummaryBaselineBalancedUpperField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -257,9 +233,33 @@ class LocationMessage(DataMessage):
 
 
 
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @baseline_balanced_upper.setter
+    def baseline_balanced_upper(self, value: float):
+        field = self.get_field(HrvStatusSummaryBaselineBalancedUpperField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def status(self) -> Optional[HrvStatus]:
+        field = self.get_field(HrvStatusSummaryStatusField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @status.setter
+    def status(self, value: HrvStatus):
+        field = self.get_field(HrvStatusSummaryStatusField.ID)
 
         if field:
             if value is None:
@@ -272,23 +272,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,35 +293,37 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class HrvStatusSummaryWeeklyAverageField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='weekly_average',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 1,
+                 scale = 128,
                          size = size,
+        units = 'ms',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class HrvStatusSummaryLastNightAverageField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='last_night_average',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 128,
                          size = size,
-        units = 'degrees',
+        units = 'ms',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -346,18 +331,18 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
+class HrvStatusSummaryLastNight5MinHighField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='last_night_5_min_high',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 128,
                          size = size,
-        units = 'degrees',
+        units = 'ms',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -365,35 +350,18 @@ class LocationPositionLongField(Field):
         )
 
 
-class LocationSymbolField(Field):
+class HrvStatusSummaryBaselineLowUpperField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='baseline_low_upper',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 1,
+                 scale = 128,
                          size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
-    ID = 4
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='altitude',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
-                         size = size,
-        units = 'm',
+        units = 'ms',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -401,14 +369,52 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
+class HrvStatusSummaryBaselineBalancedLowerField(Field):
+    ID = 4
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='baseline_balanced_lower',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class HrvStatusSummaryBaselineBalancedUpperField(Field):
+    ID = 5
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='baseline_balanced_upper',
+            field_id=self.ID,
+            base_type=BaseType.UINT16,
+        offset = 0,
+                 scale = 128,
+                         size = size,
+        units = 'ms',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class HrvStatusSummaryStatusField(Field):
     ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='status',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.ENUM,
         offset = 0,
                  scale = 1,
                          size = size,

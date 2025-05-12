@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class JumpMessage(DataMessage):
+    ID = 285
+    NAME = 'jump'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,42 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=JumpMessage.NAME,
+                         global_id=JumpMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        JumpDistanceField(
+            size=self.__get_field_size(definition_message, JumpDistanceField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        JumpHeightField(
+            size=self.__get_field_size(definition_message, JumpHeightField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        JumpRotationsField(
+            size=self.__get_field_size(definition_message, JumpRotationsField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        JumpHangTimeField(
+            size=self.__get_field_size(definition_message, JumpHangTimeField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        JumpScoreField(
+            size=self.__get_field_size(definition_message, JumpScoreField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        JumpPositionLatField(
+            size=self.__get_field_size(definition_message, JumpPositionLatField.ID),
+            growable=definition_message is None), 
+        JumpPositionLongField(
+            size=self.__get_field_size(definition_message, JumpPositionLongField.ID),
+            growable=definition_message is None), 
+        JumpSpeedField(
+            size=self.__get_field_size(definition_message, JumpSpeedField.ID),
+            growable=definition_message is None), 
+        JumpEnhancedSpeedField(
+            size=self.__get_field_size(definition_message, JumpEnhancedSpeedField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +81,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +109,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def distance(self) -> Optional[float]:
+        field = self.get_field(JumpDistanceField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +119,105 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @distance.setter
+    def distance(self, value: float):
+        field = self.get_field(JumpDistanceField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def height(self) -> Optional[float]:
+        field = self.get_field(JumpHeightField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @height.setter
+    def height(self, value: float):
+        field = self.get_field(JumpHeightField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def rotations(self) -> Optional[int]:
+        field = self.get_field(JumpRotationsField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @rotations.setter
+    def rotations(self, value: int):
+        field = self.get_field(JumpRotationsField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def hang_time(self) -> Optional[float]:
+        field = self.get_field(JumpHangTimeField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @hang_time.setter
+    def hang_time(self, value: float):
+        field = self.get_field(JumpHangTimeField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+
+    @property
+    def score(self) -> Optional[float]:
+        field = self.get_field(JumpScoreField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+
+    @score.setter
+    def score(self, value: float):
+        field = self.get_field(JumpScoreField.ID)
 
         if field:
             if value is None:
@@ -152,7 +230,7 @@ class LocationMessage(DataMessage):
 
     @property
     def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+        field = self.get_field(JumpPositionLatField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -163,7 +241,7 @@ class LocationMessage(DataMessage):
 
     @position_lat.setter
     def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+        field = self.get_field(JumpPositionLatField.ID)
 
         if field:
             if value is None:
@@ -176,7 +254,7 @@ class LocationMessage(DataMessage):
 
     @property
     def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+        field = self.get_field(JumpPositionLongField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -187,7 +265,7 @@ class LocationMessage(DataMessage):
 
     @position_long.setter
     def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+        field = self.get_field(JumpPositionLongField.ID)
 
         if field:
             if value is None:
@@ -199,8 +277,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def speed(self) -> Optional[float]:
+        field = self.get_field(JumpSpeedField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +287,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @speed.setter
+    def speed(self, value: float):
+        field = self.get_field(JumpSpeedField.ID)
 
         if field:
             if value is None:
@@ -223,8 +301,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def enhanced_speed(self) -> Optional[float]:
+        field = self.get_field(JumpEnhancedSpeedField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,33 +311,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @enhanced_speed.setter
+    def enhanced_speed(self, value: float):
+        field = self.get_field(JumpEnhancedSpeedField.ID)
 
         if field:
             if value is None:
@@ -272,23 +326,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,14 +347,52 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class JumpDistanceField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='distance',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.FLOAT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class JumpHeightField(Field):
+    ID = 1
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='height',
+            field_id=self.ID,
+            base_type=BaseType.FLOAT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 'm',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class JumpRotationsField(Field):
+    ID = 2
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='rotations',
+            field_id=self.ID,
+            base_type=BaseType.UINT8,
         offset = 0,
                  scale = 1,
                          size = size,
@@ -327,8 +402,44 @@ class LocationNameField(Field):
         )
 
 
-class LocationPositionLatField(Field):
-    ID = 1
+class JumpHangTimeField(Field):
+    ID = 3
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='hang_time',
+            field_id=self.ID,
+            base_type=BaseType.FLOAT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        units = 's',
+        type_name = '',
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class JumpScoreField(Field):
+    ID = 4
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='score',
+            field_id=self.ID,
+            base_type=BaseType.FLOAT32,
+        offset = 0,
+                 scale = 1,
+                         size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class JumpPositionLatField(Field):
+    ID = 5
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
@@ -346,8 +457,8 @@ class LocationPositionLatField(Field):
         )
 
 
-class LocationPositionLongField(Field):
-    ID = 2
+class JumpPositionLongField(Field):
+    ID = 6
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
@@ -365,35 +476,18 @@ class LocationPositionLongField(Field):
         )
 
 
-class LocationSymbolField(Field):
-    ID = 3
+class JumpSpeedField(Field):
+    ID = 7
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='speed',
             field_id=self.ID,
             base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 1,
+                 scale = 1000,
                          size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
-
-
-class LocationAltitudeField(Field):
-    ID = 4
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='altitude',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
-                         size = size,
-        units = 'm',
+        units = 'm/s',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -401,17 +495,19 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
-    ID = 6
+class JumpEnhancedSpeedField(Field):
+    ID = 8
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='enhanced_speed',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT32,
         offset = 0,
-                 scale = 1,
+                 scale = 1000,
                          size = size,
+        units = 'm/s',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

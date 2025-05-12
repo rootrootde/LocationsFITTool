@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationMessage(DataMessage):
-    ID = 29
-    NAME = 'location'
+class TimestampCorrelationMessage(DataMessage):
+    ID = 162
+    NAME = 'timestamp_correlation'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,36 +31,33 @@ class LocationMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationMessage.NAME,
-                         global_id=LocationMessage.ID,
+        super().__init__(name=TimestampCorrelationMessage.NAME,
+                         global_id=TimestampCorrelationMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        MessageIndexField(
-            size=self.__get_field_size(definition_message, MessageIndexField.ID),
-            growable=definition_message is None), 
         TimestampField(
             size=self.__get_field_size(definition_message, TimestampField.ID),
             growable=definition_message is None), 
-        LocationNameField(
-            size=self.__get_field_size(definition_message, LocationNameField.ID),
+        TimestampCorrelationFractionalTimestampField(
+            size=self.__get_field_size(definition_message, TimestampCorrelationFractionalTimestampField.ID),
             growable=definition_message is None), 
-        LocationPositionLatField(
-            size=self.__get_field_size(definition_message, LocationPositionLatField.ID),
+        TimestampCorrelationSystemTimestampField(
+            size=self.__get_field_size(definition_message, TimestampCorrelationSystemTimestampField.ID),
             growable=definition_message is None), 
-        LocationPositionLongField(
-            size=self.__get_field_size(definition_message, LocationPositionLongField.ID),
+        TimestampCorrelationFractionalSystemTimestampField(
+            size=self.__get_field_size(definition_message, TimestampCorrelationFractionalSystemTimestampField.ID),
             growable=definition_message is None), 
-        LocationSymbolField(
-            size=self.__get_field_size(definition_message, LocationSymbolField.ID),
+        TimestampCorrelationLocalTimestampField(
+            size=self.__get_field_size(definition_message, TimestampCorrelationLocalTimestampField.ID),
             growable=definition_message is None), 
-        LocationAltitudeField(
-            size=self.__get_field_size(definition_message, LocationAltitudeField.ID),
+        TimestampCorrelationTimestampMsField(
+            size=self.__get_field_size(definition_message, TimestampCorrelationTimestampMsField.ID),
             growable=definition_message is None), 
-        LocationDescriptionField(
-            size=self.__get_field_size(definition_message, LocationDescriptionField.ID),
+        TimestampCorrelationSystemTimestampMsField(
+            size=self.__get_field_size(definition_message, TimestampCorrelationSystemTimestampMsField.ID),
             growable=definition_message is None)
         ])
 
@@ -75,30 +72,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-    @property
-    def message_index(self) -> Optional[int]:
-        field = self.get_field(MessageIndexField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @message_index.setter
-    def message_index(self, value: int):
-        field = self.get_field(MessageIndexField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
 # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
 
     @property
@@ -127,8 +100,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def location_name(self) -> Optional[str]:
-        field = self.get_field(LocationNameField.ID)
+    def fractional_timestamp(self) -> Optional[float]:
+        field = self.get_field(TimestampCorrelationFractionalTimestampField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -137,9 +110,35 @@ class LocationMessage(DataMessage):
 
 
 
-    @location_name.setter
-    def location_name(self, value: str):
-        field = self.get_field(LocationNameField.ID)
+    @fractional_timestamp.setter
+    def fractional_timestamp(self, value: float):
+        field = self.get_field(TimestampCorrelationFractionalTimestampField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def system_timestamp(self) -> Optional[int]:
+        field = self.get_field(TimestampCorrelationSystemTimestampField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @system_timestamp.setter
+    def system_timestamp(self, value: int):
+        field = self.get_field(TimestampCorrelationSystemTimestampField.ID)
 
         if field:
             if value is None:
@@ -151,8 +150,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_lat(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLatField.ID)
+    def fractional_system_timestamp(self) -> Optional[float]:
+        field = self.get_field(TimestampCorrelationFractionalSystemTimestampField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -161,9 +160,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_lat.setter
-    def position_lat(self, value: float):
-        field = self.get_field(LocationPositionLatField.ID)
+    @fractional_system_timestamp.setter
+    def fractional_system_timestamp(self, value: float):
+        field = self.get_field(TimestampCorrelationFractionalSystemTimestampField.ID)
 
         if field:
             if value is None:
@@ -175,8 +174,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def position_long(self) -> Optional[float]:
-        field = self.get_field(LocationPositionLongField.ID)
+    def local_timestamp(self) -> Optional[int]:
+        field = self.get_field(TimestampCorrelationLocalTimestampField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -185,9 +184,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @position_long.setter
-    def position_long(self, value: float):
-        field = self.get_field(LocationPositionLongField.ID)
+    @local_timestamp.setter
+    def local_timestamp(self, value: int):
+        field = self.get_field(TimestampCorrelationLocalTimestampField.ID)
 
         if field:
             if value is None:
@@ -199,8 +198,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def symbol(self) -> Optional[int]:
-        field = self.get_field(LocationSymbolField.ID)
+    def timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(TimestampCorrelationTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -209,9 +208,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @symbol.setter
-    def symbol(self, value: int):
-        field = self.get_field(LocationSymbolField.ID)
+    @timestamp_ms.setter
+    def timestamp_ms(self, value: int):
+        field = self.get_field(TimestampCorrelationTimestampMsField.ID)
 
         if field:
             if value is None:
@@ -223,8 +222,8 @@ class LocationMessage(DataMessage):
     
 
     @property
-    def altitude(self) -> Optional[float]:
-        field = self.get_field(LocationAltitudeField.ID)
+    def system_timestamp_ms(self) -> Optional[int]:
+        field = self.get_field(TimestampCorrelationSystemTimestampMsField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -233,33 +232,9 @@ class LocationMessage(DataMessage):
 
 
 
-    @altitude.setter
-    def altitude(self, value: float):
-        field = self.get_field(LocationAltitudeField.ID)
-
-        if field:
-            if value is None:
-                field.clear()
-            else:
-                sub_field = field.get_valid_sub_field(self.fields)
-                field.set_value(0, value, sub_field)
-
-    
-
-    @property
-    def description(self) -> Optional[str]:
-        field = self.get_field(LocationDescriptionField.ID)
-        if field and field.is_valid():
-            sub_field = field.get_valid_sub_field(self.fields)
-            return field.get_value(sub_field=sub_field)
-        else:
-            return None
-
-
-
-    @description.setter
-    def description(self, value: str):
-        field = self.get_field(LocationDescriptionField.ID)
+    @system_timestamp_ms.setter
+    def system_timestamp_ms(self, value: int):
+        field = self.get_field(TimestampCorrelationSystemTimestampMsField.ID)
 
         if field:
             if value is None:
@@ -272,23 +247,6 @@ class LocationMessage(DataMessage):
 
 
 
-
-
-class MessageIndexField(Field):
-    ID = 254
-
-    def __init__(self, size: int = 0, growable: bool = True):
-        super().__init__(
-            name='message_index',
-            field_id=self.ID,
-            base_type=BaseType.UINT16,
-        offset = 0,
-                 scale = 1,
-                         size = size,
-        growable = growable,
-                   sub_fields = [
-        ]
-        )
 
 
 class TimestampField(Field):
@@ -310,54 +268,56 @@ class TimestampField(Field):
         )
 
 
-class LocationNameField(Field):
+class TimestampCorrelationFractionalTimestampField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='name',
+            name='fractional_timestamp',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 1,
+                 scale = 32768,
                          size = size,
+        units = 's',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLatField(Field):
+class TimestampCorrelationSystemTimestampField(Field):
     ID = 1
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_lat',
+            name='system_timestamp',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
-        offset = 0,
-                 scale = 11930464.711111112,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
                          size = size,
-        units = 'degrees',
-        type_name = '',
+        units = 'ms',
+        type_name = 'date_time',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationPositionLongField(Field):
+class TimestampCorrelationFractionalSystemTimestampField(Field):
     ID = 2
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='position_long',
+            name='fractional_system_timestamp',
             field_id=self.ID,
-            base_type=BaseType.SINT32,
+            base_type=BaseType.UINT16,
         offset = 0,
-                 scale = 11930464.711111112,
+                 scale = 32768,
                          size = size,
-        units = 'degrees',
+        units = 's',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -365,35 +325,37 @@ class LocationPositionLongField(Field):
         )
 
 
-class LocationSymbolField(Field):
+class TimestampCorrelationLocalTimestampField(Field):
     ID = 3
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='symbol',
+            name='local_timestamp',
             field_id=self.ID,
-            base_type=BaseType.UINT16,
+            base_type=BaseType.UINT32,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 's',
+        type_name = 'local_date_time',
         growable = growable,
                    sub_fields = [
         ]
         )
 
 
-class LocationAltitudeField(Field):
+class TimestampCorrelationTimestampMsField(Field):
     ID = 4
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='altitude',
+            name='timestamp_ms',
             field_id=self.ID,
             base_type=BaseType.UINT16,
-        offset = 500,
-                 scale = 5,
+        offset = 0,
+                 scale = 1,
                          size = size,
-        units = 'm',
+        units = 'ms',
         type_name = '',
         growable = growable,
                    sub_fields = [
@@ -401,17 +363,19 @@ class LocationAltitudeField(Field):
         )
 
 
-class LocationDescriptionField(Field):
-    ID = 6
+class TimestampCorrelationSystemTimestampMsField(Field):
+    ID = 5
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='description',
+            name='system_timestamp_ms',
             field_id=self.ID,
-            base_type=BaseType.STRING,
+            base_type=BaseType.UINT16,
         offset = 0,
                  scale = 1,
                          size = size,
+        units = 'ms',
+        type_name = '',
         growable = growable,
                    sub_fields = [
         ]

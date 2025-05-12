@@ -15,9 +15,9 @@ from typing import List as list
 from typing import Dict as dict
 
 
-class LocationSettingsMessage(DataMessage):
-    ID = 189
-    NAME = 'location_settings'
+class StressLevelMessage(DataMessage):
+    ID = 227
+    NAME = 'stress_level'
 
     @staticmethod
     def __get_field_size(definition_message: DefinitionMessage, field_id: int) -> int:
@@ -31,15 +31,18 @@ class LocationSettingsMessage(DataMessage):
 
     def __init__(self, definition_message=None, developer_fields=None, local_id: int = 0,
                  endian: Endian = Endian.LITTLE):
-        super().__init__(name=LocationSettingsMessage.NAME,
-                         global_id=LocationSettingsMessage.ID,
+        super().__init__(name=StressLevelMessage.NAME,
+                         global_id=StressLevelMessage.ID,
                          local_id=definition_message.local_id if definition_message else local_id,
                          endian=definition_message.endian if definition_message else endian,
                          definition_message=definition_message,
                          developer_fields=developer_fields,
                          fields=[
-        LocationSettingsLocationSettingsField(
-            size=self.__get_field_size(definition_message, LocationSettingsLocationSettingsField.ID),
+        StressLevelStressLevelValueField(
+            size=self.__get_field_size(definition_message, StressLevelStressLevelValueField.ID),
+            growable=definition_message is None), 
+        StressLevelStressLevelTimeField(
+            size=self.__get_field_size(definition_message, StressLevelStressLevelTimeField.ID),
             growable=definition_message is None)
         ])
 
@@ -56,8 +59,8 @@ class LocationSettingsMessage(DataMessage):
 
 
     @property
-    def location_settings(self) -> Optional[LocationSettings]:
-        field = self.get_field(LocationSettingsLocationSettingsField.ID)
+    def stress_level_value(self) -> Optional[int]:
+        field = self.get_field(StressLevelStressLevelValueField.ID)
         if field and field.is_valid():
             sub_field = field.get_valid_sub_field(self.fields)
             return field.get_value(sub_field=sub_field)
@@ -66,9 +69,35 @@ class LocationSettingsMessage(DataMessage):
 
 
 
-    @location_settings.setter
-    def location_settings(self, value: LocationSettings):
-        field = self.get_field(LocationSettingsLocationSettingsField.ID)
+    @stress_level_value.setter
+    def stress_level_value(self, value: int):
+        field = self.get_field(StressLevelStressLevelValueField.ID)
+
+        if field:
+            if value is None:
+                field.clear()
+            else:
+                sub_field = field.get_valid_sub_field(self.fields)
+                field.set_value(0, value, sub_field)
+
+    
+# timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @property
+    def stress_level_time(self) -> Optional[int]:
+        field = self.get_field(StressLevelStressLevelTimeField.ID)
+        if field and field.is_valid():
+            sub_field = field.get_valid_sub_field(self.fields)
+            return field.get_value(sub_field=sub_field)
+        else:
+            return None
+
+
+    # timestamp : milliseconds from January 1st, 1970 at 00:00:00 UTC
+
+    @stress_level_time.setter
+    def stress_level_time(self, value: int):
+        field = self.get_field(StressLevelStressLevelTimeField.ID)
 
         if field:
             if value is None:
@@ -83,17 +112,36 @@ class LocationSettingsMessage(DataMessage):
 
 
 
-class LocationSettingsLocationSettingsField(Field):
+class StressLevelStressLevelValueField(Field):
     ID = 0
 
     def __init__(self, size: int = 0, growable: bool = True):
         super().__init__(
-            name='location_settings',
+            name='stress_level_value',
             field_id=self.ID,
-            base_type=BaseType.ENUM,
+            base_type=BaseType.SINT16,
         offset = 0,
                  scale = 1,
                          size = size,
+        growable = growable,
+                   sub_fields = [
+        ]
+        )
+
+
+class StressLevelStressLevelTimeField(Field):
+    ID = 1
+
+    def __init__(self, size: int = 0, growable: bool = True):
+        super().__init__(
+            name='stress_level_time',
+            field_id=self.ID,
+            base_type=BaseType.UINT32,
+        offset = -631065600000,
+                 scale = 0.001,
+                         size = size,
+        units = 'ms',
+        type_name = 'date_time',
         growable = growable,
                    sub_fields = [
         ]
