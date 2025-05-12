@@ -94,8 +94,8 @@ class FloatDelegate(QStyledItemDelegate):
         elif index.column() == 2:  # Longitude
             editor.setRange(-180.0, 180.0)
         elif index.column() == 3:  # Altitude
-            editor.setRange(-5000.0, 30000.0)  # Wider range for altitude
-            editor.setDecimals(2)
+            editor.setRange(-5000.0, 29990.0)
+            editor.setDecimals(0)
         return editor
 
     def setEditorData(self, editor, index):
@@ -486,7 +486,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # Log all critical errors
                 for err in critical_errors:
                     self.log_message(f"Critical Save Error: {err}")
-                # Show only the first critical error in QMessageBox for brevity, or summarize
                 QMessageBox.critical(
                     self,
                     "Error Saving FIT File",
@@ -508,9 +507,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     )
                 else:
                     QMessageBox.information(self, "File Saved", display_message)
-                self.log_message(
-                    success_log_message
-                )  # Log overall success regardless of warnings
+                # Log overall success regardless of warnings
+                self.log_message(success_log_message)
 
     @Slot()
     def slot_add_waypoint(self):
