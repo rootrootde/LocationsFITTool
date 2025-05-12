@@ -5,7 +5,7 @@ from fit_tool.profile.profile_type import LocationSettings as FitLocationSetting
 from fit_tool.profile.profile_type import MapSymbol
 from location_tool import fit_handler
 from location_tool.ui_main_window import Ui_MainWindow
-from PySide6.QtCore import QDateTime, Qt, QTimer, Slot
+from PySide6.QtCore import QDateTime, Qt, Slot
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QAbstractItemView,
