@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 import gpxpy
-
+from fit_tool.profile.profile_type import MapSymbol
 from fit_tool.data_message import DataMessage
 from fit_tool.fit_file import FitFile
 from fit_tool.fit_file_builder import FitFileBuilder
@@ -263,25 +263,26 @@ def read_gpx_file(file_path: str) -> List[FitLocationData]:
             symbol_val = 0  # Default FIT symbol
             if gpx_wp.symbol:
                 try:
-                    # Attempt to map common GPX symbols or use a default
-                    # This is a very basic example; a real mapping would be more complex
-                    if (
-                        "summit" in gpx_wp.symbol.lower()
-                        or "peak" in gpx_wp.symbol.lower()
-                    ):
-                        symbol_val = 1  # Example: FIT CoursePoint.SUMMIT
-                    elif "water" in gpx_wp.symbol.lower():
-                        symbol_val = 3  # Example: FIT CoursePoint.WATER
-                    # Add more mappings as needed
-                except Exception:  # Broad except if symbol isn't what we expect
+                    # Use MapSymbol Enum for mapping GPX sym tag to FIT symbol integer
+                    sym_str = gpx_wp.symbol.upper()
+                    if sym_str in MapSymbol.__members__:
+                        symbol_val = MapSymbol[sym_str].value
+                except Exception:
                     pass  # Keep default symbol_val
 
             # Altitude (elevation in GPX)
             altitude = gpx_wp.elevation
 
+            # Use comment/cmt as description if description is empty
+            description = gpx_wp.description
+            if not description and hasattr(gpx_wp, "comment") and gpx_wp.comment:
+                description = gpx_wp.comment
+            elif not description and hasattr(gpx_wp, "cmt") and gpx_wp.cmt:
+                description = gpx_wp.cmt
+
             wp = FitLocationData(
                 name=gpx_wp.name,
-                description=gpx_wp.description,
+                description=description,
                 latitude=gpx_wp.latitude,
                 longitude=gpx_wp.longitude,
                 altitude=altitude,
