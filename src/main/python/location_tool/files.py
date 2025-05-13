@@ -36,12 +36,12 @@ def import_gpx_file(parent_widget, logger=print):
         return None, None
 
     try:
-        waypoints, errors = read_gpx_file(file_path, logger=logger)  # Pass logger
+        waypoints, errors = read_gpx_file(file_path)
         if errors:
             for error in errors:
                 logger(f"GPX Read Error/Warning: {error}")
-                QMessageBox.warning(parent_widget, "GPX Read Warning", str(error))  # ADDED QMessageBox
-        return file_path, waypoints  # ADDED return
+                QMessageBox.warning(parent_widget, "GPX Read Warning", str(error))
+        return file_path, waypoints
     except Exception as e:
         logger(f"Failed to import GPX file: {e}")
         QMessageBox.critical(
