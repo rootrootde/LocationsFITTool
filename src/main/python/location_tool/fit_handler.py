@@ -121,6 +121,7 @@ def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
 
         try:
             # process FileIdMessage
+
             if global_id == FileIdMessage.ID:
                 msg = actual_message
 
@@ -178,12 +179,16 @@ def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
                     time_created=processed_time_created,
                     product_name=getattr(msg, "product_name", None),
                 )
+
+            # process FileCreatorMessage
             elif global_id == FileCreatorMessage.ID:
                 msg = actual_message
                 fit_data.creator = FitCreatorData(
                     software_version=getattr(msg, "software_version", None),
                     hardware_version=getattr(msg, "hardware_version", None),
                 )
+
+            # process LocationSettingsMessage
             elif global_id == LocationSettingsMessage.ID:
                 msg = actual_message
                 setting_val = getattr(msg, "location_settings", None)
@@ -199,6 +204,8 @@ def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
                 fit_data.settings = FitLocationSettingData(
                     waypoint_setting=setting_enum
                 )
+
+            # process LocationMessage
             elif global_id == LocationMessage.ID:
                 msg = actual_message
                 lat_degrees = getattr(msg, "position_lat", None)
