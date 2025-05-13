@@ -17,8 +17,6 @@ from fit_tool.profile.profile_type import (
     MapSymbol,
 )
 
-from .utils import process_raw_timestamp
-
 # Define conservative maximum character lengths for truncation
 MAX_NAME_CHARS = 50
 MAX_DESC_CHARS = 50
@@ -26,7 +24,7 @@ MAX_DESC_CHARS = 50
 
 # --- Data Classes ---
 @dataclass
-class FitHeaderData:
+class FileIdMessageData:
     file_type: Optional[FileType] = FileType.LOCATIONS  # Allow None initially if read from FIT
     manufacturer: Optional[Manufacturer] = Manufacturer.DEVELOPMENT  # Allow None initially
     product: Optional[Any] = 0  # Can be int or GarminProduct enum
@@ -39,13 +37,13 @@ class FitHeaderData:
 
 
 @dataclass
-class FitCreatorData:
+class FileCreatorMessageData:
     software_version: Optional[int] = 0  # e.g. 100 for 1.00
     hardware_version: Optional[int] = 0
 
 
 @dataclass
-class FitLocationSettingData:
+class LocationSettingsMessageData:
     location_settings_enum: Optional[LocationSettings] = (
         None  # Stores the LocationSettings enum value
     )
@@ -54,23 +52,23 @@ class FitLocationSettingData:
 
 
 @dataclass
-class FitLocationData:
+class LocationMessageData:
     name: Optional[str] = "Waypoint"
     latitude: float = 0.0  # Degrees
     longitude: float = 0.0  # Degrees
     altitude: float = 0.0  # Meters
     timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    symbol: MapSymbol = MapSymbol.AIRPORT  # Changed from GENERIC
+    symbol: MapSymbol = MapSymbol.AIRPORT
     message_index: Optional[int] = None
-    description: Optional[str] = None  # For internal/GPX use
+    description: Optional[str] = None
 
 
 @dataclass
 class LocationsFitFileData:
-    header: FitHeaderData = field(default_factory=FitHeaderData)
-    creator: FitCreatorData = field(default_factory=FitCreatorData)
-    location_settings: Optional[FitLocationSettingData] = None
-    locations: List[FitLocationData] = field(default_factory=list)
+    header: FileIdMessageData = field(default_factory=FileIdMessageData)
+    creator: FileCreatorMessageData = field(default_factory=FileCreatorMessageData)
+    location_settings: Optional[LocationSettingsMessageData] = None
+    locations: List[LocationMessageData] = field(default_factory=list)
     errors: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
 
@@ -138,7 +136,7 @@ def read_fit_file(
 
                 time_created: Optional[datetime] = getattr(msg, "time_created", None)
 
-                fit_data.header = FitHeaderData(
+                fit_data.header = FileIdMessageData(
                     file_type=file_type_enum,
                     manufacturer=manufacturer_enum,
                     product=garmin_product_enum if garmin_product_enum else product_id_val,
@@ -150,7 +148,7 @@ def read_fit_file(
             # process FileCreatorMessage
             elif global_id == FileCreatorMessage.ID:
                 msg: DataMessage = actual_message
-                fit_data.creator = FitCreatorData(
+                fit_data.creator = FileCreatorMessageData(
                     software_version=getattr(msg, "software_version", None),
                     hardware_version=getattr(msg, "hardware_version", None),
                 )
@@ -173,7 +171,7 @@ def read_fit_file(
                                 f"Invalid LocationSettings value: {location_settings_raw}. Using None."
                             )
 
-                fit_data.location_settings = FitLocationSettingData(
+                fit_data.location_settings = LocationSettingsMessageData(
                     location_settings_enum=location_settings_enum
                     # name and message_index are not directly part of this FIT message,
                     # they might be set elsewhere or based on other logic if needed.
@@ -197,7 +195,7 @@ def read_fit_file(
                                 f"Invalid MapSymbol value {symbol_val} in FIT LocationMessage. Using default."
                             )
 
-                waypoint: FitLocationData = FitLocationData(
+                waypoint: LocationMessageData = LocationMessageData(
                     name=getattr(msg, "location_name", None),
                     description=getattr(
                         msg, "description", None
@@ -228,14 +226,14 @@ def read_fit_file(
 
 def read_gpx_file(
     file_path: str, logger: Optional[Callable[[str], None]] = None
-) -> Tuple[List[FitLocationData], List[str]]:
+) -> Tuple[List[LocationMessageData], List[str]]:
     """
     Parses a GPX file and extracts waypoint data from <wpt> (top-level waypoints)
     and <rtept> (route points from all routes).
     Track points (<trkpt>) are ignored.
-    Returns a tuple containing a list of FitLocationData objects and a list of error/warning strings.
+    Returns a tuple containing a list of LocationMessageData objects and a list of error/warning strings.
     """
-    waypoints: List[FitLocationData] = []
+    waypoints: List[LocationMessageData] = []
     errors: List[str] = []
 
     try:
@@ -267,7 +265,7 @@ def read_gpx_file(
             else:
                 timestamp = datetime.now(timezone.utc)
 
-            symbol_to_assign: MapSymbol = MapSymbol.AIRPORT  # Default from FitLocationData
+            symbol_to_assign: MapSymbol = MapSymbol.AIRPORT  # Default from LocationMessageData
             if gpx_wp.symbol:
                 try:
                     sym_str: str = gpx_wp.symbol.strip().upper().replace(" ", "_")
@@ -302,7 +300,7 @@ def read_gpx_file(
                 errors.append(f"Skipping waypoint '{name}' due to missing latitude/longitude.")
                 continue
 
-            wp: FitLocationData = FitLocationData(
+            wp: LocationMessageData = LocationMessageData(
                 name=name,
                 description=description,
                 latitude=gpx_wp.latitude,
@@ -376,7 +374,7 @@ def read_gpx_file(
                             )
                             continue
 
-                        wp_rte: FitLocationData = FitLocationData(
+                        wp_rte: LocationMessageData = LocationMessageData(
                             name=name_rte,
                             description=description_rte,
                             latitude=route_pt.latitude,
@@ -431,8 +429,8 @@ def write_fit_file(
 
     # File ID Message
     fid_msg: FileIdMessage = FileIdMessage()
-    # fit_data.header will always exist due to default_factory=FitHeaderData
-    header: FitHeaderData = fit_data.header
+    # fit_data.header will always exist due to default_factory=FileIdMessageData
+    header: FileIdMessageData = fit_data.header
     fid_msg.type = header.file_type if header.file_type is not None else FileType.LOCATIONS
     fid_msg.manufacturer = (
         header.manufacturer if header.manufacturer is not None else Manufacturer.DEVELOPMENT
@@ -444,7 +442,7 @@ def write_fit_file(
         else:
             fid_msg.product = header.product
     else:
-        # Default product ID, aligns with FitHeaderData default if manufacturer is DEVELOPMENT
+        # Default product ID, aligns with FileIdMessageData default if manufacturer is DEVELOPMENT
         fid_msg.product = 0 if header.manufacturer == Manufacturer.DEVELOPMENT else 1
 
     fid_msg.serial_number = header.serial_number if header.serial_number is not None else 0
@@ -458,8 +456,8 @@ def write_fit_file(
 
     # File Creator Message
     creator_msg: FileCreatorMessage = FileCreatorMessage()
-    # fit_data.creator will always exist due to default_factory=FitCreatorData
-    creator: FitCreatorData = fit_data.creator
+    # fit_data.creator will always exist due to default_factory=FileCreatorMessageData
+    creator: FileCreatorMessageData = fit_data.creator
     creator_msg.software_version = (
         creator.software_version if creator.software_version is not None else 0
     )
@@ -480,7 +478,9 @@ def write_fit_file(
     builder.add(ls_msg)
 
     # Location Messages (Waypoints)
-    for index, wp_data in enumerate(fit_data.locations):  # index is int, wp_data is FitLocationData
+    for index, wp_data in enumerate(
+        fit_data.locations
+    ):  # index is int, wp_data is LocationMessageData
         loc_msg: LocationMessage = LocationMessage()
 
         # Truncate name and description based on estimated byte length

@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, List, Optional
 
 from fit_tool.profile.profile_type import MapSymbol
-from location_tool import fit_handler  # For FitLocationData type hint
+from location_tool import fit_handler  # For LocationMessageData type hint
 
 # Import get_resource_path from main_window.py for now
 # This might create a circular import if main_window also imports table.py directly for types.
@@ -148,13 +148,15 @@ def setup_waypoint_table(table_widget: QTableWidget, parent_widget: QWidget) -> 
 
 def populate_waypoint_table(
     table_widget: QTableWidget,
-    waypoints_data: List[fit_handler.FitLocationData],
+    waypoints_data: List[fit_handler.LocationMessageData],
     appctxt: Any,
     log_func: Callable[[str], None],
 ) -> None:
     table_widget.setRowCount(0)
     table_widget.setRowCount(len(waypoints_data))
-    for row_idx, wp_data in enumerate(waypoints_data):  # row_idx is int, wp_data is FitLocationData
+    for row_idx, wp_data in enumerate(
+        waypoints_data
+    ):  # row_idx is int, wp_data is LocationMessageData
         set_table_row_from_wp_data(
             table_widget,
             row_idx,
@@ -168,7 +170,7 @@ def populate_waypoint_table(
 def set_table_row_from_wp_data(
     table_widget: QTableWidget,
     row_idx: int,
-    wp_data: fit_handler.FitLocationData,
+    wp_data: fit_handler.LocationMessageData,
     appctxt: Any,  # Typically an ApplicationContext from fbs, but can be None
     log_func: Callable[[str], None],
 ) -> None:

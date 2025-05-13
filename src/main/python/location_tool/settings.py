@@ -3,17 +3,17 @@ from datetime import datetime
 from typing import Any, Dict, Optional
 
 from location_tool.fit_handler import (
+    FileCreatorMessageData,
+    FileIdMessageData,
     FileType,
-    FitCreatorData,
-    FitHeaderData,
     GarminProduct,
     Manufacturer,
 )
 from PySide6.QtCore import QSettings
 
 
-# Helper to convert dictionary to FitHeaderData
-def _dict_to_fit_header(d: Optional[Dict[str, Any]]) -> Optional[FitHeaderData]:
+# Helper to convert dictionary to FileIdMessageData
+def _dict_to_fit_header(d: Optional[Dict[str, Any]]) -> Optional[FileIdMessageData]:
     if not d or not isinstance(d, dict):
         return None
     try:
@@ -23,7 +23,7 @@ def _dict_to_fit_header(d: Optional[Dict[str, Any]]) -> Optional[FitHeaderData]:
         product_val = d.get("product")
         time_created_val = d.get("time_created")
 
-        return FitHeaderData(
+        return FileIdMessageData(
             file_type=FileType(file_type_val) if file_type_val is not None else None,
             manufacturer=Manufacturer(manufacturer_val) if manufacturer_val is not None else None,
             product=GarminProduct(product_val)
@@ -35,25 +35,25 @@ def _dict_to_fit_header(d: Optional[Dict[str, Any]]) -> Optional[FitHeaderData]:
         )
     except (ValueError, TypeError) as e:  # Catch specific errors for robustness
         # Log or handle error if conversion fails, e.g. due to enum changes or bad data
-        print(f"Error converting dict to FitHeaderData: {e}, data: {d}")  # Basic logging
+        print(f"Error converting dict to FileIdMessageData: {e}, data: {d}")  # Basic logging
         return None
 
 
-# Helper to convert dictionary to FitCreatorData
-def _dict_to_fit_creator(d: Optional[Dict[str, Any]]) -> Optional[FitCreatorData]:
+# Helper to convert dictionary to FileCreatorMessageData
+def _dict_to_fit_creator(d: Optional[Dict[str, Any]]) -> Optional[FileCreatorMessageData]:
     if not d or not isinstance(d, dict):
         return None
     try:
-        return FitCreatorData(
+        return FileCreatorMessageData(
             hardware_version=d.get("hardware_version"),
             software_version=d.get("software_version"),
         )
     except (ValueError, TypeError) as e:  # Catch specific errors
-        print(f"Error converting dict to FitCreatorData: {e}, data: {d}")  # Basic logging
+        print(f"Error converting dict to FileCreatorMessageData: {e}, data: {d}")  # Basic logging
         return None
 
 
-def load_fit_header_defaults() -> Optional[FitHeaderData]:
+def load_fit_header_defaults() -> Optional[FileIdMessageData]:
     settings: QSettings = QSettings("LocationsFITTool", "LocationsFITTool")
     if settings.contains("fit_header_defaults"):
         header_dict: Optional[Dict[str, Any]] = settings.value("fit_header_defaults", None)
@@ -61,7 +61,7 @@ def load_fit_header_defaults() -> Optional[FitHeaderData]:
     return None
 
 
-def load_fit_creator_defaults() -> Optional[FitCreatorData]:
+def load_fit_creator_defaults() -> Optional[FileCreatorMessageData]:
     settings: QSettings = QSettings("LocationsFITTool", "LocationsFITTool")
     if settings.contains("fit_creator_defaults"):
         creator_dict: Optional[Dict[str, Any]] = settings.value("fit_creator_defaults", None)
@@ -69,7 +69,7 @@ def load_fit_creator_defaults() -> Optional[FitCreatorData]:
     return None
 
 
-def save_fit_header_defaults(header: Optional[FitHeaderData]) -> None:
+def save_fit_header_defaults(header: Optional[FileIdMessageData]) -> None:
     settings: QSettings = QSettings("LocationsFITTool", "LocationsFITTool")
     if header and is_dataclass(header):
         # Ensure datetime is stored in a serializable format (ISO format string)
@@ -92,7 +92,7 @@ def save_fit_header_defaults(header: Optional[FitHeaderData]) -> None:
         settings.remove("fit_header_defaults")
 
 
-def save_fit_creator_defaults(creator: Optional[FitCreatorData]) -> None:
+def save_fit_creator_defaults(creator: Optional[FileCreatorMessageData]) -> None:
     settings: QSettings = QSettings("LocationsFITTool", "LocationsFITTool")
     if creator and is_dataclass(creator):
         settings.setValue("fit_creator_defaults", asdict(creator))

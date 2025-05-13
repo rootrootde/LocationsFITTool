@@ -2,24 +2,24 @@
 from datetime import datetime, timezone
 from typing import List, Tuple  # Added List and Tuple
 
-from location_tool import fit_handler  # For FitLocationData type hint
+from location_tool import fit_handler  # For LocationMessageData type hint
 
 
 def reindex_waypoints(
-    waypoints_data: List[fit_handler.FitLocationData],
-) -> List[fit_handler.FitLocationData]:
+    waypoints_data: List[fit_handler.LocationMessageData],
+) -> List[fit_handler.LocationMessageData]:
     """Ensure all waypoints have a sequential message_index."""
-    for i, wp in enumerate(waypoints_data):  # i is int, wp is FitLocationData
+    for i, wp in enumerate(waypoints_data):  # i is int, wp is LocationMessageData
         wp.message_index = i
     return waypoints_data
 
 
 def add_waypoint(
-    current_waypoints_data: List[fit_handler.FitLocationData],
-) -> Tuple[List[fit_handler.FitLocationData], fit_handler.FitLocationData]:
+    current_waypoints_data: List[fit_handler.LocationMessageData],
+) -> Tuple[List[fit_handler.LocationMessageData], fit_handler.LocationMessageData]:
     """Adds a new default waypoint to the list, re-indexes, and returns the updated list and the new waypoint."""
     new_wp_index: int = len(current_waypoints_data)
-    new_wp: fit_handler.FitLocationData = fit_handler.FitLocationData(
+    new_wp: fit_handler.LocationMessageData = fit_handler.LocationMessageData(
         name=f"Waypoint {new_wp_index}",
         description="",
         latitude=0.0,
@@ -38,9 +38,9 @@ def add_waypoint(
 
 
 def delete_waypoints(
-    current_waypoints_data: List[fit_handler.FitLocationData],
+    current_waypoints_data: List[fit_handler.LocationMessageData],
     sorted_rows_to_delete: List[int],
-) -> Tuple[List[fit_handler.FitLocationData], int, int]:
+) -> Tuple[List[fit_handler.LocationMessageData], int, int]:
     """
     Deletes waypoints from the list based on their row indices.
     Returns the updated list, number of deleted items, and the recommended row index for new selection.
@@ -68,6 +68,6 @@ def delete_waypoints(
     return current_waypoints_data, num_deleted, new_selection_row
 
 
-def delete_all_waypoints() -> List[fit_handler.FitLocationData]:
+def delete_all_waypoints() -> List[fit_handler.LocationMessageData]:
     """Returns an empty list, effectively deleting all waypoints."""
     return []

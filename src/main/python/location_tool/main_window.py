@@ -36,11 +36,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if isinstance(action, QAction):  # Ensure it's a QAction
                 self.addAction(action)
 
-        self.current_waypoints_data: list[fit_handler.FitLocationData] = []
+        self.current_waypoints_data: list[fit_handler.LocationMessageData] = []
         self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
         self.current_file_path: Optional[str] = None
-        self.fit_header_defaults: Optional[fit_handler.FitHeaderData] = None
-        self.fit_creator_defaults: Optional[fit_handler.FitCreatorData] = None
+        self.fit_header_defaults: Optional[fit_handler.FileIdMessageData] = None
+        self.fit_creator_defaults: Optional[fit_handler.FileCreatorMessageData] = None
 
         # Populate the existing Location Settings ComboBox from the UI
         for setting in FitLocationSettingsEnum:
@@ -186,7 +186,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.log(
                 "No FIT header defaults found in settings, will use hardcoded defaults if needed."
             )
-            self.fit_header_defaults = fit_handler.FitHeaderData()
+            self.fit_header_defaults = fit_handler.FileIdMessageData()
 
     def _load_fit_creator_defaults(self) -> None:
         self.fit_creator_defaults = app_settings.load_fit_creator_defaults()
@@ -196,31 +196,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.log(
                 "No FIT creator defaults found in settings, will use hardcoded defaults if needed."
             )
-            self.fit_creator_defaults = fit_handler.FitCreatorData()
+            self.fit_creator_defaults = fit_handler.FileCreatorMessageData()
 
-    def _save_fit_header_defaults(self, header: Optional[fit_handler.FitHeaderData]) -> None:
+    def _save_fit_header_defaults(self, header: Optional[fit_handler.FileIdMessageData]) -> None:
         app_settings.save_fit_header_defaults(header)
         if header:
             self.logger.log("Saved FIT header defaults to settings.")
         else:
             self.logger.log("Cleared FIT header defaults from settings.")
 
-    def _save_fit_creator_defaults(self, creator: Optional[fit_handler.FitCreatorData]) -> None:
+    def _save_fit_creator_defaults(
+        self, creator: Optional[fit_handler.FileCreatorMessageData]
+    ) -> None:
         app_settings.save_fit_creator_defaults(creator)
         if creator:
             self.logger.log("Saved FIT creator defaults to settings.")
         else:
             self.logger.log("Cleared FIT creator defaults from settings.")
 
-    def _get_fit_header_for_save(self) -> fit_handler.FitHeaderData:
+    def _get_fit_header_for_save(self) -> fit_handler.FileIdMessageData:
         if self.fit_header_defaults:
             return self.fit_header_defaults
-        return fit_handler.FitHeaderData()
+        return fit_handler.FileIdMessageData()
 
-    def _get_fit_creator_for_save(self) -> fit_handler.FitCreatorData:
+    def _get_fit_creator_for_save(self) -> fit_handler.FileCreatorMessageData:
         if self.fit_creator_defaults:
             return self.fit_creator_defaults
-        return fit_handler.FitCreatorData()
+        return fit_handler.FileCreatorMessageData()
 
     def _setup_waypoint_table(self) -> None:
         table_manager.setup_waypoint_table(self.waypoint_table, self)
@@ -284,7 +286,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         selected_location_setting_enum: Optional[FitLocationSettingsEnum] = (
             self.location_settings_combo.currentData()
         )
-        location_setting_data = fit_handler.FitLocationSettingData(
+        location_setting_data = fit_handler.LocationSettingsMessageData(
             location_settings_enum=selected_location_setting_enum
         )
 
@@ -300,7 +302,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def slot_add_waypoint(self) -> None:
-        new_wp: Optional[fit_handler.FitLocationData]
+        new_wp: Optional[fit_handler.LocationMessageData]
         self.current_waypoints_data, new_wp = waypoint_manager.add_waypoint(
             self.current_waypoints_data
         )
@@ -366,7 +368,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.error(f"Waypoint data change for invalid row: {row}")
             return
 
-        wp_data: fit_handler.FitLocationData = self.current_waypoints_data[row]
+        wp_data: fit_handler.LocationMessageData = self.current_waypoints_data[row]
         item: Optional[QTableWidgetItem] = self.waypoint_table.item(
             row, column
         )  # QTableWidgetItem can be None
