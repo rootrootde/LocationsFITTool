@@ -136,19 +136,14 @@ def read_fit_file(
                 elif product_id_val is not None and manufacturer_enum != Manufacturer.GARMIN:
                     pass
 
-                time_created_val: Optional[int] = getattr(
-                    msg, "time_created", None
-                )  # Raw FIT timestamp
-                processed_time_created: Optional[datetime] = process_raw_timestamp(
-                    time_created_val, logger=logger
-                )
+                time_created: Optional[datetime] = getattr(msg, "time_created", None)
 
                 fit_data.header = FitHeaderData(
                     file_type=file_type_enum,
                     manufacturer=manufacturer_enum,
                     product=garmin_product_enum if garmin_product_enum else product_id_val,
                     serial_number=getattr(msg, "serial_number", None),
-                    time_created=processed_time_created,
+                    time_created=time_created,
                     product_name=getattr(msg, "product_name", None),
                 )
 
@@ -163,23 +158,23 @@ def read_fit_file(
             # process LocationSettingsMessage
             elif global_id == LocationSettingsMessage.ID:
                 msg: DataMessage = actual_message
-                # The LocationSettingsMessage has a 'location_settings' property which returns the LocationSettings enum
-                location_settings_value: Optional[LocationSettings] = getattr(
-                    msg, "location_settings", None
-                )
+                # The LocationSettingsMessage has a 'location_settings' property which returns an int value
+                # that needs to be converted to a LocationSettings enum
+                location_settings_raw: Optional[int] = getattr(msg, "location_settings", None)
 
-                # Ensure it's the correct enum type if a value is present
-                if location_settings_value is not None and not isinstance(
-                    location_settings_value, LocationSettings
-                ):
-                    if logger:
-                        logger(
-                            f"Warning: LocationSettingsMessage.location_settings was not of type LocationSettings enum, but {type(location_settings_value)}. Value: {location_settings_value}"
-                        )
-                    location_settings_value = None  # Or attempt conversion if appropriate and safe
+                # Convert the int value to the LocationSettings enum
+                location_settings_enum: Optional[LocationSettings] = None
+                if location_settings_raw is not None:
+                    try:
+                        location_settings_enum = LocationSettings(location_settings_raw)
+                    except ValueError:
+                        if logger:
+                            logger(
+                                f"Invalid LocationSettings value: {location_settings_raw}. Using None."
+                            )
 
                 fit_data.location_settings = FitLocationSettingData(
-                    location_settings_enum=location_settings_value
+                    location_settings_enum=location_settings_enum
                     # name and message_index are not directly part of this FIT message,
                     # they might be set elsewhere or based on other logic if needed.
                 )
@@ -189,13 +184,7 @@ def read_fit_file(
                 msg: DataMessage = actual_message
                 lat_degrees: Optional[float] = getattr(msg, "position_lat", None)
                 lon_degrees: Optional[float] = getattr(msg, "position_long", None)
-
-                raw_location_timestamp: Optional[int] = getattr(
-                    msg, "timestamp", None
-                )  # Raw FIT timestamp
-                location_datetime_object: Optional[datetime] = process_raw_timestamp(
-                    raw_location_timestamp, logger=logger
-                )
+                location_datetime_object: Optional[datetime] = getattr(msg, "timestamp", None)
 
                 symbol_val: Optional[int] = getattr(msg, "symbol", None)
                 symbol_enum: MapSymbol = MapSymbol.AIRPORT  # Default
@@ -482,9 +471,9 @@ def write_fit_file(
     # Location Settings Message
     ls_msg: LocationSettingsMessage = LocationSettingsMessage()
     if fit_data.location_settings and fit_data.location_settings.location_settings_enum is not None:
-        ls_msg.location_settings = fit_data.location_settings.location_settings_enum
+        ls_msg.location_settings = fit_data.location_settings.location_settings_enum.value
     else:
-        ls_msg.location_settings = LocationSettings.ADD  # Defaulting to ADD
+        ls_msg.location_settings = LocationSettings.ADD.value  # Defaulting to ADD
         warnings.append(
             "Info: Location Settings data was missing or invalid; a default setting (ADD) was applied."
         )
