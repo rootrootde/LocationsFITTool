@@ -26,44 +26,50 @@ MAX_DESC_CHARS = 50
 # --- Data Classes ---
 @dataclass
 class FitHeaderData:
-    file_type: Optional[FileType] = None
-    manufacturer: Optional[Manufacturer] = None
-    product: Optional[GarminProduct] = None
+    file_type: FileType = FileType.LOCATIONS
+    manufacturer: Manufacturer = Manufacturer.DEVELOPMENT
+    product: int = 0  # Generic product ID
     serial_number: Optional[int] = None
-    time_created: Optional[datetime] = None
-    product_name: Optional[str] = None
+    time_created: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    number: int = 0  # File number / part number
+    product_name: Optional[str] = None  # Max 20 chars for .FIT
 
 
 @dataclass
 class FitCreatorData:
-    software_version: Optional[int] = None
-    hardware_version: Optional[int] = None
+    software_version: int = 0  # e.g. 100 for 1.00
+    hardware_version: int = 0
 
 
 @dataclass
-class FitLocationSettingData:  # Renamed from FitWaypointSettingData
-    waypoint_setting: Optional[LocationSettings] = None
-
-
-@dataclass
-class FitLocationData:
-    name: Optional[str] = None
-    description: Optional[str] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    altitude: Optional[float] = None
-    timestamp: Optional[datetime] = None
-    symbol: Optional[int] = None
+class FitLocationSettingData:
+    location_settings_enum: Optional[LocationSettings] = (
+        None  # Stores the LocationSettings enum value
+    )
+    name: Optional[str] = None  # Max 16 chars for .FIT
     message_index: Optional[int] = None
 
 
 @dataclass
+class FitLocationData:
+    name: Optional[str] = "Waypoint"  # Default name, max 16 chars for .FIT
+    latitude: float = 0.0  # Degrees
+    longitude: float = 0.0  # Degrees
+    altitude: float = 0.0  # Meters
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    symbol: MapSymbol = MapSymbol.AIRPORT  # Changed from GENERIC
+    message_index: Optional[int] = None
+    description: Optional[str] = None  # For internal/GPX use
+
+
+@dataclass
 class LocationsFitFileData:
-    header: Optional[FitHeaderData] = None
-    creator: Optional[FitCreatorData] = None
-    settings: Optional[FitLocationSettingData] = None
-    waypoints: List[FitLocationData] = field(default_factory=list)
+    header: FitHeaderData = field(default_factory=FitHeaderData)
+    creator: FitCreatorData = field(default_factory=FitCreatorData)
+    location_settings: Optional[FitLocationSettingData] = None
+    locations: List[FitLocationData] = field(default_factory=list)
     errors: List[str] = field(default_factory=list)
+    warnings: List[str] = field(default_factory=list)
 
 
 # --- Helper Function for Timestamp Processing ---
@@ -191,18 +197,25 @@ def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
             # process LocationSettingsMessage
             elif global_id == LocationSettingsMessage.ID:
                 msg = actual_message
-                setting_val = getattr(msg, "location_settings", None)
-                setting_enum = None
-                if setting_val is not None:
-                    try:
-                        setting_enum = LocationSettings(setting_val)
-                    except ValueError:
-                        if logger:
-                            logger(
-                                f"Invalid LocationSetting value encountered: {setting_val}"
-                            )
-                fit_data.settings = FitLocationSettingData(
-                    waypoint_setting=setting_enum
+                # The LocationSettingsMessage has a 'location_settings' property which returns the LocationSettings enum
+                location_settings_value = getattr(msg, "location_settings", None)
+
+                # Ensure it's the correct enum type if a value is present
+                if location_settings_value is not None and not isinstance(
+                    location_settings_value, LocationSettings
+                ):
+                    if logger:
+                        logger(
+                            f"Warning: LocationSettingsMessage.location_settings was not of type LocationSettings enum, but {type(location_settings_value)}. Value: {location_settings_value}"
+                        )
+                    location_settings_value = (
+                        None  # Or attempt conversion if appropriate and safe
+                    )
+
+                fit_data.location_settings = FitLocationSettingData(
+                    location_settings_enum=location_settings_value
+                    # name and message_index are not directly part of this FIT message,
+                    # they might be set elsewhere or based on other logic if needed.
                 )
 
             # process LocationMessage
@@ -226,7 +239,7 @@ def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
                     symbol=getattr(msg, "symbol", None),
                     message_index=getattr(msg, "message_index", None),
                 )
-                fit_data.waypoints.append(waypoint)
+                fit_data.locations.append(waypoint)
         except AttributeError as e:
             if logger:
                 logger(
@@ -241,11 +254,15 @@ def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
     return fit_data
 
 
-def read_gpx_file(file_path: str, logger=None) -> List[FitLocationData]:
+def read_gpx_file(
+    file_path: str, logger=None
+) -> tuple[List[FitLocationData], List[str]]:
     """
     Parses a GPX file and extracts waypoint data.
+    Returns a tuple containing a list of FitLocationData objects and a list of error/warning strings.
     """
     waypoints: List[FitLocationData] = []
+    errors: List[str] = []
     try:
         with open(file_path, "r", encoding="utf-8") as gpx_file_content:
             gpx = gpxpy.parse(gpx_file_content)
@@ -271,11 +288,20 @@ def read_gpx_file(file_path: str, logger=None) -> List[FitLocationData]:
                     sym_str = gpx_wp.symbol.upper()
                     if sym_str in MapSymbol.__members__:
                         symbol_val = MapSymbol[sym_str].value
-                except Exception:
+                    else:
+                        # If symbol is not in MapSymbol, log it as a warning/error and use default
+                        err_msg = f"GPX symbol '{gpx_wp.symbol}' not found in MapSymbol enum. Using default."
+                        if logger:
+                            logger(err_msg)
+                        errors.append(err_msg)
+                        # symbol_val remains default (0)
+                except Exception as e:
+                    err_msg = (
+                        f"Could not map GPX symbol '{gpx_wp.symbol}' to FIT symbol: {e}"
+                    )
                     if logger:
-                        logger(
-                            f"Could not map GPX symbol '{gpx_wp.symbol}' to FIT symbol."
-                        )
+                        logger(err_msg)
+                    errors.append(err_msg)
 
             # Altitude (elevation in GPX)
             altitude = gpx_wp.elevation
@@ -301,44 +327,62 @@ def read_gpx_file(file_path: str, logger=None) -> List[FitLocationData]:
 
         if not waypoints and gpx.routes:
             # Fallback: if no waypoints, try to get points from the first route
-            for route_idx, route_pt in enumerate(gpx.routes[0].points):
-                timestamp = route_pt.time
-                if timestamp:
-                    if timestamp.tzinfo is None:
-                        timestamp = timestamp.replace(tzinfo=timezone.utc)
-                    else:
-                        timestamp = timestamp.astimezone(timezone.utc)
+            if gpx.routes:  # Ensure routes exist
+                # Check if the first route has points
+                if gpx.routes[0].points:
+                    for route_idx, route_pt in enumerate(gpx.routes[0].points):
+                        timestamp = route_pt.time
+                        if timestamp:
+                            if timestamp.tzinfo is None:
+                                timestamp = timestamp.replace(tzinfo=timezone.utc)
+                            else:
+                                timestamp = timestamp.astimezone(timezone.utc)
+                        else:
+                            timestamp = datetime.now(timezone.utc)
+
+                        altitude = route_pt.elevation
+
+                        current_idx = len(
+                            waypoints
+                        )  # Use current length of waypoints for message_index base
+
+                        wp = FitLocationData(
+                            name=route_pt.name or f"RoutePt {route_idx}",
+                            description=route_pt.comment,
+                            latitude=route_pt.latitude,
+                            longitude=route_pt.longitude,
+                            altitude=altitude,
+                            timestamp=timestamp,
+                            symbol=0,  # Default symbol for route points
+                            message_index=current_idx,  # Use current_idx
+                        )
+                        waypoints.append(wp)
                 else:
-                    timestamp = datetime.now(timezone.utc)
+                    info_msg = (
+                        "GPX file contains routes but the first route has no points."
+                    )
+                    if logger:
+                        logger(info_msg)
 
-                altitude = route_pt.elevation
-
-                wp = FitLocationData(
-                    name=route_pt.name or f"RoutePt {route_idx}",
-                    description=route_pt.comment,
-                    latitude=route_pt.latitude,
-                    longitude=route_pt.longitude,
-                    altitude=altitude,
-                    timestamp=timestamp,
-                    symbol=0,  # Default symbol for route points
-                    message_index=idx + 1 + route_idx,  # Continue indexing
-                )
-                waypoints.append(wp)
+            else:  # No routes
+                info_msg = "GPX file contains no waypoints and no routes."
+                if logger:
+                    logger(info_msg)
 
     except ImportError:
-        # This error should ideally be caught by the GUI and inform the user
+        err_msg = "GPX parsing requires the 'gpxpy' library. Please install it: pip install gpxpy"
         if logger:
-            logger(
-                "GPX parsing requires the 'gpxpy' library. Please install it: pip install gpxpy"
-            )
-        return waypoints
+            logger(err_msg)
+        errors.append(err_msg)
+        return waypoints, errors  # Return empty waypoints and the error
     except Exception as e:
-        # Log or raise a more specific error to be handled by the GUI
+        err_msg = f"Error parsing GPX file {file_path}: {e}"
         if logger:
-            logger(f"Error parsing GPX file {file_path}: {e}")
-        return waypoints
+            logger(err_msg)
+        errors.append(err_msg)
+        return waypoints, errors  # Return potentially partial waypoints and the error
 
-    return waypoints
+    return waypoints, errors
 
 
 # --- Write Logic ---
@@ -360,9 +404,9 @@ def degrees_to_semicircles(degrees: Optional[float]) -> Optional[int]:
 
 def write_fit_file(
     file_path: str, fit_data: LocationsFitFileData, logger=None
-) -> tuple[List[str], List[str]]:
+) -> tuple[bool, List[str], List[str]]:
     """Writes the provided LocationsFitFileData to a .fit file.
-    Returns a tuple of (warnings, critical_errors).
+    Returns a tuple of (success_status, warnings, critical_errors).
     """
     warnings: List[str] = []
     critical_errors: List[str] = []
@@ -425,18 +469,20 @@ def write_fit_file(
 
     # Location Settings Message
     ls_msg = LocationSettingsMessage()
-    if fit_data.settings and fit_data.settings.waypoint_setting is not None:
-        ls_msg.location_settings = fit_data.settings.waypoint_setting
+    if (
+        fit_data.location_settings
+        and fit_data.location_settings.location_settings_enum is not None
+    ):
+        ls_msg.location_settings = fit_data.location_settings.location_settings_enum
     else:
-        # Default LocationSettings if not provided (e.g., new file from scratch)
         ls_msg.location_settings = LocationSettings.ADD  # Defaulting to ADD
         warnings.append(
-            "Info: Location Settings data was missing; a default setting (ADD) was applied."
+            "Info: Location Settings data was missing or invalid; a default setting (ADD) was applied."
         )
     builder.add(ls_msg)
 
     # Location Messages (Waypoints)
-    for index, wp_data in enumerate(fit_data.waypoints):
+    for index, wp_data in enumerate(fit_data.locations):
         loc_msg = LocationMessage()
 
         # Truncate name and description based on estimated byte length
@@ -486,9 +532,9 @@ def write_fit_file(
     try:
         fit_file_built = builder.build()
         fit_file_built.to_file(file_path)
+        return True, warnings, critical_errors  # Return True on success
     except Exception as e:
         critical_errors.append(f"Error building or writing FIT file: {e}")
         if logger:
             logger(f"Error building or writing FIT file: {e}")
-
-    return warnings, critical_errors
+        return False, warnings, critical_errors  # Return False on failure
