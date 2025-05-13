@@ -21,7 +21,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.appctxt = appctxt
         self.setupUi(self)
-        self.resizeDocks([self.log_dock], [100], Qt.Vertical)
+        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
         # Initialize logger
         self.logger = logging_utils.Logger(
@@ -216,7 +216,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         save_file_path = self.current_file_path
         if not save_file_path or not save_file_path.endswith(".fit"):
             save_file_path, _ = QFileDialog.getSaveFileName(
-                self, "Save Locations.fit File", "", "FIT Files (*.fit)"
+                self, "Save Locations.fit File", "Locations.fit", "FIT Files (*.fit)"
             )
             if not save_file_path:
                 self.logger.log("Save cancelled by user.")

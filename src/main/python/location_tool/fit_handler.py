@@ -18,6 +18,8 @@ from fit_tool.profile.profile_type import (
     MapSymbol,
 )
 
+from .utils import process_raw_timestamp
+
 # Define conservative maximum character lengths for truncation
 MAX_NAME_CHARS = 50
 MAX_DESC_CHARS = 50
@@ -52,7 +54,7 @@ class FitLocationSettingData:
 
 @dataclass
 class FitLocationData:
-    name: Optional[str] = "Waypoint"  # Default name, max 16 chars for .FIT
+    name: Optional[str] = "Waypoint"
     latitude: float = 0.0  # Degrees
     longitude: float = 0.0  # Degrees
     altitude: float = 0.0  # Meters
@@ -70,39 +72,6 @@ class LocationsFitFileData:
     locations: List[FitLocationData] = field(default_factory=list)
     errors: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
-
-
-# --- Helper Function for Timestamp Processing ---
-def _process_raw_timestamp(raw_timestamp: any, logger=None) -> Optional[datetime]:
-    """
-    Converts a raw timestamp value to a timezone-aware UTC datetime object.
-    The raw_timestamp can be an int/float (assumed ms since Unix epoch)
-    or a datetime object.
-    """
-    if raw_timestamp is None:
-        return None
-
-    processed_dt = None
-    if isinstance(raw_timestamp, (int, float)):
-        try:
-            processed_dt = datetime.fromtimestamp(
-                raw_timestamp / 1000.0, tz=timezone.utc
-            )
-        except Exception as e:
-            if logger:
-                logger(f"Error converting timestamp ({raw_timestamp}) to datetime: {e}")
-    elif isinstance(raw_timestamp, datetime):
-        processed_dt = raw_timestamp
-        if processed_dt.tzinfo is None:
-            processed_dt = processed_dt.replace(tzinfo=timezone.utc)
-        else:
-            processed_dt = processed_dt.astimezone(timezone.utc)
-    else:
-        if logger:
-            logger(
-                f"Unexpected type for timestamp: {type(raw_timestamp)}. Value: {raw_timestamp}"
-            )
-    return processed_dt
 
 
 # --- Read Logic ---
@@ -173,7 +142,7 @@ def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
                     pass
 
                 time_created_val = getattr(msg, "time_created", None)
-                processed_time_created = _process_raw_timestamp(
+                processed_time_created = process_raw_timestamp(
                     time_created_val, logger=logger
                 )
 
@@ -225,7 +194,7 @@ def read_fit_file(file_path: str, logger=None) -> LocationsFitFileData:
                 lon_degrees = getattr(msg, "position_long", None)
 
                 raw_location_timestamp = getattr(msg, "timestamp", None)
-                location_datetime_object = _process_raw_timestamp(
+                location_datetime_object = process_raw_timestamp(
                     raw_location_timestamp, logger=logger
                 )
 
@@ -258,16 +227,31 @@ def read_gpx_file(
     file_path: str, logger=None
 ) -> tuple[List[FitLocationData], List[str]]:
     """
-    Parses a GPX file and extracts waypoint data.
+    Parses a GPX file and extracts waypoint data from <wpt> (top-level waypoints)
+    and <rtept> (route points from all routes).
+    Track points (<trkpt>) are ignored.
     Returns a tuple containing a list of FitLocationData objects and a list of error/warning strings.
     """
     waypoints: List[FitLocationData] = []
     errors: List[str] = []
+
+    try:
+        # Import gpxpy locally to make the ImportError exception more specific
+        # and to handle the case where gpxpy is not installed.
+        import gpxpy.gpx  # For GPXXMLSyntaxException
+    except ImportError:
+        err_msg = "GPX parsing requires the 'gpxpy' library. Please install it: pip install gpxpy"
+        if logger:
+            logger(err_msg)
+        errors.append(err_msg)
+        return waypoints, errors  # Return early if gpxpy is not available
+
     try:
         with open(file_path, "r", encoding="utf-8") as gpx_file_content:
             gpx = gpxpy.parse(gpx_file_content)
 
-        for idx, gpx_wp in enumerate(gpx.waypoints):
+        # 1. Process top-level waypoints (<wpt>)
+        for gpx_wp in gpx.waypoints:
             timestamp = gpx_wp.time
             if timestamp:
                 if timestamp.tzinfo is None:
@@ -275,62 +259,65 @@ def read_gpx_file(
                 else:
                     timestamp = timestamp.astimezone(timezone.utc)
             else:
-                # If GPX waypoint has no timestamp, use current time or handle as needed
                 timestamp = datetime.now(timezone.utc)
 
-            # Try to get a symbol, often from <sym> tag in GPX
-            # GPX symbols are strings, FIT symbols are integers. Mapping might be needed.
-            # For now, using a default if not found or not an integer.
-            symbol_val = 0  # Default FIT symbol
+            symbol_to_assign = MapSymbol.AIRPORT  # Default from FitLocationData
             if gpx_wp.symbol:
                 try:
-                    # Use MapSymbol Enum for mapping GPX sym tag to FIT symbol integer
-                    sym_str = gpx_wp.symbol.upper()
+                    sym_str = gpx_wp.symbol.strip().upper().replace(" ", "_")
                     if sym_str in MapSymbol.__members__:
-                        symbol_val = MapSymbol[sym_str].value
+                        symbol_to_assign = MapSymbol[sym_str]
                     else:
-                        # If symbol is not in MapSymbol, log it as a warning/error and use default
-                        err_msg = f"GPX symbol '{gpx_wp.symbol}' not found in MapSymbol enum. Using default."
-                        if logger:
-                            logger(err_msg)
-                        errors.append(err_msg)
-                        # symbol_val remains default (0)
+                        try:
+                            sym_int = int(gpx_wp.symbol)
+                            symbol_to_assign = MapSymbol(
+                                sym_int
+                            )  # Raises ValueError if invalid
+                        except ValueError:
+                            err_msg = f"GPX waypoint symbol '{gpx_wp.symbol}' is not a recognized MapSymbol name or integer value. Using default."
+                            if logger:
+                                logger(err_msg)
+                            errors.append(err_msg)
                 except Exception as e:
-                    err_msg = (
-                        f"Could not map GPX symbol '{gpx_wp.symbol}' to FIT symbol: {e}"
-                    )
+                    err_msg = f"Could not map GPX waypoint symbol '{gpx_wp.symbol}' to FIT symbol: {e}. Using default."
                     if logger:
                         logger(err_msg)
                     errors.append(err_msg)
 
-            # Altitude (elevation in GPX)
             altitude = gpx_wp.elevation
 
-            # Use comment/cmt as description if description is empty
             description = gpx_wp.description
             if not description and hasattr(gpx_wp, "comment") and gpx_wp.comment:
                 description = gpx_wp.comment
             elif not description and hasattr(gpx_wp, "cmt") and gpx_wp.cmt:
                 description = gpx_wp.cmt
 
+            name = gpx_wp.name or "Waypoint"
+
+            if gpx_wp.latitude is None or gpx_wp.longitude is None:
+                errors.append(
+                    f"Skipping waypoint '{name}' due to missing latitude/longitude."
+                )
+                continue
+
             wp = FitLocationData(
-                name=gpx_wp.name,
+                name=name,
                 description=description,
                 latitude=gpx_wp.latitude,
                 longitude=gpx_wp.longitude,
                 altitude=altitude,
                 timestamp=timestamp,
-                symbol=symbol_val,
-                message_index=idx,  # This will be re-indexed by the GUI later when appending
+                symbol=symbol_to_assign,
+                message_index=len(waypoints),
             )
             waypoints.append(wp)
 
-        if not waypoints and gpx.routes:
-            # Fallback: if no waypoints, try to get points from the first route
-            if gpx.routes:  # Ensure routes exist
-                # Check if the first route has points
-                if gpx.routes[0].points:
-                    for route_idx, route_pt in enumerate(gpx.routes[0].points):
+        # 2. Process points from all routes (<rtept> within <rte>)
+        if gpx.routes:
+            for route_idx, route in enumerate(gpx.routes):
+                route_name_prefix = route.name or f"Route {route_idx + 1}"
+                if route.points:
+                    for point_idx, route_pt in enumerate(route.points):
                         timestamp = route_pt.time
                         if timestamp:
                             if timestamp.tzinfo is None:
@@ -340,66 +327,94 @@ def read_gpx_file(
                         else:
                             timestamp = datetime.now(timezone.utc)
 
+                        symbol_to_assign = MapSymbol.AIRPORT  # Default
+                        if route_pt.symbol:
+                            try:
+                                sym_str = (
+                                    route_pt.symbol.strip().upper().replace(" ", "_")
+                                )
+                                if sym_str in MapSymbol.__members__:
+                                    symbol_to_assign = MapSymbol[sym_str]
+                                else:
+                                    try:
+                                        sym_int = int(route_pt.symbol)
+                                        symbol_to_assign = MapSymbol(
+                                            sym_int
+                                        )  # Raises ValueError if invalid
+                                    except ValueError:
+                                        err_msg = f"GPX route point symbol '{route_pt.symbol}' is not a recognized MapSymbol name or integer value. Using default."
+                                        if logger:
+                                            logger(err_msg)
+                                        errors.append(err_msg)
+                            except Exception as e:
+                                err_msg = f"Could not map GPX route point symbol '{route_pt.symbol}' to FIT symbol: {e}. Using default."
+                                if logger:
+                                    logger(err_msg)
+                                errors.append(err_msg)
+
                         altitude = route_pt.elevation
 
-                        current_idx = len(
-                            waypoints
-                        )  # Use current length of waypoints for message_index base
+                        description = route_pt.description
+                        if (
+                            not description
+                            and hasattr(route_pt, "comment")
+                            and route_pt.comment
+                        ):
+                            description = route_pt.comment
+                        # GPXRoutePoint does not have .cmt attribute
+
+                        name = (
+                            route_pt.name
+                            or f"{route_name_prefix} - Point {point_idx + 1}"
+                        )
+
+                        if route_pt.latitude is None or route_pt.longitude is None:
+                            errors.append(
+                                f"Skipping route point '{name}' due to missing latitude/longitude."
+                            )
+                            continue
 
                         wp = FitLocationData(
-                            name=route_pt.name or f"RoutePt {route_idx}",
-                            description=route_pt.comment,
+                            name=name,
+                            description=description,
                             latitude=route_pt.latitude,
                             longitude=route_pt.longitude,
                             altitude=altitude,
                             timestamp=timestamp,
-                            symbol=0,  # Default symbol for route points
-                            message_index=current_idx,  # Use current_idx
+                            symbol=symbol_to_assign,
+                            message_index=len(waypoints),
                         )
                         waypoints.append(wp)
-                else:
-                    info_msg = (
-                        "GPX file contains routes but the first route has no points."
-                    )
-                    if logger:
-                        logger(info_msg)
 
-            else:  # No routes
-                info_msg = "GPX file contains no waypoints and no routes."
-                if logger:
-                    logger(info_msg)
+        # 3. Track points are intentionally not processed.
 
-    except ImportError:
-        err_msg = "GPX parsing requires the 'gpxpy' library. Please install it: pip install gpxpy"
+        if (
+            not waypoints and not errors
+        ):  # Only log if no points found AND no other errors occurred
+            info_msg = "GPX file parsed, but no waypoints or route points were found or extracted."
+            if logger:
+                logger(info_msg)
+            # errors.append(info_msg) # Appending to errors might be too strong for just an empty file.
+
+    except gpxpy.gpx.GPXXMLSyntaxException as e:
+        err_msg = f"Error parsing GPX XML in file '{file_path}': {e}"
         if logger:
             logger(err_msg)
         errors.append(err_msg)
-        return waypoints, errors  # Return empty waypoints and the error
     except Exception as e:
-        err_msg = f"Error parsing GPX file {file_path}: {e}"
+        # Catch any other unexpected error during GPX processing
+        err_msg = f"Unexpected error processing GPX file '{file_path}': {e}"
         if logger:
             logger(err_msg)
+            # For debugging, you might want to log the traceback:
+            # import traceback
+            # logger(traceback.format_exc())
         errors.append(err_msg)
-        return waypoints, errors  # Return potentially partial waypoints and the error
 
     return waypoints, errors
 
 
 # --- Write Logic ---
-def get_timestamp_from_datetime(dt: Optional[datetime]) -> Optional[int]:
-    """Converts an optional datetime object to an integer timestamp in milliseconds since UTC epoch."""
-    if dt is None:
-        return None
-    if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return round(dt.timestamp() * 1000)
-
-
-def degrees_to_semicircles(degrees: Optional[float]) -> Optional[int]:
-    """Converts degrees to semicircles."""
-    if degrees is None:
-        return None
-    return round(degrees * (2**31 / 180.0))
 
 
 def write_fit_file(
@@ -414,57 +429,51 @@ def write_fit_file(
 
     # File ID Message
     fid_msg = FileIdMessage()
-    if fit_data.header:
-        header = fit_data.header
-        fid_msg.type = (
-            header.file_type if header.file_type is not None else FileType.LOCATIONS
-        )
-        fid_msg.manufacturer = (
-            header.manufacturer
-            if header.manufacturer is not None
-            else Manufacturer.DEVELOPMENT
-        )
-        if header.product is not None:
-            if isinstance(header.product, GarminProduct):
-                fid_msg.product = header.product.value
-            else:
-                fid_msg.product = header.product
+    # fit_data.header will always exist due to default_factory=FitHeaderData
+    header = fit_data.header
+    fid_msg.type = (
+        header.file_type if header.file_type is not None else FileType.LOCATIONS
+    )
+    fid_msg.manufacturer = (
+        header.manufacturer
+        if header.manufacturer is not None
+        else Manufacturer.DEVELOPMENT
+    )
+    if header.product is not None:
+        # Check if product is an enum (like GarminProduct) or a raw int
+        if isinstance(header.product, GarminProduct):
+            fid_msg.product = header.product.value
         else:
-            fid_msg.product = 1  # Default product ID for Development manufacturer
-        fid_msg.serial_number = (
-            header.serial_number if header.serial_number is not None else 0
-        )
-        fid_msg.time_created = (
-            header.time_created
-            if header.time_created is not None
-            else datetime.now(timezone.utc)
-        )
-        if header.product_name is not None:
-            fid_msg.product_name = header.product_name
+            fid_msg.product = header.product
     else:
-        # Hardcoded defaults for FileIdMessage if no header info from GUI/import
-        fid_msg.type = FileType.LOCATIONS
-        fid_msg.manufacturer = Manufacturer.DEVELOPMENT
-        fid_msg.product = 1  # Example product ID for Development
-        fid_msg.serial_number = 0
-        fid_msg.time_created = datetime.now(timezone.utc)
-        # fid_msg.product_name = "LocationsTool"  # Optional default product name
+        # Default product ID, aligns with FitHeaderData default if manufacturer is DEVELOPMENT
+        fid_msg.product = 0 if header.manufacturer == Manufacturer.DEVELOPMENT else 1
+
+    fid_msg.serial_number = (
+        header.serial_number if header.serial_number is not None else 0
+    )
+    fid_msg.time_created = (
+        header.time_created
+        if header.time_created is not None
+        else datetime.now(timezone.utc)
+    )
+    if (
+        header.product_name is not None
+    ):  # Max 20 chars for .FIT, handled by fit_tool library
+        fid_msg.product_name = header.product_name
+    # No else needed here, if product_name is None, it remains unset in fid_msg
     builder.add(fid_msg)
 
     # File Creator Message
     creator_msg = FileCreatorMessage()
-    if fit_data.creator:
-        creator = fit_data.creator
-        creator_msg.software_version = (
-            creator.software_version if creator.software_version is not None else 1
-        )
-        creator_msg.hardware_version = (
-            creator.hardware_version if creator.hardware_version is not None else 1
-        )
-    else:
-        # Hardcoded defaults for FileCreatorMessage
-        creator_msg.software_version = 1
-        creator_msg.hardware_version = 1
+    # fit_data.creator will always exist due to default_factory=FitCreatorData
+    creator = fit_data.creator
+    creator_msg.software_version = (
+        creator.software_version if creator.software_version is not None else 0
+    )
+    creator_msg.hardware_version = (
+        creator.hardware_version if creator.hardware_version is not None else 0
+    )
     builder.add(creator_msg)
 
     # Location Settings Message
