@@ -171,7 +171,7 @@ def set_table_row_from_wp_data(
     table_widget: QTableWidget,
     row_idx: int,
     wp_data: fit_handler.LocationMessageData,
-    appctxt: Any,  # Typically an ApplicationContext from fbs, but can be None
+    appctxt: Any,
     log_func: Callable[[str], None],
 ) -> None:
     table_widget.setItem(row_idx, 0, QTableWidgetItem(wp_data.name or ""))

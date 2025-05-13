@@ -238,7 +238,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.waypoint_table, self.current_waypoints_data, self.appctxt, self.logger.log
         )
         self.waypoint_table.cellChanged.connect(self.slot_waypoint_data_changed)
-        self.update_status_bar()
 
     def _clear_all_forms_and_tables(self) -> None:
         self.current_waypoints_data = []
@@ -247,7 +246,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._populate_waypoint_table()
         self.location_settings_combo.setCurrentIndex(-1)
         self.logger.log("Cleared all waypoint data and current file information.")
-        self.update_status_bar()
 
     @Slot()
     def slot_import_locations_fit(self) -> None:
@@ -364,6 +362,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(int, int)
     def slot_waypoint_data_changed(self, row: int, column: int) -> None:
+        self.logger.log(f"Waypoint data changed at row {row}, column {column}.")
         if row < 0 or row >= len(self.current_waypoints_data):
             self.logger.error(f"Waypoint data change for invalid row: {row}")
             return
@@ -401,6 +400,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         .replace(tzinfo=timezone.utc)
                     )
                     wp_data.timestamp = new_value
+            elif column == 5:
+                new_value = int(item.text())
+                wp_data.symbol = new_value
             elif column == 6:
                 new_value = item.text()
                 wp_data.description = new_value
@@ -410,7 +412,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.log(
                 f"Waypoint '{wp_data.name}' (idx {row}), field '{self.waypoint_table.horizontalHeaderItem(column).text()}' changed to: {new_value}"
             )
-            self.update_status_bar()
 
         except ValueError as e:
             self.logger.error(
@@ -439,11 +440,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "Copyright 2024 Your Name/Company",
         )
         self.logger.log("Displayed About dialog.")
-
-    def update_status_bar(self) -> None:
-        num_waypoints: int = len(self.current_waypoints_data)
-        file_status: str = self.current_file_path if self.current_file_path else "No file loaded"
-        self.statusBar().showMessage(f"Waypoints: {num_waypoints} | File: {file_status}")
 
     def closeEvent(
         self, event: Any
