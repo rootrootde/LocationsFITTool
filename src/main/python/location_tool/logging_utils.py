@@ -74,3 +74,11 @@ class Logger:
         if cls._instance is None:
             raise RuntimeError("Logger not initialized. Call Logger.init() first.")
         return cls._instance
+
+    @classmethod
+    def get_logger(
+        cls, text_edit_widget: Optional[QTextEdit] = None, app_name: str = "Application"
+    ) -> "Logger":
+        if cls._instance is None:
+            cls._instance = cls(text_edit_widget, app_name=app_name)
+        return cls._instance

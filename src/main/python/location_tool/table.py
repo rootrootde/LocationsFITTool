@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, List, Optional
+from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import MapSymbol
 from location_tool import (
@@ -127,7 +127,7 @@ class WptTableManager(QWidget):
         self.waypoint_table = waypoint_table
         self.parent = parent
         self.appctxt = appctxt
-        self.logger = logging_utils.Logger.get()
+        self.logger = logging_utils.Logger.get_logger()
         self.waypoints_data: List[fit_handler.LocationMessageData] = []
 
     def setup_waypoint_table(self) -> None:

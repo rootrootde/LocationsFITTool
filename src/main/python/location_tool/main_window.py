@@ -4,7 +4,7 @@ from fit_tool.profile.profile_type import LocationSettings as FitLocationSetting
 from location_tool import fit_handler, logging_utils
 from location_tool.table import WptTableManager
 from location_tool.ui_main_window import Ui_MainWindow
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QFileDialog,
@@ -27,8 +27,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
 
         # Initialize logger
-        logging_utils.Logger.init(self.log_textedit, app_name="LocationsFITTool")
-        self.logger = logging_utils.Logger.get()
+        self.logger = logging_utils.Logger.get_logger(self.log_textedit, "LocationsFITTool")
 
         # add all actions to the main window to enable shortcuts
         for action in self.findChildren(QAction):
