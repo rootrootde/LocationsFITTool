@@ -131,11 +131,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.groupBox_2)
 
-        self.groupBox = QGroupBox(self.centralwidget)
-        self.groupBox.setObjectName(u"groupBox")
-
-        self.horizontalLayout_2.addWidget(self.groupBox)
-
 
         self.verticalLayout_7.addLayout(self.horizontalLayout_2)
 
@@ -216,6 +211,5 @@ class Ui_MainWindow(object):
         self.add_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.delete_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
         self.delete_all_wpts_btn.setText(QCoreApplication.translate("MainWindow", u"Delete All", None))
-        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Device", None))
     # retranslateUi
 
