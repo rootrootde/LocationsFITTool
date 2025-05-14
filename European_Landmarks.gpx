@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="ChatGPT" xmlns="http://www.topografix.com/GPX/1/1">
+    <metadata>
+        <name>Diverse Landmarks</name>
+        <time>2025-05-14T12:00:00Z</time>
+    </metadata>
+
+    <wpt lat="48.8584" lon="2.2945">
+        <ele>35</ele>
+        <time>2025-05-14T12:01:00Z</time>
+        <name>Eiffel Tower</name>
+        <desc>Iconic iron tower in Paris</desc>
+        <cmt>Great view at night</cmt>
+        <sym>73</sym> <!-- TALL_TOWER -->
+    </wpt>
+
+    <wpt lat="50.1109" lon="8.6821">
+        <ele>112</ele>
+        <time>2025-05-14T12:02:00Z</time>
+        <name>Frankfurt Central Station</name>
+        <desc>Main transportation hub</desc>
+        <cmt>Busy, modern train station</cmt>
+        <sym>76</sym> <!-- TRAIL_HEAD (repurposed for station icon) -->
+    </wpt>
+
+    <wpt lat="47.4979" lon="19.0402">
+        <ele>96</ele>
+        <time>2025-05-14T12:03:00Z</time>
+        <name>Budapest Parliament</name>
+        <desc>Neo-Gothic riverside building</desc>
+        <cmt>Must-see in Budapest</cmt>
+        <sym>10</sym> <!-- BUILDING -->
+    </wpt>
+
+    <wpt lat="51.1789" lon="-1.8262">
+        <ele>114</ele>
+        <time>2025-05-14T12:04:00Z</time>
+        <name>Stonehenge</name>
+        <desc>Ancient stone monument</desc>
+        <cmt>Prehistoric mystery</cmt>
+        <sym>63</sym> <!-- SCENIC_AREA -->
+    </wpt>
+
+    <wpt lat="48.1374" lon="11.5755">
+        <ele>519</ele>
+        <time>2025-05-14T12:05:00Z</time>
+        <name>Hofbräuhaus</name>
+        <desc>Historic beer hall in Munich</desc>
+        <cmt>Try the pork knuckle</cmt>
+        <sym>5</sym> <!-- BAR -->
+    </wpt>
+
+    <wpt lat="52.5200" lon="13.4050">
+        <ele>34</ele>
+        <time>2025-05-14T12:06:00Z</time>
+        <name>Berlin TV Tower</name>
+        <desc>Fernsehturm at Alexanderplatz</desc>
+        <cmt>360° views</cmt>
+        <sym>73</sym> <!-- TALL_TOWER -->
+    </wpt>
+
+    <wpt lat="40.4319" lon="116.5704">
+        <ele>300</ele>
+        <time>2025-05-14T12:07:00Z</time>
+        <name>Great Wall of China</name>
+        <desc>Historic fortification</desc>
+        <cmt>Walk a section</cmt>
+        <sym>24</sym> <!-- DAM (repurposed for wall) -->
+    </wpt>
+
+    <wpt lat="41.9028" lon="12.4964">
+        <ele>20</ele>
+        <time>2025-05-14T12:08:00Z</time>
+        <name>Piazza Navona</name>
+        <desc>Famous square with fountains</desc>
+        <cmt>Great for people-watching</cmt>
+        <sym>51</sym> <!-- PARK -->
+    </wpt>
+
+    <wpt lat="40.7580" lon="-73.9855">
+        <ele>15</ele>
+        <time>2025-05-14T12:09:00Z</time>
+        <name>Times Square</name>
+        <desc>Bright lights and Broadway</desc>
+        <cmt>Very crowded at night</cmt>
+        <sym>42</sym> <!-- LIVE_THEATER -->
+    </wpt>
+
+    <wpt lat="55.7520" lon="37.6175">
+        <ele>144</ele>
+        <time>2025-05-14T12:10:00Z</time>
+        <name>Red Square</name>
+        <desc>Historic plaza in Moscow</desc>
+        <cmt>Near Kremlin + St. Basil's</cmt>
+        <sym>17</sym> <!-- CITY_LARGE -->
+    </wpt>
+
+    <wpt lat="43.7230" lon="10.3966">
+        <ele>5</ele>
+        <time>2025-05-14T12:11:00Z</time>
+        <name>Leaning Tower of Pisa</name>
+        <desc>Unintentionally tilted tower</desc>
+        <cmt>Don't push it!</cmt>
+        <sym>67</sym> <!-- SHORT_TOWER -->
+    </wpt>
+
+    <wpt lat="41.0082" lon="28.9784">
+        <ele>40</ele>
+        <time>2025-05-14T12:12:00Z</time>
+        <name>Hagia Sophia</name>
+        <desc>Byzantine landmark</desc>
+        <cmt>Now a mosque again</cmt>
+        <sym>16</sym> <!-- CHURCH -->
+    </wpt>
+
+    <wpt lat="59.3275" lon="18.0670">
+        <ele>28</ele>
+        <time>2025-05-14T12:13:00Z</time>
+        <name>ABBA Museum</name>
+        <desc>Pop music-themed museum</desc>
+        <cmt>Dancing Queen!</cmt>
+        <sym>48</sym> <!-- MUSEUM -->
+    </wpt>
+
+    <wpt lat="35.6586" lon="139.7454">
+        <ele>40</ele>
+        <time>2025-05-14T12:14:00Z</time>
+        <name>Tokyo Tower</name>
+        <desc>Iconic red communications tower</desc>
+        <cmt>Inspired by Eiffel Tower</cmt>
+        <sym>73</sym> <!-- TALL_TOWER -->
+    </wpt>
+
+    <wpt lat="25.1972" lon="55.2744">
+        <ele>5</ele>
+        <time>2025-05-14T12:15:00Z</time>
+        <name>Burj Khalifa</name>
+        <desc>Tallest building on Earth</desc>
+        <cmt>Observation deck on top</cmt>
+        <sym>73</sym> <!-- TALL_TOWER -->
+    </wpt>
+
+</gpx>
