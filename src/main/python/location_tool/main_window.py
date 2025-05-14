@@ -24,6 +24,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
+        # Sync toggle action with log dock visibility
+        self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
+        self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
+
         # Initialize logger
         logging_utils.Logger.init(self.log_textedit, app_name="LocationsFITTool")
         self.logger = logging_utils.Logger.get()
@@ -63,7 +67,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _import_fit_file(self, logger: Callable[[str], None] = print) -> None:
         file_path: Optional[str]
-        file_path, _ = QFileDialog.getOpenFileName(self, "Import Locations.fit File", "", "FIT Files (*.fit)")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Import Locations.fit File", "", "FIT Files (*.fit)"
+        )
         if not file_path:
             return
 
@@ -79,7 +85,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.logger.log(f"Waypoints loaded: {len(self.current_waypoints_data)}")
 
-            self.wpts_need_reindexing.emit(self.current_waypoints_data)  # Emit signal to reindex waypoints
+            self.wpts_need_reindexing.emit(
+                self.current_waypoints_data
+            )  # Emit signal to reindex waypoints
 
             # Only update location settings if the imported FIT file has them
             if (
@@ -116,7 +124,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.current_file_path = file_path
             self.current_waypoints_data.extend(waypoints)
 
-            self.wpts_need_reindexing.emit(self.current_waypoints_data)  # Emit signal to reindex waypoints
+            self.wpts_need_reindexing.emit(
+                self.current_waypoints_data
+            )  # Emit signal to reindex waypoints
 
             self.table_manager.populate_waypoint_table()
             self.logger.log(
@@ -189,11 +199,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.information(self, "No Data", "There are no waypoints to save.")
             return
 
-        default_filename: str = "locations.fit"
+        default_filename: str = "Locations.fit"
         if self.current_file_path:
             default_filename = self.current_file_path.split("/")[-1]
             if not default_filename.lower().endswith(".fit"):
-                default_filename = "locations.fit"
+                default_filename = "Locations.fit"
 
         file_path: Optional[str]
         file_path, _ = QFileDialog.getSaveFileName(
@@ -234,6 +244,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.log_dock.hide()
         self.logger.log(f"Log window {'shown' if checked else 'hidden'}.")
 
-    def closeEvent(self, event: Any) -> None:  # Consider using QCloseEvent if available and appropriate
+    def closeEvent(
+        self, event: Any
+    ) -> None:  # Consider using QCloseEvent if available and appropriate
         self.logger.log("Application closing.")
         super().closeEvent(event)
