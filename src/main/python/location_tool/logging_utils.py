@@ -1,4 +1,3 @@
-# filepath: /Users/chris/Coding/LocationsFITTool/src/main/python/location_tool/logging_utils.py
 from datetime import datetime
 from typing import Optional
 
@@ -7,6 +6,8 @@ from PySide6.QtWidgets import QTextEdit
 
 
 class Logger:
+    _instance: Optional["Logger"] = None
+
     def __init__(
         self,
         text_edit_widget: Optional[QTextEdit],
@@ -61,3 +62,15 @@ class Logger:
         if self.text_edit_widget:
             self.text_edit_widget.clear()
         self.log("Log cleared.")
+
+    @classmethod
+    def init(cls, text_edit_widget: Optional[QTextEdit], app_name: str = "Application") -> "Logger":
+        if cls._instance is None:
+            cls._instance = cls(text_edit_widget, app_name=app_name)
+        return cls._instance
+
+    @classmethod
+    def get(cls) -> "Logger":
+        if cls._instance is None:
+            raise RuntimeError("Logger not initialized. Call Logger.init() first.")
+        return cls._instance

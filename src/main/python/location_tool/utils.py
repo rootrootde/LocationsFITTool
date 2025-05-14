@@ -1,6 +1,5 @@
 import os
-from datetime import datetime, timezone
-from typing import Any, Callable, Optional  # Added Any, Callable
+from typing import Any, Optional  # Added Any, Callable
 
 # This _BASE_PATH will be the directory of utils.py, i.e., .../location_tool/
 _BASE_PATH: str = os.path.dirname(os.path.abspath(__file__))
