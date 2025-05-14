@@ -13,7 +13,7 @@
   <property name="font">
    <font>
     <family>SF Pro</family>
-    <pointsize>13</pointsize>
+    <pointsize>12</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -22,34 +22,14 @@
   <property name="styleSheet">
    <string notr="true">QWidget {
     font-family: &quot;SF Pro&quot;;
-    font-size: 13pt;
+    font-size: 12pt;
 }
 
-QGroupBox {
-    font-weight: bold;
-    border: 1px solid #555;
-    border-radius: 5px;
-    margin-top: 10px;
+QTextEdit {
+	font-family: &quot;SF Mono&quot;;
+	font-size: 11pt;
 }
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    left: 10px;
-    padding: 0 5px;
-}
-
-QPlainTextEdit {
-	font-family:  &quot;SF Mono&quot;;
-	font-size: 12pt
-
-}
-
-
-
-QMainWindow::separator {
-  width: 0px;
-  height:0px;
-}</string>
+</string>
   </property>
   <property name="dockOptions">
    <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
