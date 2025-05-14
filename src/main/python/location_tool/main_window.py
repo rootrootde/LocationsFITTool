@@ -159,44 +159,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def slot_save_locations_fit(self) -> None:
-        from location_tool.ui_save_fit_dialog import Ui_save_fit_dialog
-        from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
+        from location_tool.save_fit_dialog import SaveFitDialog
 
         current_waypoints = self.waypoint_table_controller.waypoints
         if not current_waypoints:
             QMessageBox.information(self, "No Data", "There are no waypoints to save.")
             return
 
-        class SaveDialog(QDialog, Ui_save_fit_dialog):
-            def __init__(self, parent=None):
-                super().__init__(parent)
-                self.setupUi(self)
-                self.selected_save_path_le.setText("")
-                self.mode_add_rb.setChecked(True)  # Default to ADD
-                self.select_save_path_btn.clicked.connect(self.select_save_path)
-
-            def select_save_path(self):
-                file_path, _ = QFileDialog.getSaveFileName(
-                    self, "Save Locations FIT File", "Locations.fit", "FIT Files (*.fit)"
-                )
-                if file_path:
-                    if not file_path.lower().endswith(".fit"):
-                        file_path += ".fit"
-                    self.selected_save_path_le.setText(file_path)
-
-            def get_save_path(self):
-                return self.selected_save_path_le.text().strip()
-
-            def get_mode(self):
-                if self.mode_add_rb.isChecked():
-                    return "ADD"
-                elif self.mode_replace_rb.isChecked():
-                    return "REPLACE"
-                elif self.mode_delete_all_rb.isChecked():
-                    return "DELETE_ALL"
-                return "ADD"  # Default
-
-        dlg = SaveDialog(self)
+        dlg = SaveFitDialog(self)
         if dlg.exec() != QDialog.Accepted:
             return
 
