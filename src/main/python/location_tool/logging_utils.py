@@ -11,21 +11,36 @@ class Logger:
     def __init__(
         self,
         text_edit_widget: Optional[QTextEdit],
-        app_name: str = "Application",
         console_log: bool = True,
+        verbose: bool = False,
     ) -> None:
         self.text_edit_widget: Optional[QTextEdit] = text_edit_widget
-        self.app_name: str = app_name
         self.console_log: bool = console_log
+        self.verbose: bool = verbose
 
     def _format_message(self, message: str, level: str = "INFO") -> str:
         timestamp: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        return f"[{timestamp}] [{self.app_name}] [{level}] {message}"
+        location: str = ""
+
+        if self.verbose:
+            import inspect
+            import os
+
+            frame = inspect.currentframe()
+            outer_frames = inspect.getouterframes(frame)
+            if len(outer_frames) >= 3:
+                caller_frame = outer_frames[2]
+                filename = os.path.basename(caller_frame.filename)
+                lineno = caller_frame.lineno
+                funcname = caller_frame.function
+                location = f" [{filename}:{funcname}:{lineno}]"
+
+        return f"[{timestamp}] [{level}]{location} {message}"
 
     def log(self, message: str) -> None:
         formatted_message: str = self._format_message(message, "INFO")
         if self.text_edit_widget:
-            self.text_edit_widget.appendPlainText(formatted_message)
+            self.text_edit_widget.append(formatted_message)
             # Auto-scroll to the bottom
             scrollbar = self.text_edit_widget.verticalScrollBar()
             if scrollbar:  # Check if scrollbar exists
@@ -36,7 +51,7 @@ class Logger:
     def error(self, message: str) -> None:
         formatted_message: str = self._format_message(message, "ERROR")
         if self.text_edit_widget:
-            self.text_edit_widget.appendPlainText(formatted_message)
+            self.text_edit_widget.append(formatted_message)
             # Auto-scroll to the bottom
             cursor: QTextCursor = self.text_edit_widget.textCursor()
             cursor.movePosition(QTextCursor.MoveOperation.End)
@@ -50,7 +65,7 @@ class Logger:
     def warning(self, message: str) -> None:
         formatted_message: str = self._format_message(message, "WARNING")
         if self.text_edit_widget:
-            self.text_edit_widget.appendPlainText(formatted_message)
+            self.text_edit_widget.append(formatted_message)
             # Auto-scroll to the bottom
             cursor: QTextCursor = self.text_edit_widget.textCursor()
             cursor.movePosition(QTextCursor.MoveOperation.End)
@@ -64,21 +79,9 @@ class Logger:
         self.log("Log cleared.")
 
     @classmethod
-    def init(cls, text_edit_widget: Optional[QTextEdit], app_name: str = "Application") -> "Logger":
-        if cls._instance is None:
-            cls._instance = cls(text_edit_widget, app_name=app_name)
-        return cls._instance
-
-    @classmethod
-    def get(cls) -> "Logger":
-        if cls._instance is None:
-            raise RuntimeError("Logger not initialized. Call Logger.init() first.")
-        return cls._instance
-
-    @classmethod
     def get_logger(
-        cls, text_edit_widget: Optional[QTextEdit] = None, app_name: str = "Application"
+        cls, text_edit_widget: Optional[QTextEdit] = None, verbose: bool = False
     ) -> "Logger":
         if cls._instance is None:
-            cls._instance = cls(text_edit_widget, app_name=app_name)
+            cls._instance = cls(text_edit_widget, verbose=verbose)
         return cls._instance

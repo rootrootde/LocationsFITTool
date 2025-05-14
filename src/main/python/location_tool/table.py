@@ -121,14 +121,23 @@ class FloatDelegate(QStyledItemDelegate):
         model.setData(index, f"{editor.value():.{self.decimals}f}", Qt.EditRole)
 
 
-class WptTableManager(QWidget):
+class WaypointTableController(QWidget):
     def __init__(self, waypoint_table: QTableWidget, parent: QWidget, appctxt: Any) -> None:
         super().__init__(parent)
         self.waypoint_table = waypoint_table
         self.parent = parent
         self.appctxt = appctxt
         self.logger = logging_utils.Logger.get_logger()
-        self.waypoints_data: List[fit_handler.LocationMessageData] = []
+        self._waypoints: List[fit_handler.LocationMessageData] = []
+
+    @property
+    def waypoints(self) -> List[fit_handler.LocationMessageData]:
+        return self._waypoints
+
+    @waypoints.setter
+    def waypoints(self, waypoints: List[fit_handler.LocationMessageData]) -> None:
+        self._waypoints = self.reindex_waypoints(waypoints)
+        self.populate_waypoint_table()
 
     def setup_waypoint_table(self) -> None:
         self.waypoint_table.setColumnCount(7)
@@ -145,13 +154,13 @@ class WptTableManager(QWidget):
         )
         self.waypoint_table.setItemDelegateForColumn(
             WptTableColumn.LONGITUDE.value, FloatDelegate(decimals=6, parent=self)
-        )  # Longitude
+        )
         self.waypoint_table.setItemDelegateForColumn(
             WptTableColumn.ALTITUDE.value, FloatDelegate(decimals=2, parent=self)
-        )  # Altitude
+        )
         self.waypoint_table.setItemDelegateForColumn(
             WptTableColumn.TIMESTAMP.value, DateTimeDelegate(parent=self)
-        )  # Timestamp
+        )
 
         header: QHeaderView = self.waypoint_table.horizontalHeader()
         for i in range(self.waypoint_table.columnCount()):
@@ -166,8 +175,8 @@ class WptTableManager(QWidget):
         self.waypoint_table.blockSignals(True)
 
         self.waypoint_table.setRowCount(0)
-        self.waypoint_table.setRowCount(len(self.waypoints_data))
-        for row_idx, wp_data in enumerate(self.waypoints_data):
+        self.waypoint_table.setRowCount(len(self.waypoints))
+        for row_idx, wp_data in enumerate(self.waypoints):
             self.set_table_row_from_wp_data(
                 row_idx,
                 wp_data,
@@ -254,7 +263,7 @@ class WptTableManager(QWidget):
 
     @Slot()
     def slot_add_waypoint(self) -> None:
-        new_wp_index: int = len(self.waypoints_data)
+        new_wp_index: int = len(self.waypoints)
         new_wp = fit_handler.LocationMessageData(
             name=f"Waypoint {new_wp_index}",
             description="",
@@ -265,7 +274,7 @@ class WptTableManager(QWidget):
             symbol=0,  # Default symbol, e.g., generic
             message_index=new_wp_index,  # Initial index, will be updated by reindex
         )
-        self.waypoints_data.append(new_wp)
+        self.waypoints.append(new_wp)
 
         if new_wp:
             last_row = self.waypoint_table.rowCount() - 1
@@ -273,7 +282,7 @@ class WptTableManager(QWidget):
                 self.waypoint_table.selectRow(last_row)
                 self.waypoint_table.scrollToItem(self.waypoint_table.item(last_row, 0))
 
-        self.waypoints_data = self.reindex_waypoints(self.waypoints_data)
+        self.waypoints = self.reindex_waypoints(self.waypoints)
         self.populate_waypoint_table()
         self.logger.log(f"Added new waypoint: {new_wp.name}")
 
@@ -296,17 +305,17 @@ class WptTableManager(QWidget):
             rows_to_delete = sorted(set(selected_rows), reverse=True)
             num_deleted = 0
             for row_idx in rows_to_delete:
-                if 0 <= row_idx < len(self.waypoints_data):
-                    del self.waypoints_data[row_idx]
+                if 0 <= row_idx < len(self.waypoints):
+                    del self.waypoints[row_idx]
                     num_deleted += 1
-            self.waypoints_data = self.reindex_waypoints(self.waypoints_data)
+            self.waypoints = self.reindex_waypoints(self.waypoints)
             self.populate_waypoint_table()
             if num_deleted > 0:
                 self.logger.log(f"Deleted {num_deleted} waypoint(s).")
 
     @Slot()
     def slot_delete_all_waypoints(self) -> None:
-        if not self.waypoints_data:
+        if not self.waypoints:
             QMessageBox.information(self, "No Data", "There are no waypoints to delete.")
             return
 
@@ -318,18 +327,18 @@ class WptTableManager(QWidget):
             QMessageBox.StandardButton.No,
         )
         if reply == QMessageBox.StandardButton.Yes:
-            self.waypoints_data = []
+            self.waypoints = []
             self.populate_waypoint_table()
             self.logger.log("Deleted all waypoints.")
 
     @Slot(int, int)
     def slot_waypoint_data_changed(self, row: int, column: int) -> None:
         self.logger.log(f"Waypoint data changed at row {row}, column {column}.")
-        if row < 0 or row >= len(self.waypoints_data):
+        if row < 0 or row >= len(self.waypoints):
             self.logger.error(f"Waypoint data change for invalid row: {row}")
             return
 
-        wp_data: fit_handler.LocationMessageData = self.waypoints_data[row]
+        wp_data: fit_handler.LocationMessageData = self.waypoints[row]
         item: Optional[QTableWidgetItem] = self.waypoint_table.item(row, column)
         if not item:
             return
@@ -408,10 +417,3 @@ class WptTableManager(QWidget):
                 self, "Edit Error", f"Invalid value entered: {e}. Please try again."
             )
             self.populate_waypoint_table()
-
-    def get_waypoints(self) -> List[fit_handler.LocationMessageData]:
-        return self.waypoints_data
-
-    def set_waypoints_data(self, waypoints: List[fit_handler.LocationMessageData]) -> None:
-        self.waypoints_data = self.reindex_waypoints(waypoints)
-        self.populate_waypoint_table()

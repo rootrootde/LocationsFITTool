@@ -16,16 +16,50 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDockWidget, QGroupBox,
-    QHBoxLayout, QHeaderView, QLabel, QMainWindow,
-    QPlainTextEdit, QPushButton, QSizePolicy, QSpacerItem,
-    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QDockWidget, QGroupBox, QHBoxLayout,
+    QHeaderView, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSpacerItem, QTableWidget,
+    QTableWidgetItem, QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(952, 705)
+        font = QFont()
+        font.setFamilies([u"SF Pro"])
+        font.setPointSize(13)
+        MainWindow.setFont(font)
+        MainWindow.setStyleSheet(u"QWidget {\n"
+"    font-family: \"SF Pro\";\n"
+"    font-size: 13pt;\n"
+"}\n"
+"\n"
+"QGroupBox {\n"
+"    font-weight: bold;\n"
+"    border: 1px solid #555;\n"
+"    border-radius: 5px;\n"
+"    margin-top: 10px;\n"
+"}\n"
+"\n"
+"QGroupBox::title {\n"
+"    subcontrol-origin: margin;\n"
+"    left: 10px;\n"
+"    padding: 0 5px;\n"
+"}\n"
+"\n"
+"QPlainTextEdit {\n"
+"	font-family:  \"SF Mono\";\n"
+"	font-size: 12pt\n"
+"\n"
+"}\n"
+"\n"
+"\n"
+"\n"
+"QMainWindow::separator {\n"
+"  width: 0px;\n"
+"  height:0px;\n"
+"}")
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
         self.import_locations_fit_action = QAction(MainWindow)
         self.import_locations_fit_action.setObjectName(u"import_locations_fit_action")
@@ -53,6 +87,30 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout_7 = QVBoxLayout(self.centralwidget)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.file_btns_layout = QHBoxLayout()
+        self.file_btns_layout.setObjectName(u"file_btns_layout")
+        self.import_locations_fit_btn = QPushButton(self.centralwidget)
+        self.import_locations_fit_btn.setObjectName(u"import_locations_fit_btn")
+
+        self.file_btns_layout.addWidget(self.import_locations_fit_btn)
+
+        self.import_gpx_btn = QPushButton(self.centralwidget)
+        self.import_gpx_btn.setObjectName(u"import_gpx_btn")
+
+        self.file_btns_layout.addWidget(self.import_gpx_btn)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.file_btns_layout.addItem(self.horizontalSpacer)
+
+        self.save_locations_fit_btn = QPushButton(self.centralwidget)
+        self.save_locations_fit_btn.setObjectName(u"save_locations_fit_btn")
+
+        self.file_btns_layout.addWidget(self.save_locations_fit_btn)
+
+
+        self.verticalLayout_7.addLayout(self.file_btns_layout)
+
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.groupBox_2 = QGroupBox(self.centralwidget)
@@ -62,40 +120,6 @@ class Ui_MainWindow(object):
         self.waypoint_area = QVBoxLayout()
         self.waypoint_area.setObjectName(u"waypoint_area")
         self.waypoint_area.setContentsMargins(-1, -1, 0, -1)
-        self.file_btns_layout = QHBoxLayout()
-        self.file_btns_layout.setObjectName(u"file_btns_layout")
-        self.import_locations_fit_btn = QPushButton(self.groupBox_2)
-        self.import_locations_fit_btn.setObjectName(u"import_locations_fit_btn")
-
-        self.file_btns_layout.addWidget(self.import_locations_fit_btn)
-
-        self.import_gpx_btn = QPushButton(self.groupBox_2)
-        self.import_gpx_btn.setObjectName(u"import_gpx_btn")
-
-        self.file_btns_layout.addWidget(self.import_gpx_btn)
-
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.file_btns_layout.addItem(self.horizontalSpacer)
-
-        self.label = QLabel(self.groupBox_2)
-        self.label.setObjectName(u"label")
-
-        self.file_btns_layout.addWidget(self.label)
-
-        self.location_settings_combo = QComboBox(self.groupBox_2)
-        self.location_settings_combo.setObjectName(u"location_settings_combo")
-
-        self.file_btns_layout.addWidget(self.location_settings_combo)
-
-        self.save_locations_fit_btn = QPushButton(self.groupBox_2)
-        self.save_locations_fit_btn.setObjectName(u"save_locations_fit_btn")
-
-        self.file_btns_layout.addWidget(self.save_locations_fit_btn)
-
-
-        self.waypoint_area.addLayout(self.file_btns_layout)
-
         self.waypoint_table = QTableWidget(self.groupBox_2)
         self.waypoint_table.setObjectName(u"waypoint_table")
 
@@ -143,23 +167,45 @@ class Ui_MainWindow(object):
         self.log_dock_contents.setMinimumSize(QSize(0, 100))
         self.verticalLayout = QVBoxLayout(self.log_dock_contents)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.log_textedit = QPlainTextEdit(self.log_dock_contents)
+        self.log_textedit = QTextEdit(self.log_dock_contents)
         self.log_textedit.setObjectName(u"log_textedit")
-        self.log_textedit.setReadOnly(True)
 
         self.verticalLayout.addWidget(self.log_textedit)
 
         self.log_dock.setWidget(self.log_dock_contents)
         MainWindow.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.log_dock)
+        self.menuBar = QMenuBar(MainWindow)
+        self.menuBar.setObjectName(u"menuBar")
+        self.menuBar.setGeometry(QRect(0, 0, 952, 24))
+        self.menuFile = QMenu(self.menuBar)
+        self.menuFile.setObjectName(u"menuFile")
+        self.menuWaypoint = QMenu(self.menuBar)
+        self.menuWaypoint.setObjectName(u"menuWaypoint")
+        self.menuView = QMenu(self.menuBar)
+        self.menuView.setObjectName(u"menuView")
+        MainWindow.setMenuBar(self.menuBar)
+
+        self.menuBar.addAction(self.menuFile.menuAction())
+        self.menuBar.addAction(self.menuWaypoint.menuAction())
+        self.menuBar.addAction(self.menuView.menuAction())
+        self.menuFile.addAction(self.import_locations_fit_action)
+        self.menuFile.addAction(self.import_gpx_action)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.save_locations_fit_action)
+        self.menuFile.addSeparator()
+        self.menuWaypoint.addAction(self.add_wpt_action)
+        self.menuWaypoint.addAction(self.delete_wpt_action)
+        self.menuWaypoint.addAction(self.delete_all_wpts_action)
+        self.menuView.addAction(self.toggle_debug_log_action)
 
         self.retranslateUi(MainWindow)
-        self.import_locations_fit_btn.clicked.connect(self.import_locations_fit_action.trigger)
-        self.import_gpx_btn.clicked.connect(self.import_gpx_action.trigger)
+        self.toggle_debug_log_action.toggled.connect(self.log_dock.setVisible)
         self.save_locations_fit_btn.clicked.connect(self.save_locations_fit_action.trigger)
-        self.add_wpt_btn.clicked.connect(self.add_wpt_action.trigger)
         self.delete_wpt_btn.clicked.connect(self.delete_wpt_action.trigger)
         self.delete_all_wpts_btn.clicked.connect(self.delete_all_wpts_action.trigger)
-        self.toggle_debug_log_action.toggled.connect(self.log_dock.setVisible)
+        self.add_wpt_btn.clicked.connect(self.add_wpt_action.trigger)
+        self.import_gpx_btn.clicked.connect(self.import_gpx_action.trigger)
+        self.import_locations_fit_btn.clicked.connect(self.import_locations_fit_action.trigger)
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
@@ -203,13 +249,15 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(shortcut)
         self.toggle_debug_log_action.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+D", None))
 #endif // QT_CONFIG(shortcut)
-        self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Waypoints", None))
         self.import_locations_fit_btn.setText(QCoreApplication.translate("MainWindow", u"Import Locations.fit", None))
         self.import_gpx_btn.setText(QCoreApplication.translate("MainWindow", u"Import GPX", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Method:", None))
         self.save_locations_fit_btn.setText(QCoreApplication.translate("MainWindow", u"Save Locations.fit", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Waypoints", None))
         self.add_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.delete_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
         self.delete_all_wpts_btn.setText(QCoreApplication.translate("MainWindow", u"Delete All", None))
+        self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+        self.menuWaypoint.setTitle(QCoreApplication.translate("MainWindow", u"Waypoint", None))
+        self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
     # retranslateUi
 
