@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import platform
 import sys
 
 try:
@@ -13,6 +14,8 @@ except ImportError:
 
 from location_tool.main_window import MainWindow
 
+FORCE_LIGHT_MODE = False
+
 if __name__ == "__main__":
     if USE_FBS:
         appctxt = ApplicationContext()
@@ -20,6 +23,17 @@ if __name__ == "__main__":
     else:
         app = QApplication(sys.argv)
         appctxt = None
+
+    # Force light mode on macOS
+    if FORCE_LIGHT_MODE:
+        if platform.system() == "Darwin":
+            try:
+                from AppKit import NSApp, NSAppearance
+
+                appearance = NSAppearance.appearanceNamed_("NSAppearanceNameAqua")
+                NSApp.setAppearance_(appearance)
+            except Exception as e:
+                print(f"Failed to force light mode: {e}")
 
     try:
         window = MainWindow(appctxt)

@@ -10,14 +10,90 @@
     <height>705</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>SF Pro</family>
+    <pointsize>13</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>LocationsFITTool</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+    font-family: &quot;SF Pro&quot;;
+    font-size: 13pt;
+}
+
+QGroupBox {
+    font-weight: bold;
+    border: 1px solid #555;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px;
+}
+
+QPlainTextEdit {
+	font-family:  &quot;SF Mono&quot;;
+	font-size: 12pt
+
+}
+
+
+
+QMainWindow::separator {
+  width: 0px;
+  height:0px;
+}</string>
   </property>
   <property name="dockOptions">
    <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_7">
+    <item>
+     <layout class="QHBoxLayout" name="file_btns_layout">
+      <item>
+       <widget class="QPushButton" name="import_locations_fit_btn">
+        <property name="text">
+         <string>Import Locations.fit</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="import_gpx_btn">
+        <property name="text">
+         <string>Import GPX</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="save_locations_fit_btn">
+        <property name="text">
+         <string>Save Locations.fit</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -31,54 +107,6 @@
            <property name="rightMargin">
             <number>0</number>
            </property>
-           <item>
-            <layout class="QHBoxLayout" name="file_btns_layout">
-             <item>
-              <widget class="QPushButton" name="import_locations_fit_btn">
-               <property name="text">
-                <string>Import Locations.fit</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="import_gpx_btn">
-               <property name="text">
-                <string>Import GPX</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Method:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="location_settings_combo"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="save_locations_fit_btn">
-               <property name="text">
-                <string>Save Locations.fit</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
            <item>
             <widget class="QTableWidget" name="waypoint_table"/>
            </item>
@@ -145,14 +173,47 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPlainTextEdit" name="log_textedit">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <widget class="QTextEdit" name="log_textedit"/>
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>952</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="import_locations_fit_action"/>
+    <addaction name="import_gpx_action"/>
+    <addaction name="separator"/>
+    <addaction name="save_locations_fit_action"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuWaypoint">
+    <property name="title">
+     <string>Waypoint</string>
+    </property>
+    <addaction name="add_wpt_action"/>
+    <addaction name="delete_wpt_action"/>
+    <addaction name="delete_all_wpts_action"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="toggle_debug_log_action"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuWaypoint"/>
+   <addaction name="menuView"/>
   </widget>
   <action name="import_locations_fit_action">
    <property name="text">
@@ -247,34 +308,18 @@
  <resources/>
  <connections>
   <connection>
-   <sender>import_locations_fit_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>import_locations_fit_action</receiver>
-   <slot>trigger()</slot>
+   <sender>toggle_debug_log_action</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>log_dock</receiver>
+   <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>87</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>import_gpx_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>import_gpx_action</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>225</x>
-     <y>27</y>
-    </hint>
     <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
+     <x>399</x>
+     <y>480</y>
     </hint>
    </hints>
   </connection>
@@ -287,22 +332,6 @@
     <hint type="sourcelabel">
      <x>717</x>
      <y>27</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>add_wpt_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>add_wpt_action</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>137</x>
-     <y>544</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -343,18 +372,50 @@
    </hints>
   </connection>
   <connection>
-   <sender>toggle_debug_log_action</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>log_dock</receiver>
-   <slot>setVisible(bool)</slot>
+   <sender>add_wpt_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>add_wpt_action</receiver>
+   <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
+     <x>137</x>
+     <y>544</y>
+    </hint>
+    <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>import_gpx_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>import_gpx_action</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>225</x>
+     <y>27</y>
+    </hint>
     <hint type="destinationlabel">
-     <x>399</x>
-     <y>480</y>
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>import_locations_fit_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>import_locations_fit_action</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
    </hints>
   </connection>
