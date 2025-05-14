@@ -28,38 +28,18 @@ class Ui_MainWindow(object):
         MainWindow.resize(952, 705)
         font = QFont()
         font.setFamilies([u"SF Pro"])
-        font.setPointSize(13)
+        font.setPointSize(12)
         MainWindow.setFont(font)
         MainWindow.setStyleSheet(u"QWidget {\n"
 "    font-family: \"SF Pro\";\n"
-"    font-size: 13pt;\n"
+"    font-size: 12pt;\n"
 "}\n"
 "\n"
-"QGroupBox {\n"
-"    font-weight: bold;\n"
-"    border: 1px solid #555;\n"
-"    border-radius: 5px;\n"
-"    margin-top: 10px;\n"
+"QTextEdit {\n"
+"	font-family: \"SF Mono\";\n"
+"	font-size: 11pt;\n"
 "}\n"
-"\n"
-"QGroupBox::title {\n"
-"    subcontrol-origin: margin;\n"
-"    left: 10px;\n"
-"    padding: 0 5px;\n"
-"}\n"
-"\n"
-"QPlainTextEdit {\n"
-"	font-family:  \"SF Mono\";\n"
-"	font-size: 12pt\n"
-"\n"
-"}\n"
-"\n"
-"\n"
-"\n"
-"QMainWindow::separator {\n"
-"  width: 0px;\n"
-"  height:0px;\n"
-"}")
+"")
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
         self.import_locations_fit_action = QAction(MainWindow)
         self.import_locations_fit_action.setObjectName(u"import_locations_fit_action")
