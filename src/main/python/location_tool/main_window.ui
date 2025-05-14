@@ -125,13 +125,6 @@
         </layout>
        </widget>
       </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>Device</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </item>
    </layout>
