@@ -13,3 +13,6 @@ genprofile = [
     "jinja2>=3.1.6",
     "openpyxl>=3.1.5",
 ]
+
+[tool.ruff]
+line-length = 100
