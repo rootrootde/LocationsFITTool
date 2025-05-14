@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>952</width>
+    <height>705</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,91 +17,118 @@
    <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_7">
     <item>
-     <layout class="QHBoxLayout" name="file_btns_layout">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QPushButton" name="import_locations_fit_btn">
-        <property name="text">
-         <string>Import Locations.fit</string>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Waypoints</string>
         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QVBoxLayout" name="waypoint_area">
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="file_btns_layout">
+             <item>
+              <widget class="QPushButton" name="import_locations_fit_btn">
+               <property name="text">
+                <string>Import Locations.fit</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="import_gpx_btn">
+               <property name="text">
+                <string>Import GPX</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Method:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="location_settings_combo"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="save_locations_fit_btn">
+               <property name="text">
+                <string>Save Locations.fit</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="waypoint_table"/>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="wpt_btns_layout">
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="add_wpt_btn">
+               <property name="text">
+                <string>Add</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="delete_wpt_btn">
+               <property name="text">
+                <string>Delete</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="delete_all_wpts_btn">
+               <property name="text">
+                <string>Delete All</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="import_gpx_btn">
-        <property name="text">
-         <string>Import GPX</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Method:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="location_settings_combo"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="save_locations_fit_btn">
-        <property name="text">
-         <string>Save Locations.fit</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QTableWidget" name="waypoint_table"/>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="wpt_btns_layout">
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="add_wpt_btn">
-        <property name="text">
-         <string>Add</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="delete_wpt_btn">
-        <property name="text">
-         <string>Delete</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="delete_all_wpts_btn">
-        <property name="text">
-         <string>Delete All</string>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Device</string>
         </property>
        </widget>
       </item>
@@ -110,6 +137,9 @@
    </layout>
   </widget>
   <widget class="QDockWidget" name="log_dock">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>

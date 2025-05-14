@@ -69,7 +69,6 @@ genprofile = [
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "openpyxl", specifier = ">=3.1.5" },
 ]
-packaging = []
 
 [[package]]
 name = "markupsafe"
