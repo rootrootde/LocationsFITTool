@@ -19,4 +19,7 @@ def get_resource_path(
         # Assuming appctxt has a get_resource method that returns a string path
         return appctxt.get_resource(relative_path)
 
-    return os.path.join(os.path.dirname(_BASE_PATH), "resources", relative_path)
+    # Fix: go up two directories, then into resources/base/
+    return os.path.join(
+        os.path.dirname(os.path.dirname(_BASE_PATH)), "resources", "base", relative_path
+    )
