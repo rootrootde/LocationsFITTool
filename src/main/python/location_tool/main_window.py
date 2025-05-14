@@ -15,8 +15,6 @@ from PySide6.QtWidgets import (
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    wpts_need_reindexing = Signal(list)
-
     def __init__(self, appctxt: Any, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.appctxt = appctxt
@@ -37,7 +35,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if isinstance(action, QAction):  # Ensure it's a QAction
                 self.addAction(action)
 
-        self.current_waypoints_data: list[fit_handler.LocationMessageData] = []
+        # self.current_waypoints_data: list[fit_handler.LocationMessageData] = []
         self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
         self.current_file_path: Optional[str] = None
 
@@ -58,7 +56,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
 
         self.delete_all_wpts_action.triggered.connect(self.table_manager.slot_delete_all_waypoints)
-        self.wpts_need_reindexing.connect(self.table_manager.reindex_waypoints)
 
         self.table_manager.setup_waypoint_table()
         self.table_manager.populate_waypoint_table()
@@ -81,13 +78,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     QMessageBox.warning(self, "FIT Read Warning", str(error))
 
             self.current_file_path = file_path
-            self.current_waypoints_data.extend(fit_file_data_container.locations)
+            # Replace extend with set_waypoints_data
+            self.table_manager.set_waypoints_data(
+                self.table_manager.get_waypoints() + fit_file_data_container.locations
+            )
 
-            self.logger.log(f"Waypoints loaded: {len(self.current_waypoints_data)}")
-
-            self.wpts_need_reindexing.emit(
-                self.current_waypoints_data
-            )  # Emit signal to reindex waypoints
+            self.logger.log(f"Waypoints loaded: {len(self.table_manager.get_waypoints())}")
 
             # Only update location settings if the imported FIT file has them
             if (
@@ -102,7 +98,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.location_settings_combo.setCurrentIndex(index)
 
             self.logger.log(f"Successfully imported and appended from FIT file: {file_path}")
-            self.table_manager.populate_waypoint_table()
+            # self.table_manager.populate_waypoint_table()  # Already called by set_waypoints_data
 
         except Exception as e:
             self.logger.error(f"Failed to import FIT file: {e}")
@@ -122,13 +118,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     QMessageBox.warning(self, "GPX Read Warning", str(error))
 
             self.current_file_path = file_path
-            self.current_waypoints_data.extend(waypoints)
+            # Replace extend with set_waypoints_data
+            self.table_manager.set_waypoints_data(self.table_manager.get_waypoints() + waypoints)
 
-            self.wpts_need_reindexing.emit(
-                self.current_waypoints_data
-            )  # Emit signal to reindex waypoints
-
-            self.table_manager.populate_waypoint_table()
             self.logger.log(
                 f"Successfully imported and appended from GPX file: {file_path}. Waypoints added: {len(waypoints)}"
             )
@@ -177,10 +169,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return False
 
     def _clear_all_forms_and_tables(self) -> None:
-        self.current_waypoints_data = []
+        # self.current_waypoints_data = []
+        self.table_manager.set_waypoints_data([])
         self.loaded_location_settings = None
         self.current_file_path = None
-        self.table_manager.populate_waypoint_table()
+        # self.table_manager.populate_waypoint_table()
         self.location_settings_combo.setCurrentIndex(-1)
         self.logger.log("Cleared all waypoint data and current file information.")
 
@@ -195,7 +188,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def slot_save_locations_fit(self) -> None:
-        if not self.current_waypoints_data:
+        current_waypoints = self.table_manager.get_waypoints()
+        if not current_waypoints:
             QMessageBox.information(self, "No Data", "There are no waypoints to save.")
             return
 
@@ -230,7 +224,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             header=header_data,
             creator=creator_data,
             location_settings=location_setting_data,
-            locations=self.current_waypoints_data,
+            locations=current_waypoints,
         )
 
         if self._save_fit_file(file_path, fit_data_container, logger=self.logger.log):
