@@ -129,6 +129,7 @@ class WaypointTableController(QWidget):
         self.appctxt = appctxt
         self.logger = logging_utils.Logger.get_logger()
         self._waypoints: List[fit_handler.LocationMessageData] = []
+        self.setup_waypoint_table()
 
     @property
     def waypoints(self) -> List[fit_handler.LocationMessageData]:
@@ -137,7 +138,7 @@ class WaypointTableController(QWidget):
     @waypoints.setter
     def waypoints(self, waypoints: List[fit_handler.LocationMessageData]) -> None:
         self._waypoints = self.reindex_waypoints(waypoints)
-        self.populate_waypoint_table()
+        self.refresh_waypoint_table()
 
     def setup_waypoint_table(self) -> None:
         self.waypoint_table.setColumnCount(7)
@@ -171,7 +172,7 @@ class WaypointTableController(QWidget):
         self.waypoint_table.horizontalHeader().setStretchLastSection(True)
         self.waypoint_table.cellChanged.connect(self.slot_waypoint_data_changed)
 
-    def populate_waypoint_table(self) -> None:
+    def refresh_waypoint_table(self) -> None:
         self.waypoint_table.blockSignals(True)
 
         self.waypoint_table.setRowCount(0)
@@ -271,7 +272,7 @@ class WaypointTableController(QWidget):
             longitude=0.0,
             altitude=0.0,
             timestamp=datetime.now(timezone.utc),
-            symbol=0,  # Default symbol, e.g., generic
+            symbol=MapSymbol.FLAG_BLUE.value,  # default
             message_index=new_wp_index,  # Initial index, will be updated by reindex
         )
         self.waypoints.append(new_wp)
@@ -282,8 +283,7 @@ class WaypointTableController(QWidget):
                 self.waypoint_table.selectRow(last_row)
                 self.waypoint_table.scrollToItem(self.waypoint_table.item(last_row, 0))
 
-        self.waypoints = self.reindex_waypoints(self.waypoints)
-        self.populate_waypoint_table()
+        self.waypoints = self.waypoints
         self.logger.log(f"Added new waypoint: {new_wp.name}")
 
     @Slot()
@@ -298,7 +298,7 @@ class WaypointTableController(QWidget):
             "Confirm Delete",
             f"Are you sure you want to delete {len(selected_rows)} waypoint(s)?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes,
         )
 
         if reply == QMessageBox.StandardButton.Yes:
@@ -308,8 +308,9 @@ class WaypointTableController(QWidget):
                 if 0 <= row_idx < len(self.waypoints):
                     del self.waypoints[row_idx]
                     num_deleted += 1
-            self.waypoints = self.reindex_waypoints(self.waypoints)
-            self.populate_waypoint_table()
+
+            self.waypoints = self.waypoints
+
             if num_deleted > 0:
                 self.logger.log(f"Deleted {num_deleted} waypoint(s).")
 
@@ -328,7 +329,6 @@ class WaypointTableController(QWidget):
         )
         if reply == QMessageBox.StandardButton.Yes:
             self.waypoints = []
-            self.populate_waypoint_table()
             self.logger.log("Deleted all waypoints.")
 
     @Slot(int, int)
@@ -358,9 +358,9 @@ class WaypointTableController(QWidget):
                 new_value = float(item.text())
                 wp_data.altitude = new_value
             elif column == WptTableColumn.TIMESTAMP.value:
-                q_datetime_edit = self.waypoint_table.cellWidget(row, column)
-                if isinstance(q_datetime_edit, QDateTimeEdit):
-                    new_value = q_datetime_edit.dateTime().toPython().replace(tzinfo=timezone.utc)
+                cell_widget = self.waypoint_table.cellWidget(row, column)
+                if isinstance(cell_widget, QDateTimeEdit):
+                    new_value = cell_widget.dateTime().toPython().replace(tzinfo=timezone.utc)
                     wp_data.timestamp = new_value
                 else:
                     new_value = (
@@ -374,6 +374,7 @@ class WaypointTableController(QWidget):
                 wp_data.symbol = new_value
 
                 # --- Update the icon in the symbol cell ---
+                # TODO put in own function
                 self.waypoint_table.blockSignals(True)
                 symbol_item = self.waypoint_table.item(row, WptTableColumn.SYMBOL.value)
                 if symbol_item:
@@ -416,4 +417,4 @@ class WaypointTableController(QWidget):
             QMessageBox.warning(
                 self, "Edit Error", f"Invalid value entered: {e}. Please try again."
             )
-            self.populate_waypoint_table()
+            self.refresh_waypoint_table()
