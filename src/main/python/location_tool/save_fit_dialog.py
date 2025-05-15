@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog, QFileDialog
 
-from main.python.location_tool.ui_layouts.ui_save_fit_dialog import Ui_save_fit_dialog
+from .ui_layouts.ui_save_fit_dialog import Ui_save_fit_dialog
 
 
 class SaveFitDialog(QDialog, Ui_save_fit_dialog):

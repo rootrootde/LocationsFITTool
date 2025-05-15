@@ -2,8 +2,7 @@ import json
 import subprocess
 
 from PySide6.QtCore import QObject, QThread, QTimer, Signal
-
-from main.python.location_tool.utils.utils import get_resource_path
+from python.location_tool.utils.utils import get_resource_path
 
 
 class MTPDeviceInfoWorker(QThread):

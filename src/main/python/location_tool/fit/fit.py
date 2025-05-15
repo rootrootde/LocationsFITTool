@@ -17,8 +17,7 @@ from fit_tool.profile.profile_type import (
     MapSymbol,
 )
 
-from main.python.location_tool.utils.utils import logger
-
+from ..utils import logger
 from .data import (
     FileCreatorMessageData,
     FileIdMessageData,
