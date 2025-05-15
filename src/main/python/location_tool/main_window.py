@@ -1,11 +1,6 @@
 from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
-from location_tool import fit_handler, logging_utils
-from location_tool.fit_handler import FileHandler
-from location_tool.mtp_device_manager import MTPDeviceManager
-from location_tool.table import WaypointTableController
-from location_tool.ui_main_window import Ui_MainWindow
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
@@ -16,21 +11,33 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from main.python.location_tool.device.mtp_device_manager import MTPDeviceManager
+from main.python.location_tool.ui_layouts.ui_main_window import Ui_MainWindow
+from main.python.location_tool.utils.utils import logger
+from main.python.location_tool.waypoints.table import WaypointTableController
+
+from .fit.fit import (
+    FileCreatorMessageData,
+    FileIdMessageData,
+    FitFileHandler,
+    LocationSettingsMessageData,
+    LocationsFitFileData,
+)
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, appctxt: Any, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
+        self.setupUi(self)
         self.appctxt = appctxt
-        self.fit_handler = FileHandler(appctxt)
+        self.logger = logger.Logger.get_logger(self.log_textedit)
+        self.fit_handler = FitFileHandler(appctxt)
         self.mtp_device_manager = MTPDeviceManager(appctxt, self)
 
-        self.setupUi(self)
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
         # Sync toggle action with log dock visibility
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
-
-        self.logger = logging_utils.Logger.get_logger(self.log_textedit)
 
         # add all actions to the main window to enable shortcuts
         for action in self.findChildren(QAction):
@@ -146,12 +153,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         mode_enum = FitLocationSettingsEnum[mode_str]
 
-        fit_data_container = fit_handler.LocationsFitFileData(
-            header=fit_handler.FileIdMessageData(),
-            creator=fit_handler.FileCreatorMessageData(),
-            location_settings=fit_handler.LocationSettingsMessageData(
-                location_settings_enum=mode_enum
-            ),
+        fit_data_container = LocationsFitFileData(
+            header=FileIdMessageData(),
+            creator=FileCreatorMessageData(),
+            location_settings=LocationSettingsMessageData(location_settings_enum=mode_enum),
             locations=current_waypoints,
         )
 

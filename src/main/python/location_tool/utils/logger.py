@@ -84,4 +84,8 @@ class Logger:
     ) -> "Logger":
         if cls._instance is None:
             cls._instance = cls(text_edit_widget, verbose=verbose)
+        else:
+            # Always update the widget if a new one is provided
+            if text_edit_widget is not None:
+                cls._instance.text_edit_widget = text_edit_widget
         return cls._instance

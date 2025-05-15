@@ -4,11 +4,6 @@ from enum import Enum
 from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import MapSymbol
-from location_tool import (
-    fit_handler,
-    logging_utils,
-)
-from location_tool.utils import get_resource_path
 from PySide6.QtCore import QDateTime, QModelIndex, Qt, Slot
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
@@ -23,6 +18,10 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QWidget,
 )
+
+from main.python.location_tool.utils.utils import get_resource_path, logger
+
+from ..fit.data import LocationMessageData
 
 
 class WptTableColumn(Enum):
@@ -127,16 +126,16 @@ class WaypointTableController(QWidget):
         self.waypoint_table = waypoint_table
         self.parent = parent
         self.appctxt = appctxt
-        self.logger = logging_utils.Logger.get_logger()
-        self._waypoints: List[fit_handler.LocationMessageData] = []
+        self.logger = logger.Logger.get_logger()
+        self._waypoints: List[LocationMessageData] = []
         self.setup_waypoint_table()
 
     @property
-    def waypoints(self) -> List[fit_handler.LocationMessageData]:
+    def waypoints(self) -> List[LocationMessageData]:
         return self._waypoints
 
     @waypoints.setter
-    def waypoints(self, waypoints: List[fit_handler.LocationMessageData]) -> None:
+    def waypoints(self, waypoints: List[LocationMessageData]) -> None:
         self._waypoints = self.reindex_waypoints(waypoints)
         self.refresh_waypoint_table()
 
@@ -189,7 +188,7 @@ class WaypointTableController(QWidget):
     def set_table_row_from_wp_data(
         self,
         row_idx: int,
-        wp_data: fit_handler.LocationMessageData,
+        wp_data: LocationMessageData,
     ) -> None:
         self.waypoint_table.setItem(row_idx, 0, QTableWidgetItem(wp_data.name or ""))
         self.waypoint_table.setItem(
@@ -255,8 +254,8 @@ class WaypointTableController(QWidget):
         return sorted(set(item.row() for item in self.waypoint_table.selectedItems()), reverse=True)
 
     def reindex_waypoints(
-        self, waypoints_data: List[fit_handler.LocationMessageData]
-    ) -> List[fit_handler.LocationMessageData]:
+        self, waypoints_data: List[LocationMessageData]
+    ) -> List[LocationMessageData]:
         """Ensure all waypoints have a sequential message_index."""
         for i, wp in enumerate(waypoints_data):
             wp.message_index = i
@@ -265,7 +264,7 @@ class WaypointTableController(QWidget):
     @Slot()
     def slot_add_waypoint(self) -> None:
         new_wp_index: int = len(self.waypoints)
-        new_wp = fit_handler.LocationMessageData(
+        new_wp = LocationMessageData(
             name=f"Waypoint {new_wp_index}",
             description="",
             latitude=0.0,
@@ -338,7 +337,7 @@ class WaypointTableController(QWidget):
             self.logger.error(f"Waypoint data change for invalid row: {row}")
             return
 
-        wp_data: fit_handler.LocationMessageData = self.waypoints[row]
+        wp_data: LocationMessageData = self.waypoints[row]
         item: Optional[QTableWidgetItem] = self.waypoint_table.item(row, column)
         if not item:
             return
