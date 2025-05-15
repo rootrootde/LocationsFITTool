@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Callable, List, Optional, Tuple
 
+import gpxpy.gpx  # For GPXXMLSyntaxException
 from fit_tool.data_message import DataMessage
 from fit_tool.fit_file import FitFile
 from fit_tool.fit_file_builder import FitFileBuilder
@@ -16,6 +17,7 @@ from fit_tool.profile.profile_type import (
     Manufacturer,
     MapSymbol,
 )
+from location_tool import logging_utils
 
 # Define conservative maximum character lengths for truncation
 MAX_NAME_CHARS = 50
@@ -237,19 +239,6 @@ def read_gpx_file(
     errors: List[str] = []
 
     try:
-        # Import gpxpy locally to make the ImportError exception more specific
-        # and to handle the case where gpxpy is not installed.
-        import gpxpy.gpx  # For GPXXMLSyntaxException
-    except ImportError:
-        err_msg: str = (
-            "GPX parsing requires the 'gpxpy' library. Please install it: pip install gpxpy"
-        )
-        if logger:
-            logger(err_msg)
-        errors.append(err_msg)
-        return waypoints, errors  # Return early if gpxpy is not available
-
-    try:
         with open(file_path, "r", encoding="utf-8") as gpx_file_content:
             gpx: gpxpy.gpx.GPX = gpxpy.parse(gpx_file_content)
 
@@ -312,82 +301,6 @@ def read_gpx_file(
             )
             waypoints.append(wp)
 
-        # 2. Process points from all routes (<rtept> within <rte>)
-        if gpx.routes:
-            for route_idx, route in enumerate(gpx.routes):  # route is gpxpy.gpx.GPXRoute
-                route_name_prefix: str = route.name or f"Route {route_idx + 1}"
-                if route.points:
-                    for point_idx, route_pt in enumerate(
-                        route.points
-                    ):  # route_pt is gpxpy.gpx.GPXRoutePoint
-                        timestamp_rte: datetime
-                        gpx_rte_timestamp: Optional[datetime] = route_pt.time
-                        if gpx_rte_timestamp:
-                            if gpx_rte_timestamp.tzinfo is None:
-                                timestamp_rte = gpx_rte_timestamp.replace(tzinfo=timezone.utc)
-                            else:
-                                timestamp_rte = gpx_rte_timestamp.astimezone(timezone.utc)
-                        else:
-                            timestamp_rte = datetime.now(timezone.utc)
-
-                        symbol_to_assign_rte: MapSymbol = MapSymbol.AIRPORT  # Default
-                        if route_pt.symbol:
-                            try:
-                                sym_str_rte: str = route_pt.symbol.strip().upper().replace(" ", "_")
-                                if sym_str_rte in MapSymbol.__members__:
-                                    symbol_to_assign_rte = MapSymbol[sym_str_rte]
-                                else:
-                                    try:
-                                        sym_int_rte: int = int(route_pt.symbol)
-                                        symbol_to_assign_rte = MapSymbol(
-                                            sym_int_rte
-                                        )  # Raises ValueError if invalid
-                                    except ValueError:
-                                        err_msg_rte: str = f"GPX route point symbol '{route_pt.symbol}' is not a recognized MapSymbol name or integer value. Using default."
-                                        if logger:
-                                            logger(err_msg_rte)
-                                        errors.append(err_msg_rte)
-                            except Exception as e:
-                                err_msg_rte: str = f"Could not map GPX route point symbol '{route_pt.symbol}' to FIT symbol: {e}. Using default."
-                                if logger:
-                                    logger(err_msg_rte)
-                                errors.append(err_msg_rte)
-
-                        altitude_rte: Optional[float] = route_pt.elevation
-
-                        description_rte: Optional[str] = route_pt.description
-                        if (
-                            not description_rte
-                            and hasattr(route_pt, "comment")
-                            and route_pt.comment
-                        ):
-                            description_rte = route_pt.comment
-                        # GPXRoutePoint does not have .cmt attribute
-
-                        name_rte: str = (
-                            route_pt.name or f"{route_name_prefix} - Point {point_idx + 1}"
-                        )
-
-                        if route_pt.latitude is None or route_pt.longitude is None:
-                            errors.append(
-                                f"Skipping route point '{name_rte}' due to missing latitude/longitude."
-                            )
-                            continue
-
-                        wp_rte: LocationMessageData = LocationMessageData(
-                            name=name_rte,
-                            description=description_rte,
-                            latitude=route_pt.latitude,
-                            longitude=route_pt.longitude,
-                            altitude=altitude_rte,
-                            timestamp=timestamp_rte,
-                            symbol=symbol_to_assign_rte,
-                            message_index=len(waypoints),
-                        )
-                        waypoints.append(wp_rte)
-
-        # 3. Track points are intentionally not processed.
-
         if not waypoints and not errors:  # Only log if no points found AND no other errors occurred
             info_msg: str = (
                 "GPX file parsed, but no waypoints or route points were found or extracted."
@@ -417,17 +330,39 @@ def read_gpx_file(
 # --- Write Logic ---
 
 
+def _get_symbol_value(wp_data, warnings):
+    if isinstance(wp_data.symbol, MapSymbol):
+        return wp_data.symbol.value, warnings
+    elif isinstance(wp_data.symbol, int):
+        try:
+            MapSymbol(wp_data.symbol)
+            return wp_data.symbol, warnings
+        except ValueError:
+            warnings.append(
+                f"Waypoint '{wp_data.name}' had an invalid integer symbol '{wp_data.symbol}'. Defaulted to FLAG_BLUE."
+            )
+            return MapSymbol.FLAG_BLUE.value, warnings
+    else:
+        warnings.append(
+            f"Waypoint '{wp_data.name}' had an invalid symbol type '{type(wp_data.symbol)}'. Defaulted to FLAG_BLUE."
+        )
+        return MapSymbol.GENERIC.value, warnings
+
+
 def write_fit_file(
-    file_path: str, fit_data: LocationsFitFileData, logger: Optional[Callable[[str], None]] = None
+    file_path: str, fit_data: LocationsFitFileData
 ) -> Tuple[bool, List[str], List[str]]:
-    """Writes the provided LocationsFitFileData to a .fit file.
-    Returns a tuple of (success_status, warnings, critical_errors).
-    """
+    """Writes the provided LocationsFitFileData to a .fit file."""
+
     warnings: List[str] = []
     critical_errors: List[str] = []
     builder: FitFileBuilder = FitFileBuilder(auto_define=True, min_string_size=50)
+    logger = logging_utils.Logger.get_logger()
 
-    # File ID Message
+    # ============================================================
+    # ===================== File ID Message ======================
+    # ============================================================
+
     fid_msg: FileIdMessage = FileIdMessage()
     # fit_data.header will always exist due to default_factory=FileIdMessageData
     header: FileIdMessageData = fit_data.header
@@ -449,15 +384,17 @@ def write_fit_file(
     fid_msg.time_created = (
         header.time_created if header.time_created is not None else datetime.now(timezone.utc)
     )
-    if header.product_name is not None:  # Max 20 chars for .FIT, handled by fit_tool library
+    if header.product_name is not None:
         fid_msg.product_name = header.product_name
     # No else needed here, if product_name is None, it remains unset in fid_msg
+
     builder.add(fid_msg)
 
-    # File Creator Message
+    # ============================================================
+    # =================== File Creator Message ===================
+    # ============================================================
     creator_msg: FileCreatorMessage = FileCreatorMessage()
-    # fit_data.creator will always exist due to default_factory=FileCreatorMessageData
-    creator: FileCreatorMessageData = fit_data.creator
+    creator: FileCreatorMessageData = fit_data.creator  # always exists due to default_factory
     creator_msg.software_version = (
         creator.software_version if creator.software_version is not None else 0
     )
@@ -466,7 +403,9 @@ def write_fit_file(
     )
     builder.add(creator_msg)
 
-    # Location Settings Message
+    # ============================================================
+    # =================== Location Settings Message ==============
+    # ============================================================
     ls_msg: LocationSettingsMessage = LocationSettingsMessage()
     if fit_data.location_settings and fit_data.location_settings.location_settings_enum is not None:
         ls_msg.location_settings = fit_data.location_settings.location_settings_enum.value
@@ -477,75 +416,45 @@ def write_fit_file(
         )
     builder.add(ls_msg)
 
-    # Location Messages (Waypoints)
-    for index, wp_data in enumerate(
-        fit_data.locations
-    ):  # index is int, wp_data is LocationMessageData
+    # ============================================================
+    # ===================== Location Messages ====================
+    # ============================================================
+    for index, wp_data in enumerate(fit_data.locations):
         loc_msg: LocationMessage = LocationMessage()
 
-        # Truncate name and description based on estimated byte length
-        name_to_set: Optional[str] = wp_data.name
-        if name_to_set is not None:
-            name_bytes: bytes = name_to_set.encode("utf-8")
-            if len(name_bytes) > MAX_NAME_CHARS:  # Assuming MAX_NAME_CHARS is now a byte limit
-                # Truncate byte string and decode back, ignoring errors during decode
-                name_bytes = name_bytes[:MAX_NAME_CHARS]
-                name_to_set = name_bytes.decode("utf-8", "ignore")
-                warnings.append(
-                    f"Warning: Waypoint {index} name truncated to fit byte limit (approx. {MAX_NAME_CHARS} bytes)."
-                )
-        loc_msg.location_name = name_to_set
+        if len(wp_data.name) > MAX_NAME_CHARS:
+            warnings.append(
+                f"Warning: Waypoint {index} name truncated to ({MAX_NAME_CHARS} chars limit)."
+            )
 
-        desc_to_set: Optional[str] = wp_data.description
-        if desc_to_set is not None:
-            desc_bytes: bytes = desc_to_set.encode("utf-8")
-            if len(desc_bytes) > MAX_DESC_CHARS:  # Assuming MAX_DESC_CHARS is now a byte limit
-                desc_bytes = desc_bytes[:MAX_DESC_CHARS]
-                desc_to_set = desc_bytes.decode("utf-8", "ignore")
-                warnings.append(
-                    f"Warning: Waypoint {index} description truncated to fit byte limit (approx. {MAX_DESC_CHARS} bytes)."
-                )
-        loc_msg.description = desc_to_set
+        if len(wp_data.description) > MAX_DESC_CHARS:
+            warnings.append(
+                f"Warning: Waypoint {index} description truncated to ({MAX_DESC_CHARS} chars limit)."
+            )
+
+        loc_msg.location_name = wp_data.name[:MAX_NAME_CHARS] if wp_data.name else "Waypoint"
+        loc_msg.description = wp_data.description[:MAX_DESC_CHARS] if wp_data.description else None
 
         if wp_data.latitude is not None and wp_data.longitude is not None:
             loc_msg.position_lat = wp_data.latitude
             loc_msg.position_long = wp_data.longitude
         else:
             critical_errors.append(
-                f"Waypoint '{name_to_set or f'index: {index}'}' skipped due to missing latitude/longitude."
+                f"Waypoint '{wp_data.name or f'index: {index}'}' skipped due to missing latitude/longitude."
             )
             continue  # Skip this waypoint
 
         if wp_data.altitude is not None:
             loc_msg.altitude = wp_data.altitude
 
-        loc_msg.timestamp = (
-            wp_data.timestamp if wp_data.timestamp else datetime.now(timezone.utc)
-        )  # Ensure timestamp is set
+        loc_msg.timestamp = wp_data.timestamp if wp_data.timestamp else datetime.now(timezone.utc)
 
-        # Ensure symbol is a valid MapSymbol enum member before assigning its value
-        if isinstance(wp_data.symbol, MapSymbol):
-            loc_msg.symbol = wp_data.symbol.value
-        elif isinstance(wp_data.symbol, int):
-            try:
-                # Validate if the int corresponds to a MapSymbol member
-                MapSymbol(wp_data.symbol)
-                loc_msg.symbol = wp_data.symbol
-            except ValueError:
-                loc_msg.symbol = MapSymbol.GENERIC.value  # Default if int is invalid
-                warnings.append(
-                    f"Waypoint '{name_to_set or f'index: {index}'}' had an invalid integer symbol '{wp_data.symbol}'. Defaulted to GENERIC."
-                )
-        else:
-            loc_msg.symbol = MapSymbol.GENERIC.value  # Default for other invalid types
-            warnings.append(
-                f"Waypoint '{name_to_set or f'index: {index}'}' had an invalid symbol type '{type(wp_data.symbol)}'. Defaulted to GENERIC."
-            )
+        # determine symbol value
+        loc_msg.symbol, warnings = _get_symbol_value(wp_data, warnings)
 
-        if wp_data.message_index is not None:
-            loc_msg.message_index = wp_data.message_index
-        else:
-            loc_msg.message_index = index  # Default to loop index if not set
+        loc_msg.message_index = (
+            wp_data.message_index if wp_data.message_index is not None else index
+        )
 
         builder.add(loc_msg)
 
@@ -555,18 +464,18 @@ def write_fit_file(
     if critical_errors:
         if logger:
             for err in critical_errors:
-                logger(f"Critical FIT Write Error: {err}")
+                logger.error(f"Critical FIT Write Error: {err}")
         return False, warnings, critical_errors
 
     try:
         fit_file_result: FitFile = builder.build()
         fit_file_result.to_file(file_path)
         if logger:
-            logger(f"Successfully wrote FIT file to: {file_path}")
+            logger.log(f"Successfully wrote FIT file to: {file_path}")
         return True, warnings, critical_errors
     except Exception as e:
         err_msg: str = f"Failed to build or write FIT file: {e}"
         if logger:
-            logger(err_msg)
+            logger.error(err_msg)
         critical_errors.append(err_msg)
         return False, warnings, critical_errors
