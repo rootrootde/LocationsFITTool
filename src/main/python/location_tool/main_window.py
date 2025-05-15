@@ -11,13 +11,13 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from .fit.data import (
+from .fit.fit import FitFileHandler
+from .fit.fit_data import (
     FileCreatorMessageData,
     FileIdMessageData,
     LocationSettingsMessageData,
     LocationsFitFileData,
 )
-from .fit.fit import FitFileHandler
 from .gpx.gpx import GpxFileHandler
 from .ui_layouts.ui_main_window import Ui_MainWindow
 from .utils import logger

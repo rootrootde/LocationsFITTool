@@ -6,7 +6,7 @@ from fit_tool.profile.profile_type import (
     MapSymbol,
 )
 
-from ..fit.data import LocationMessageData
+from ..fit.fit_data import LocationMessageData
 from ..utils import logger
 
 

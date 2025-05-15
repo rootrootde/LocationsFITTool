@@ -19,9 +19,14 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..fit.data import LocationMessageData
+from ..fit.fit_data import LocationMessageData
 from ..utils import logger
 from ..utils.utils import get_resource_path
+
+
+# TODO: this should be the generic interface for all waypoint data (GpxWaypointData, LocationMessageData...)
+class WaypointData:
+    pass
 
 
 class TableColumn(Enum):
