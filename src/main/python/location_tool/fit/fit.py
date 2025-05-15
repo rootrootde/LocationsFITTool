@@ -17,7 +17,7 @@ from fit_tool.profile.profile_type import (
 )
 
 from ..utils import logger
-from .data import (
+from .fit_data import (
     FileCreatorMessageData,
     FileIdMessageData,
     LocationMessageData,
