@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .device.mtp import MTPDeviceManager
 from .fit.fit import FitFileHandler
 from .fit.fit_data import (
     FileCreatorMessageData,
@@ -21,7 +22,7 @@ from .fit.fit_data import (
 from .gpx.gpx import GpxFileHandler
 from .ui_layouts.ui_main_window import Ui_MainWindow
 from .utils import logger
-from .waypoints.table import WaypointData, WaypointTableController
+from .waypoints.table import WaypointTableController
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -32,6 +33,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.logger = logger.Logger.get_logger(self.log_textedit)
         self.fit_handler = FitFileHandler(appctxt)
         self.gpx_handler = GpxFileHandler(appctxt)
+        self.mtp_device_manager = MTPDeviceManager(appctxt, self)
 
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
@@ -67,9 +69,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.waypoint_table_controller.slot_delete_all_waypoints
         )
 
+        # Connect MTP device signals
+        self.mtp_device_manager.deviceFound.connect(self.slot_mtp_device_found)
+        self.mtp_device_manager.deviceError.connect(self.slot_mtp_device_error)
+
+        # Connect scan_for_devices_action
+        self.scan_for_devices_action.toggled.connect(self.slot_toggle_device_scanning)
+
         self.waypoint_table_controller.setup_waypoint_table()
 
         self.logger.log("Application started.")
+
+    @Slot(bool)
+    def slot_toggle_device_scanning(self, checked: bool) -> None:
+        if checked:
+            self.logger.log("Starting MTP device scan...")
+            self.mtp_device_manager.start_scanning()
+        else:
+            self.logger.log("Stopping MTP device scan...")
+            self.mtp_device_manager.stop_scanning()
+
+    @Slot(dict)
+    def slot_mtp_device_found(self, device_info: dict) -> None:
+        if device_info.get("found"):
+            manufacturer = device_info.get("manufacturer", "N/A")
+            model = device_info.get("model", "N/A")
+            serial = device_info.get("serialnumber", "N/A")
+            self.logger.log(f"MTP Device Found: {manufacturer} {model} (Serial: {serial})")
+        else:
+            self.logger.log("No MTP device found.")
+
+    @Slot(str)
+    def slot_mtp_device_error(self, error_message: str) -> None:
+        self.logger.error(f"MTP Device Error: {error_message}")
 
     @Slot()
     def slot_import_locations_fit(self) -> None:

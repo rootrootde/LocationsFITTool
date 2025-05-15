@@ -2,7 +2,8 @@ import json
 import subprocess
 
 from PySide6.QtCore import QObject, QThread, QTimer, Signal
-from python.location_tool.utils.utils import get_resource_path
+
+from location_tool.utils.utils import get_resource_path
 
 
 class MTPDeviceInfoWorker(QThread):
@@ -69,7 +70,18 @@ class MTPDeviceManager(QObject):
         self.scan_timer = QTimer()
         self.scan_timer.setInterval(3000)
         self.scan_timer.timeout.connect(self.check_device)
-        self.scan_timer.start()
+        # self.scan_timer.start() # Do not start automatically
+
+    def start_scanning(self):
+        """Starts the MTP device scanning timer."""
+        if not self.scan_timer.isActive():
+            self.scan_timer.start()
+            self.check_device()  # Optionally, trigger an immediate check
+
+    def stop_scanning(self):
+        """Stops the MTP device scanning timer."""
+        if self.scan_timer.isActive():
+            self.scan_timer.stop()
 
     def check_device(self):
         if self.worker and self.worker.isRunning():
