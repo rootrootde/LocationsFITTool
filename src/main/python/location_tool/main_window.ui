@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>952</width>
-    <height>705</height>
+    <width>578</width>
+    <height>692</height>
    </rect>
   </property>
   <property name="font">
@@ -77,7 +77,7 @@ QTextEdit {
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QGroupBox" name="groupBox_2">
+       <widget class="QGroupBox" name="waypoint_group_box">
         <property name="title">
          <string>Waypoints</string>
         </property>
@@ -133,6 +133,35 @@ QTextEdit {
         </layout>
        </widget>
       </item>
+      <item>
+       <widget class="QGroupBox" name="device_group_box">
+        <property name="title">
+         <string>Device</string>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QVBoxLayout" name="device_area">
+           <item>
+            <widget class="QLabel" name="device_info_lbl">
+             <property name="text">
+              <string>-</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignTop</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -163,7 +192,7 @@ QTextEdit {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>952</width>
+     <width>578</width>
      <height>24</height>
     </rect>
    </property>
@@ -191,10 +220,18 @@ QTextEdit {
     </property>
     <addaction name="toggle_debug_log_action"/>
    </widget>
+   <widget class="QMenu" name="menuDevice">
+    <property name="title">
+     <string>Device</string>
+    </property>
+    <addaction name="scan_for_devices_action"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuWaypoint"/>
    <addaction name="menuView"/>
+   <addaction name="menuDevice"/>
   </widget>
+  <widget class="QStatusBar" name="status_bar"/>
   <action name="import_locations_fit_action">
    <property name="text">
     <string>Import Locations.fit</string>
@@ -284,6 +321,20 @@ QTextEdit {
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
+  <action name="scan_for_devices_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Scan For Devices</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -320,13 +371,45 @@ QTextEdit {
    </hints>
   </connection>
   <connection>
-   <sender>delete_wpt_btn</sender>
+   <sender>import_gpx_btn</sender>
    <signal>clicked()</signal>
-   <receiver>delete_wpt_action</receiver>
+   <receiver>import_gpx_action</receiver>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>399</x>
+     <x>225</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>import_locations_fit_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>import_locations_fit_action</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>add_wpt_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>add_wpt_action</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>137</x>
      <y>544</y>
     </hint>
     <hint type="destinationlabel">
@@ -352,46 +435,14 @@ QTextEdit {
    </hints>
   </connection>
   <connection>
-   <sender>add_wpt_btn</sender>
+   <sender>delete_wpt_btn</sender>
    <signal>clicked()</signal>
-   <receiver>add_wpt_action</receiver>
+   <receiver>delete_wpt_action</receiver>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>137</x>
+     <x>399</x>
      <y>544</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>import_gpx_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>import_gpx_action</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>225</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>import_locations_fit_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>import_locations_fit_action</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>87</x>
-     <y>27</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
