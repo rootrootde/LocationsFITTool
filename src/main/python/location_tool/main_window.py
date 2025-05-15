@@ -1,12 +1,15 @@
-from typing import Any, Callable, List, Optional
+from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
 from location_tool import fit_handler, logging_utils
+from location_tool.fit_handler import FileHandler
+from location_tool.mtp_device_manager import MTPDeviceManager
 from location_tool.table import WaypointTableController
 from location_tool.ui_main_window import Ui_MainWindow
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
+    QDialog,
     QFileDialog,
     QMainWindow,
     QMessageBox,
@@ -18,6 +21,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, appctxt: Any, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.appctxt = appctxt
+        self.fit_handler = FileHandler(appctxt)
+        self.mtp_device_manager = MTPDeviceManager(appctxt, self)
 
         self.setupUi(self)
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
@@ -57,7 +62,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
         self.waypoint_table_controller.setup_waypoint_table()
-        self.waypoint_table_controller.populate_waypoint_table()
 
         self.logger.log("Application started.")
 
@@ -71,7 +75,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         try:
-            fit_file_data_container = fit_handler.read_fit_file(file_path, logger=self.logger.log)
+            fit_file_data_container = self.fit_handler.read_fit_file(
+                file_path, logger=self.logger.log
+            )
             if fit_file_data_container.errors:
                 for error in fit_file_data_container.errors:
                     self.logger.warning(f"FIT Read Warning: {error}")
@@ -99,7 +105,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         try:
-            waypoints, errors = fit_handler.read_gpx_file(file_path, logger=self.logger.log)
+            waypoints, errors = self.fit_handler.read_gpx_file(file_path, logger=self.logger.log)
             if errors:
                 for error in errors:
                     self.logger.warning(f"GPX Read Error/Warning: {error}")
@@ -118,19 +124,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.error(f"Failed to import GPX file: {e}")
             QMessageBox.critical(self, "Import Error", f"Could not import GPX file: {e}")
 
-    def _save_fit_file(
-        self,
-        file_path: str,
-        fit_data_container: fit_handler.LocationsFitFileData,
-        logger: Callable[[str], None] = print,
-    ) -> bool:
+    @Slot()
+    def slot_save_locations_fit(self) -> None:
+        from location_tool.save_fit_dialog import SaveFitDialog
+
+        current_waypoints = self.waypoint_table_controller.waypoints
+        if not current_waypoints:
+            QMessageBox.information(self, "No Data", "There are no waypoints to save.")
+            return
+
+        dlg = SaveFitDialog(self)
+        if dlg.exec() != QDialog.Accepted:
+            return
+
+        file_path = dlg.get_save_path()
+        if not file_path:
+            QMessageBox.warning(self, "No Path", "Please select a save path.")
+            return
+
+        mode_str = dlg.get_mode()
+
+        mode_enum = FitLocationSettingsEnum[mode_str]
+
+        fit_data_container = fit_handler.LocationsFitFileData(
+            header=fit_handler.FileIdMessageData(),
+            creator=fit_handler.FileCreatorMessageData(),
+            location_settings=fit_handler.LocationSettingsMessageData(
+                location_settings_enum=mode_enum
+            ),
+            locations=current_waypoints,
+        )
+
         try:
             success: bool
             warnings: List[str]
             critical_errors: List[str]
-            success, warnings, critical_errors = fit_handler.write_fit_file(
-                file_path, fit_data_container, logger=self.logger.log
+
+            # Save the FIT file using the fit_handler
+            success, warnings, critical_errors = self.fit_handler.write_fit_file(
+                file_path, fit_data_container
             )
+
             if critical_errors:
                 for error in critical_errors:
                     self.logger.error(f"Critical FIT Save Error: {error}")
@@ -155,46 +189,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.logger.error(f"Failed to save FIT file: {e}")
             QMessageBox.critical(self, "Save Error", f"Could not save FIT file: {e}")
-            return False
-
-    @Slot()
-    def slot_save_locations_fit(self) -> None:
-        from location_tool.save_fit_dialog import SaveFitDialog
-
-        current_waypoints = self.waypoint_table_controller.waypoints
-        if not current_waypoints:
-            QMessageBox.information(self, "No Data", "There are no waypoints to save.")
-            return
-
-        dlg = SaveFitDialog(self)
-        if dlg.exec() != QDialog.Accepted:
-            return
-
-        file_path = dlg.get_save_path()
-        if not file_path:
-            QMessageBox.warning(self, "No Path", "Please select a save path.")
-            return
-
-        mode_str = dlg.get_mode()
-        from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
-
-        mode_enum = FitLocationSettingsEnum[mode_str]
-
-        header_data = fit_handler.FileIdMessageData()
-        creator_data = fit_handler.FileCreatorMessageData()
-        location_setting_data = fit_handler.LocationSettingsMessageData(
-            location_settings_enum=mode_enum
-        )
-
-        fit_data_container = fit_handler.LocationsFitFileData(
-            header=header_data,
-            creator=creator_data,
-            location_settings=location_setting_data,
-            locations=current_waypoints,
-        )
-
-        if self._save_fit_file(file_path, fit_data_container, logger=self.logger.log):
-            pass
 
     @Slot(bool)
     def slot_toggle_log_dock(self, checked: bool) -> None:
