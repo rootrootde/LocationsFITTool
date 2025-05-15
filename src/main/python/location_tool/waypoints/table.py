@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timezone
 from enum import Enum
+from pathlib import Path
 from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import MapSymbol
@@ -230,7 +231,7 @@ class WaypointTableController(QWidget):
                 symbol_display_text = f"{symbol_enum.value}"
                 symbol_display_tooltip = f"{symbol_enum.name.lower()}"
                 icon_file_name: str = f"{symbol_enum.name.lower()}.png"
-                icon_path = os.path.join("icons", icon_file_name)
+                icon_path = str(Path("icons") / icon_file_name)
             except ValueError:
                 symbol_display_text = f"{wp_data.symbol} (Unknown)"
 
@@ -380,7 +381,7 @@ class WaypointTableController(QWidget):
                     try:
                         symbol_enum = MapSymbol(wp_data.symbol)
                         icon_file_name = f"{symbol_enum.name.lower()}.png"
-                        icon_path = os.path.join("icons", icon_file_name)
+                        icon_path = str(Path("icons") / icon_file_name)
                         resolved_icon_path = get_resource_path(self.appctxt, icon_path)
                         icon = QIcon(resolved_icon_path)
                         if not icon.isNull():

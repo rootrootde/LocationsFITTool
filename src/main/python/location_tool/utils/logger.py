@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 from PySide6.QtGui import QTextCursor
@@ -24,13 +25,12 @@ class Logger:
 
         if self.verbose:
             import inspect
-            import os
 
             frame = inspect.currentframe()
             outer_frames = inspect.getouterframes(frame)
             if len(outer_frames) >= 3:
                 caller_frame = outer_frames[2]
-                filename = os.path.basename(caller_frame.filename)
+                filename = str(Path(caller_frame.filename).name)
                 lineno = caller_frame.lineno
                 funcname = caller_frame.function
                 location = f" [{filename}:{funcname}:{lineno}]"

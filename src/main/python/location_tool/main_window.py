@@ -1,6 +1,5 @@
 from typing import Any, List, Optional
 
-from fit.fit import FitFileHandler
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction
@@ -18,6 +17,7 @@ from .fit.data import (
     LocationSettingsMessageData,
     LocationsFitFileData,
 )
+from .fit.fit import FitFileHandler
 from .ui_layouts.ui_main_window import Ui_MainWindow
 from .utils import logger
 from .waypoints.table import WaypointTableController
