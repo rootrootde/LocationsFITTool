@@ -21,7 +21,7 @@ from .fit.fit_data import (
 from .gpx.gpx import GpxFileHandler
 from .ui_layouts.ui_main_window import Ui_MainWindow
 from .utils import logger
-from .waypoints.table import WaypointTableController
+from .waypoints.table import WaypointData, WaypointTableController
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -91,12 +91,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.current_file_path = file_path
 
+            # fit_file_data_container.locations is now List[WaypointData]
             self.waypoint_table_controller.waypoints = (
                 self.waypoint_table_controller.waypoints + fit_file_data_container.locations
             )
 
             self.logger.log(
-                f"Successfully imported and appended from GPX file: {file_path}. Waypoints added: {len(fit_file_data_container.locations)}"
+                f"Successfully imported and appended from FIT file: {file_path}. Waypoints added: {len(fit_file_data_container.locations)}"
             )
 
         except Exception as e:
@@ -118,6 +119,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     QMessageBox.warning(self, "GPX Read Warning", str(error))
 
             self.current_file_path = file_path
+            # waypoints is List[WaypointData]
             self.waypoint_table_controller.waypoints = (
                 self.waypoint_table_controller.waypoints + waypoints
             )
@@ -156,7 +158,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             file_id=FileIdMessageData(),
             creator=FileCreatorMessageData(),
             location_settings=LocationSettingsMessageData(location_settings_enum=mode_enum),
-            locations=current_waypoints,
+            locations=current_waypoints,  # current_waypoints is List[WaypointData]
         )
 
         try:
