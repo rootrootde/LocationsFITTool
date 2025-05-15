@@ -25,7 +25,7 @@ from ..utils import logger
 from ..utils.utils import get_resource_path
 
 
-class WptTableColumn(Enum):
+class TableColumn(Enum):
     NAME = 0
     LATITUDE = 1
     LONGITUDE = 2
@@ -142,7 +142,7 @@ class WaypointTableController(QWidget):
 
     def setup_waypoint_table(self) -> None:
         self.waypoint_table.setColumnCount(7)
-        headers: List[str] = [name.lower() for name in WptTableColumn.__members__.keys()]
+        headers: List[str] = [name.lower() for name in TableColumn.__members__.keys()]
         self.waypoint_table.setHorizontalHeaderLabels(headers)
         self.waypoint_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.waypoint_table.setEditTriggers(
@@ -151,23 +151,23 @@ class WaypointTableController(QWidget):
             | QAbstractItemView.EditKeyPressed
         )
         self.waypoint_table.setItemDelegateForColumn(
-            WptTableColumn.LATITUDE.value, FloatDelegate(decimals=6, parent=self)
+            TableColumn.LATITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
         self.waypoint_table.setItemDelegateForColumn(
-            WptTableColumn.LONGITUDE.value, FloatDelegate(decimals=6, parent=self)
+            TableColumn.LONGITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
         self.waypoint_table.setItemDelegateForColumn(
-            WptTableColumn.ALTITUDE.value, FloatDelegate(decimals=2, parent=self)
+            TableColumn.ALTITUDE.value, FloatDelegate(decimals=2, parent=self)
         )
         self.waypoint_table.setItemDelegateForColumn(
-            WptTableColumn.TIMESTAMP.value, DateTimeDelegate(parent=self)
+            TableColumn.TIMESTAMP.value, DateTimeDelegate(parent=self)
         )
 
         header: QHeaderView = self.waypoint_table.horizontalHeader()
         for i in range(self.waypoint_table.columnCount()):
             header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(
-            WptTableColumn.DESCRIPTION.value, QHeaderView.Stretch
+            TableColumn.DESCRIPTION.value, QHeaderView.Stretch
         )  # Description
         self.waypoint_table.horizontalHeader().setStretchLastSection(True)
         self.waypoint_table.cellChanged.connect(self.slot_waypoint_data_changed)
@@ -194,21 +194,21 @@ class WaypointTableController(QWidget):
         self.waypoint_table.setItem(row_idx, 0, QTableWidgetItem(wp_data.name or ""))
         self.waypoint_table.setItem(
             row_idx,
-            WptTableColumn.LATITUDE.value,
+            TableColumn.LATITUDE.value,
             QTableWidgetItem(
                 f"{wp_data.latitude:.6f}" if wp_data.latitude is not None else "0.000000"
             ),
         )
         self.waypoint_table.setItem(
             row_idx,
-            WptTableColumn.LONGITUDE.value,
+            TableColumn.LONGITUDE.value,
             QTableWidgetItem(
                 f"{wp_data.longitude:.6f}" if wp_data.longitude is not None else "0.000000"
             ),
         )
         self.waypoint_table.setItem(
             row_idx,
-            WptTableColumn.ALTITUDE.value,
+            TableColumn.ALTITUDE.value,
             QTableWidgetItem(f"{wp_data.altitude:.2f}" if wp_data.altitude is not None else "0.00"),
         )
 
@@ -217,9 +217,7 @@ class WaypointTableController(QWidget):
             if wp_data.timestamp
             else datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         )
-        self.waypoint_table.setItem(
-            row_idx, WptTableColumn.TIMESTAMP.value, QTableWidgetItem(ts_str)
-        )
+        self.waypoint_table.setItem(row_idx, TableColumn.TIMESTAMP.value, QTableWidgetItem(ts_str))
         symbol_item: QTableWidgetItem = QTableWidgetItem()
         symbol_display_text: str = "N/A"
         symbol_display_tooltip: str = "N/A"
@@ -246,9 +244,9 @@ class WaypointTableController(QWidget):
                 self.logger.warning(
                     f"Warning: Icon not found for symbol {symbol_display_text} at {resolved_icon_path}"
                 )
-        self.waypoint_table.setItem(row_idx, WptTableColumn.SYMBOL.value, symbol_item)
+        self.waypoint_table.setItem(row_idx, TableColumn.SYMBOL.value, symbol_item)
         self.waypoint_table.setItem(
-            row_idx, WptTableColumn.DESCRIPTION.value, QTableWidgetItem(wp_data.description or "")
+            row_idx, TableColumn.DESCRIPTION.value, QTableWidgetItem(wp_data.description or "")
         )
 
     def _get_selected_table_rows(self) -> List[int]:
@@ -345,19 +343,19 @@ class WaypointTableController(QWidget):
 
         new_value: Any = None
         try:
-            if column == WptTableColumn.NAME.value:
+            if column == TableColumn.NAME.value:
                 new_value = item.text()
                 wp_data.name = new_value
-            elif column == WptTableColumn.LATITUDE.value:
+            elif column == TableColumn.LATITUDE.value:
                 new_value = float(item.text())
                 wp_data.latitude = new_value
-            elif column == WptTableColumn.LONGITUDE.value:
+            elif column == TableColumn.LONGITUDE.value:
                 new_value = float(item.text())
                 wp_data.longitude = new_value
-            elif column == WptTableColumn.ALTITUDE.value:
+            elif column == TableColumn.ALTITUDE.value:
                 new_value = float(item.text())
                 wp_data.altitude = new_value
-            elif column == WptTableColumn.TIMESTAMP.value:
+            elif column == TableColumn.TIMESTAMP.value:
                 cell_widget = self.waypoint_table.cellWidget(row, column)
                 if isinstance(cell_widget, QDateTimeEdit):
                     new_value = cell_widget.dateTime().toPython().replace(tzinfo=timezone.utc)
@@ -369,14 +367,14 @@ class WaypointTableController(QWidget):
                         .replace(tzinfo=timezone.utc)
                     )
                     wp_data.timestamp = new_value
-            elif column == WptTableColumn.SYMBOL.value:
+            elif column == TableColumn.SYMBOL.value:
                 new_value = int(item.text())
                 wp_data.symbol = new_value
 
                 # --- Update the icon in the symbol cell ---
                 # TODO put in own function
                 self.waypoint_table.blockSignals(True)
-                symbol_item = self.waypoint_table.item(row, WptTableColumn.SYMBOL.value)
+                symbol_item = self.waypoint_table.item(row, TableColumn.SYMBOL.value)
                 if symbol_item:
                     try:
                         symbol_enum = MapSymbol(wp_data.symbol)
@@ -400,7 +398,7 @@ class WaypointTableController(QWidget):
                 self.waypoint_table.blockSignals(False)
                 # ------------------------------------------
 
-            elif column == WptTableColumn.DESCRIPTION.value:
+            elif column == TableColumn.DESCRIPTION.value:
                 new_value = item.text()
                 wp_data.description = new_value
             else:
