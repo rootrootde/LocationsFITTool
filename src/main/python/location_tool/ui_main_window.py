@@ -26,20 +26,20 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(578, 692)
+        MainWindow.resize(952, 705)
         font = QFont()
         font.setFamilies([u"SF Pro"])
         font.setPointSize(12)
         MainWindow.setFont(font)
         MainWindow.setStyleSheet(u"QWidget {\n"
-"    font-family: \"SF Pro\";\n"
-"    font-size: 12pt;\n"
-"}\n"
+"        font-family: \"SF Pro\";\n"
+"        font-size: 12pt;\n"
+"        }\n"
 "\n"
-"QTextEdit {\n"
-"	font-family: \"SF Mono\";\n"
-"	font-size: 11pt;\n"
-"}\n"
+"        QTextEdit {\n"
+"        font-family: \"SF Mono\";\n"
+"        font-size: 11pt;\n"
+"        }\n"
 "")
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
         self.import_locations_fit_action = QAction(MainWindow)
