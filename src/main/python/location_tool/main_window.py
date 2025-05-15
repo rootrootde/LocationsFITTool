@@ -1,5 +1,6 @@
 from typing import Any, List, Optional
 
+from fit.fit import FitFileHandler
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction
@@ -11,18 +12,15 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from main.python.location_tool.device.mtp_device_manager import MTPDeviceManager
-from main.python.location_tool.ui_layouts.ui_main_window import Ui_MainWindow
-from main.python.location_tool.utils.utils import logger
-from main.python.location_tool.waypoints.table import WaypointTableController
-
-from .fit.fit import (
+from .fit.data import (
     FileCreatorMessageData,
     FileIdMessageData,
-    FitFileHandler,
     LocationSettingsMessageData,
     LocationsFitFileData,
 )
+from .ui_layouts.ui_main_window import Ui_MainWindow
+from .utils import logger
+from .waypoints.table import WaypointTableController
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -32,7 +30,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.appctxt = appctxt
         self.logger = logger.Logger.get_logger(self.log_textedit)
         self.fit_handler = FitFileHandler(appctxt)
-        self.mtp_device_manager = MTPDeviceManager(appctxt, self)
 
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 

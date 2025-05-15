@@ -19,9 +19,9 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from main.python.location_tool.utils.utils import get_resource_path, logger
-
 from ..fit.data import LocationMessageData
+from ..utils import logger
+from ..utils.utils import get_resource_path
 
 
 class WptTableColumn(Enum):

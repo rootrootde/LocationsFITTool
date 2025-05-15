@@ -1,4 +1,4 @@
-from main.python.location_tool.utils.utils import logger
+from python.location_tool.utils.utils import logger
 
 
 class GPXFileHandler:

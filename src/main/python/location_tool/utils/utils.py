@@ -1,8 +1,8 @@
-import os
+from pathlib import Path
 from typing import Any, Optional  # Added Any, Callable
 
 # This _BASE_PATH will be the directory of utils.py, i.e., .../location_tool/
-_BASE_PATH: str = os.path.dirname(os.path.abspath(__file__))
+_BASE_PATH: Path = Path(__file__).resolve().parent
 
 
 def get_resource_path(
@@ -19,7 +19,6 @@ def get_resource_path(
         # Assuming appctxt has a get_resource method that returns a string path
         return appctxt.get_resource(relative_path)
 
-    # Fix: go up two directories, then into resources/base/
-    return os.path.join(
-        os.path.dirname(os.path.dirname(_BASE_PATH)), "resources", "base", relative_path
-    )
+    # Go up three directories from _BASE_PATH using pathlib
+    base_dir = _BASE_PATH.parents[2]
+    return str(base_dir / "resources" / "base" / relative_path)
