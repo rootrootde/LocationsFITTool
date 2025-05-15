@@ -6,8 +6,8 @@ from fit_tool.profile.profile_type import (
     MapSymbol,
 )
 
-from ..fit.fit_data import LocationMessageData
 from ..utils import logger
+from ..waypoints.table import WaypointData
 
 
 class GpxFileHandler:
@@ -17,14 +17,14 @@ class GpxFileHandler:
 
     def parse_gpx_file(
         self, file_path: str, logger: Optional[Callable[[str], None]] = None
-    ) -> Tuple[List[LocationMessageData], List[str]]:
+    ) -> Tuple[List[WaypointData], List[str]]:
         """
         Parses a GPX file and extracts waypoint data from <wpt> (top-level waypoints)
         and <rtept> (route points from all routes).
         Track points (<trkpt>) are ignored.
-        Returns a tuple containing a list of LocationMessageData objects and a list of error/warning strings.
+        Returns a tuple containing a list of WaypointData objects and a list of error/warning strings.
         """
-        waypoints: List[LocationMessageData] = []
+        waypoints: List[WaypointData] = []
         errors: List[str] = []
 
         try:
@@ -43,7 +43,7 @@ class GpxFileHandler:
                 else:
                     timestamp = datetime.now(timezone.utc)
 
-                symbol_to_assign: MapSymbol = MapSymbol.AIRPORT  # Default from LocationMessageData
+                symbol_to_assign: MapSymbol = MapSymbol.AIRPORT  # Default from WaypointData
                 if gpx_wp.symbol:
                     try:
                         sym_str: str = gpx_wp.symbol.strip().upper().replace(" ", "_")
@@ -78,7 +78,7 @@ class GpxFileHandler:
                     errors.append(f"Skipping waypoint '{name}' due to missing latitude/longitude.")
                     continue
 
-                wp: LocationMessageData = LocationMessageData(
+                wp: WaypointData = WaypointData(
                     name=name,
                     description=description,
                     latitude=gpx_wp.latitude,

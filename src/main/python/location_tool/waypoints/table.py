@@ -1,3 +1,4 @@
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
@@ -19,14 +20,20 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..fit.fit_data import LocationMessageData
 from ..utils import logger
 from ..utils.utils import get_resource_path
 
 
-# TODO: this should be the generic interface for all waypoint data (GpxWaypointData, LocationMessageData...)
+@dataclass
 class WaypointData:
-    pass
+    name: Optional[str] = "Waypoint"
+    latitude: float = 0.0  # Degrees
+    longitude: float = 0.0  # Degrees
+    altitude: Optional[float] = None  # Meters
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    symbol: MapSymbol = MapSymbol.AIRPORT  # Default symbol, consistent with LocationMessageData
+    message_index: Optional[int] = None
+    description: Optional[str] = None
 
 
 class TableColumn(Enum):
@@ -128,20 +135,22 @@ class FloatDelegate(QStyledItemDelegate):
 class WaypointTableController(QWidget):
     def __init__(self, waypoint_table: QTableWidget, parent: QWidget, appctxt: Any) -> None:
         super().__init__(parent)
-        self.waypoint_table = waypoint_table
-        self.parent = parent
-        self.appctxt = appctxt
+        self.waypoint_table: QTableWidget = waypoint_table
+        self.parent_widget: QWidget = parent
+        self.appctxt: Any = appctxt
         self.logger = logger.Logger.get_logger()
-        self._waypoints: List[LocationMessageData] = []
+        self._waypoints: List[WaypointData] = []
+        self.float_delegate = FloatDelegate()
+        self.datetime_delegate = DateTimeDelegate()
         self.setup_waypoint_table()
 
     @property
-    def waypoints(self) -> List[LocationMessageData]:
+    def waypoints(self) -> List[WaypointData]:
         return self._waypoints
 
     @waypoints.setter
-    def waypoints(self, waypoints: List[LocationMessageData]) -> None:
-        self._waypoints = self.reindex_waypoints(waypoints)
+    def waypoints(self, new_waypoints: List[WaypointData]) -> None:
+        self._waypoints = self.reindex_waypoints(new_waypoints)
         self.refresh_waypoint_table()
 
     def setup_waypoint_table(self) -> None:
@@ -178,22 +187,16 @@ class WaypointTableController(QWidget):
 
     def refresh_waypoint_table(self) -> None:
         self.waypoint_table.blockSignals(True)
-
-        self.waypoint_table.setRowCount(0)
-        self.waypoint_table.setRowCount(len(self.waypoints))
-        for row_idx, wp_data in enumerate(self.waypoints):
-            self.set_table_row_from_wp_data(
-                row_idx,
-                wp_data,
-            )
-        self.waypoint_table.resizeColumnsToContents()
-
+        self.waypoint_table.setRowCount(0)  # Clear existing rows
+        self.waypoint_table.setRowCount(len(self._waypoints))
+        for row_idx, wp_data in enumerate(self._waypoints):
+            self.set_table_row_from_wp_data(row_idx, wp_data)
         self.waypoint_table.blockSignals(False)
 
     def set_table_row_from_wp_data(
         self,
         row_idx: int,
-        wp_data: LocationMessageData,
+        wp_data: WaypointData,
     ) -> None:
         self.waypoint_table.setItem(row_idx, 0, QTableWidgetItem(wp_data.name or ""))
         self.waypoint_table.setItem(
@@ -210,11 +213,13 @@ class WaypointTableController(QWidget):
                 f"{wp_data.longitude:.6f}" if wp_data.longitude is not None else "0.000000"
             ),
         )
-        self.waypoint_table.setItem(
-            row_idx,
-            TableColumn.ALTITUDE.value,
-            QTableWidgetItem(f"{wp_data.altitude:.2f}" if wp_data.altitude is not None else "0.00"),
-        )
+        alt_item = QTableWidgetItem()
+        if wp_data.altitude is not None:
+            alt_item.setData(Qt.EditRole, float(wp_data.altitude))
+        else:
+            alt_item.setData(Qt.EditRole, "")  # Or some placeholder for None
+        alt_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.waypoint_table.setItem(row_idx, TableColumn.ALTITUDE.value, alt_item)
 
         ts_str: str = (
             wp_data.timestamp.strftime("%Y-%m-%d %H:%M:%S")
@@ -256,37 +261,20 @@ class WaypointTableController(QWidget):
     def _get_selected_table_rows(self) -> List[int]:
         return sorted(set(item.row() for item in self.waypoint_table.selectedItems()), reverse=True)
 
-    def reindex_waypoints(
-        self, waypoints_data: List[LocationMessageData]
-    ) -> List[LocationMessageData]:
-        """Ensure all waypoints have a sequential message_index."""
-        for i, wp in enumerate(waypoints_data):
-            wp.message_index = i
+    def reindex_waypoints(self, waypoints_data: List[WaypointData]) -> List[WaypointData]:
+        for idx, wp in enumerate(waypoints_data):
+            wp.message_index = idx
         return waypoints_data
 
     @Slot()
     def slot_add_waypoint(self) -> None:
-        new_wp_index: int = len(self.waypoints)
-        new_wp = LocationMessageData(
-            name=f"Waypoint {new_wp_index}",
-            description="",
-            latitude=0.0,
-            longitude=0.0,
-            altitude=0.0,
-            timestamp=datetime.now(timezone.utc),
-            symbol=MapSymbol.FLAG_BLUE.value,  # default
-            message_index=new_wp_index,  # Initial index, will be updated by reindex
-        )
-        self.waypoints.append(new_wp)
-
-        if new_wp:
-            last_row = self.waypoint_table.rowCount() - 1
-            if last_row >= 0:
-                self.waypoint_table.selectRow(last_row)
-                self.waypoint_table.scrollToItem(self.waypoint_table.item(last_row, 0))
-
-        self.waypoints = self.waypoints
-        self.logger.log(f"Added new waypoint: {new_wp.name}")
+        new_wp = WaypointData(message_index=len(self._waypoints))
+        self._waypoints.append(new_wp)
+        self.refresh_waypoint_table()
+        new_row_index = len(self._waypoints) - 1
+        if new_row_index >= 0:
+            self.waypoint_table.selectRow(new_row_index)
+            self.waypoint_table.scrollToItem(self.waypoint_table.item(new_row_index, 0))
 
     @Slot()
     def slot_delete_selected_waypoints(self) -> None:
@@ -307,8 +295,8 @@ class WaypointTableController(QWidget):
             rows_to_delete = sorted(set(selected_rows), reverse=True)
             num_deleted = 0
             for row_idx in rows_to_delete:
-                if 0 <= row_idx < len(self.waypoints):
-                    del self.waypoints[row_idx]
+                if 0 <= row_idx < len(self._waypoints):
+                    del self._waypoints[row_idx]
                     num_deleted += 1
 
             self.waypoints = self.waypoints
@@ -318,7 +306,7 @@ class WaypointTableController(QWidget):
 
     @Slot()
     def slot_delete_all_waypoints(self) -> None:
-        if not self.waypoints:
+        if not self._waypoints:
             QMessageBox.information(self, "No Data", "There are no waypoints to delete.")
             return
 
@@ -336,11 +324,11 @@ class WaypointTableController(QWidget):
     @Slot(int, int)
     def slot_waypoint_data_changed(self, row: int, column: int) -> None:
         self.logger.log(f"Waypoint data changed at row {row}, column {column}.")
-        if row < 0 or row >= len(self.waypoints):
+        if row < 0 or row >= len(self._waypoints):
             self.logger.error(f"Waypoint data change for invalid row: {row}")
             return
 
-        wp_data: LocationMessageData = self.waypoints[row]
+        wp_data: WaypointData = self._waypoints[row]
         item: Optional[QTableWidgetItem] = self.waypoint_table.item(row, column)
         if not item:
             return
@@ -375,8 +363,6 @@ class WaypointTableController(QWidget):
                 new_value = int(item.text())
                 wp_data.symbol = new_value
 
-                # --- Update the icon in the symbol cell ---
-                # TODO put in own function
                 self.waypoint_table.blockSignals(True)
                 symbol_item = self.waypoint_table.item(row, TableColumn.SYMBOL.value)
                 if symbol_item:
@@ -400,7 +386,6 @@ class WaypointTableController(QWidget):
                         symbol_item.setText(f"{wp_data.symbol} (Unknown)")
                         symbol_item.setToolTip("N/A")
                 self.waypoint_table.blockSignals(False)
-                # ------------------------------------------
 
             elif column == TableColumn.DESCRIPTION.value:
                 new_value = item.text()

@@ -17,10 +17,10 @@ from fit_tool.profile.profile_type import (
 )
 
 from ..utils import logger
+from ..waypoints.table import WaypointData
 from .fit_data import (
     FileCreatorMessageData,
     FileIdMessageData,
-    LocationMessageData,
     LocationSettingsMessageData,
     LocationsFitFileData,
 )
@@ -41,6 +41,7 @@ class FitFileHandler:
         self, file_path: str, logger: Optional[Callable[[str], None]] = None
     ) -> LocationsFitFileData:
         fit_data: LocationsFitFileData = LocationsFitFileData()
+        parsed_waypoints: List[WaypointData] = []
 
         try:
             fit_file: FitFile = FitFile.from_file(file_path)
@@ -153,7 +154,7 @@ class FitFileHandler:
                                 f"Invalid MapSymbol value {symbol_val} in FIT LocationMessage. Using default."
                             )
 
-                    waypoint: LocationMessageData = LocationMessageData(
+                    waypoint = WaypointData(
                         name=getattr(msg, "location_name", None),
                         description=getattr(
                             msg, "description", None
@@ -167,7 +168,7 @@ class FitFileHandler:
                         symbol=symbol_enum,
                         message_index=getattr(msg, "message_index", None),
                     )
-                    fit_data.locations.append(waypoint)
+                    parsed_waypoints.append(waypoint)
             except AttributeError as e:
                 self.logger.error(
                     f"Attribute error processing message {type(actual_message).__name__} (ID: {global_id}): {e}"
@@ -177,6 +178,7 @@ class FitFileHandler:
                     f"Unexpected error processing message {type(actual_message).__name__} (ID: {global_id}): {e}"
                 )
 
+        fit_data.locations = parsed_waypoints
         return fit_data
 
     # --- Write Logic ---
@@ -224,7 +226,7 @@ class FitFileHandler:
         ls_msg.location_settings = location_settings.location_settings_enum.value
         return ls_msg
 
-    def _build_location_message(self, index, wp_data):
+    def _build_location_message(self, index, wp_data: WaypointData):
         loc_msg: LocationMessage = LocationMessage()
 
         if wp_data.name and len(wp_data.name) > MAX_NAME_CHARS:
