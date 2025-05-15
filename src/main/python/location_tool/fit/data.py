@@ -52,7 +52,7 @@ class LocationMessageData:
 
 @dataclass
 class LocationsFitFileData:
-    header: FileIdMessageData = field(default_factory=FileIdMessageData)
+    file_id: FileIdMessageData = field(default_factory=FileIdMessageData)
     creator: FileCreatorMessageData = field(default_factory=FileCreatorMessageData)
     location_settings: Optional[LocationSettingsMessageData] = None
     locations: List[LocationMessageData] = field(default_factory=list)

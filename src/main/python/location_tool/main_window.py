@@ -18,6 +18,7 @@ from .fit.data import (
     LocationsFitFileData,
 )
 from .fit.fit import FitFileHandler
+from .gpx.gpx import GpxFileHandler
 from .ui_layouts.ui_main_window import Ui_MainWindow
 from .utils import logger
 from .waypoints.table import WaypointTableController
@@ -30,6 +31,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.appctxt = appctxt
         self.logger = logger.Logger.get_logger(self.log_textedit)
         self.fit_handler = FitFileHandler(appctxt)
+        self.gpx_handler = GpxFileHandler(appctxt)
 
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
@@ -79,7 +81,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         try:
-            fit_file_data_container = self.fit_handler.read_fit_file(
+            fit_file_data_container = self.fit_handler.parse_fit_file(
                 file_path, logger=self.logger.log
             )
             if fit_file_data_container.errors:
@@ -109,7 +111,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         try:
-            waypoints, errors = self.fit_handler.read_gpx_file(file_path, logger=self.logger.log)
+            waypoints, errors = self.gpx_handler.parse_gpx_file(file_path, logger=self.logger.log)
             if errors:
                 for error in errors:
                     self.logger.warning(f"GPX Read Error/Warning: {error}")
@@ -151,7 +153,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         mode_enum = FitLocationSettingsEnum[mode_str]
 
         fit_data_container = LocationsFitFileData(
-            header=FileIdMessageData(),
+            file_id=FileIdMessageData(),
             creator=FileCreatorMessageData(),
             location_settings=LocationSettingsMessageData(location_settings_enum=mode_enum),
             locations=current_waypoints,
