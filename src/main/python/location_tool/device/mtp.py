@@ -7,8 +7,8 @@ from location_tool.utils.utils import get_resource_path
 
 
 class MTPDeviceInfoWorker(QThread):
-    deviceInfoResult = Signal(dict)
-    deviceInfoError = Signal(str)
+    device_info_result = Signal(dict)
+    device_info_error = Signal(str)
 
     def __init__(self, appctxt, parent=None):
         super().__init__(parent)
@@ -38,7 +38,7 @@ class MTPDeviceInfoWorker(QThread):
                         model = info.get("Model")
                         serialnumber = info.get("SerialNumber")
                         deviceversion = info.get("DeviceVersion")
-                        self.deviceInfoResult.emit(
+                        self.device_info_result.emit(
                             {
                                 "found": found,
                                 "manufacturer": manufacturer,
@@ -52,16 +52,16 @@ class MTPDeviceInfoWorker(QThread):
                     except json.JSONDecodeError:
                         continue
                 # If no JSON found in output
-                self.deviceInfoResult.emit({"found": False})
+                self.device_info_result.emit({"found": False})
             else:
-                self.deviceInfoError.emit(stderr.strip() or "Unknown error")
+                self.device_info_error.emit(stderr.strip() or "Unknown error")
         except Exception as e:
-            self.deviceInfoError.emit(str(e))
+            self.device_info_error.emit(str(e))
 
 
 class MTPDeviceManager(QObject):
-    deviceFound = Signal(dict)
-    deviceError = Signal(str)
+    device_found = Signal(dict)
+    device_error = Signal(str)
 
     def __init__(self, appctxt, parent=None):
         super().__init__(parent)
@@ -87,6 +87,6 @@ class MTPDeviceManager(QObject):
         if self.worker and self.worker.isRunning():
             return  # Already running
         self.worker = MTPDeviceInfoWorker(self.appctxt)
-        self.worker.deviceInfoResult.connect(self.deviceFound.emit)
-        self.worker.deviceInfoError.connect(self.deviceError.emit)
+        self.worker.device_info_result.connect(self.device_found.emit)
+        self.worker.device_info_error.connect(self.device_error.emit)
         self.worker.start()

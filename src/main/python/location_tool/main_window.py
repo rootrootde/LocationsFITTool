@@ -44,10 +44,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fit_handler = FitFileHandler(self.appctxt)
         self.gpx_handler = GpxFileHandler(self.appctxt)
         self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
-        # self.resizeDocks([self.log_dock], [150], Qt.Vertical)
-        self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
         self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
         self.current_file_path: Optional[str] = None
+
+        # self.device_group_box.setVisible(False)
+        self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
+        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
     def _setup_ui_actions(self):
         # add all actions to the main window to enable shortcuts
@@ -74,8 +76,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.waypoint_table_controller.setup_waypoint_table()
 
     def _setup_mtp_device_signals(self):
-        self.mtp_device_manager.deviceFound.connect(self.slot_mtp_device_found)
-        self.mtp_device_manager.deviceError.connect(self.slot_mtp_device_error)
+        self.mtp_device_manager.device_found.connect(self.slot_mtp_device_found)
+        self.mtp_device_manager.device_error.connect(self.slot_mtp_device_error)
 
     def _setup_additional_connections(self):
         self.scan_for_devices_action.toggled.connect(self.slot_toggle_device_scanning)
@@ -95,15 +97,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             manufacturer = device_info.get("manufacturer", "N/A")
             model = device_info.get("model", "N/A")
             serial = device_info.get("serialnumber", "N/A")
+
+            self.device_group_box.setTitle(f"{manufacturer} {model}")
+
             self.logger.log(f"MTP Device Found: {manufacturer} {model} (Serial: {serial})")
         else:
             self.logger.log("No MTP device found.")
 
-    @Slot(str)
+    @Slot(str)  # slot_mtp_device_error
     def slot_mtp_device_error(self, error_message: str) -> None:
         self.logger.error(f"MTP Device Error: {error_message}")
 
-    @Slot()
+        self.device_group_box.setTitle(f"No MTP Device Found")
+
+    @Slot()  # slot_import_locations_fit
     def slot_import_locations_fit(self) -> None:
         file_path: Optional[str]
         file_path, _ = QFileDialog.getOpenFileName(
@@ -136,7 +143,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.error(f"Failed to import FIT file: {e}")
             QMessageBox.critical(self, "Import Error", f"Could not import FIT file: {e}")
 
-    @Slot()
+    @Slot()  # slot_import_gpx
     def slot_import_gpx(self) -> None:
         file_path: Optional[str]
         file_path, _ = QFileDialog.getOpenFileName(self, "Import GPX File", "", "GPX Files (*.gpx)")
@@ -164,7 +171,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.error(f"Failed to import GPX file: {e}")
             QMessageBox.critical(self, "Import Error", f"Could not import GPX file: {e}")
 
-    @Slot()
+    @Slot()  # slot_save_locations_fit
     def slot_save_locations_fit(self) -> None:
         from location_tool.save_fit_dialog import SaveFitDialog
 
