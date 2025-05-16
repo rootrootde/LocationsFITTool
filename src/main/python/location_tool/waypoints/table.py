@@ -5,18 +5,24 @@ from pathlib import Path
 from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import MapSymbol
-from PySide6.QtCore import QDateTime, QModelIndex, Qt, Slot
+from PySide6.QtCore import QDateTime, QEvent, QModelIndex, QSize, Qt, Slot
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QDateTimeEdit,
+    QDialog,
+    QDialogButtonBox,
     QDoubleSpinBox,
+    QGridLayout,
     QHeaderView,
     QMessageBox,
+    QPushButton,
     QStyledItemDelegate,
     QStyleOptionViewItem,
     QTableWidget,
     QTableWidgetItem,
+    QTextEdit,
+    QVBoxLayout,
     QWidget,
 )
 
@@ -132,6 +138,120 @@ class FloatDelegate(QStyledItemDelegate):
         model.setData(index, f"{editor.value():.{self.decimals}f}", Qt.EditRole)
 
 
+class DescriptionDialog(QDialog):
+    def __init__(self, parent: Optional[QWidget] = None, initial_text: str = ""):
+        super().__init__(parent)
+        self.setWindowTitle("Edit Description")
+        self.setMinimumWidth(400)
+        layout = QVBoxLayout(self)
+        self.text_edit = QTextEdit(self)
+        self.text_edit.setPlainText(initial_text)
+        layout.addWidget(self.text_edit)
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+        layout.addWidget(button_box)
+
+    def get_text(self) -> str:
+        return self.text_edit.toPlainText()
+
+
+class DescriptionDelegate(QStyledItemDelegate):
+    def createEditor(self, parent, option, index):
+        # Prevent inline editor
+        return None
+
+    def editorEvent(self, event, model, option, index):
+        # Only handle double-click events
+        if event.type() == QEvent.MouseButtonDblClick:
+            current_text = index.model().data(index, Qt.EditRole)
+            dialog = DescriptionDialog(option.widget, initial_text=current_text or "")
+            if dialog.exec() == QDialog.Accepted:
+                new_text = dialog.get_text()
+                model.setData(index, new_text, Qt.EditRole)
+            return True  # Event handled
+        return super().editorEvent(event, model, option, index)
+
+    def setEditorData(self, editor, index):
+        pass  # Not used
+
+    def setModelData(self, editor, model, index):
+        pass  # Not used
+
+
+class SymbolPickerDialog(QDialog):
+    def __init__(
+        self, parent: Optional[QWidget], appctxt: Any, current_symbol: Optional[MapSymbol] = None
+    ):
+        super().__init__(parent)
+        self.setWindowTitle("Select Symbol")
+        self.setMinimumWidth(700)
+        self.selected_symbol = None
+        self.appctxt = appctxt
+        self.symbols = list(MapSymbol)
+        grid_layout = QVBoxLayout(self)
+        grid = QGridLayout()
+        icon_size = 32
+        col_count = 17
+        for idx, symbol in enumerate(self.symbols):
+            row = idx // col_count
+            col = idx % col_count
+            icon_file_name = f"{symbol.name.lower()}.png"
+            icon_path = str(Path("icons") / icon_file_name)
+            resolved_icon_path = get_resource_path(self.appctxt, icon_path)
+            btn = QPushButton()
+            btn.setIcon(QIcon(resolved_icon_path))
+            btn.setIconSize(QSize(icon_size, icon_size))
+            btn.setToolTip(symbol.name)
+            btn.setFixedSize(icon_size + 12, icon_size + 12)
+            btn.clicked.connect(lambda checked, s=symbol: self._select_symbol(s))
+            grid.addWidget(btn, row, col)
+            if current_symbol == symbol:
+                btn.setStyleSheet("border: 2px solid blue;")
+        grid_layout.addLayout(grid)
+        button_box = QDialogButtonBox(QDialogButtonBox.Cancel)
+        button_box.rejected.connect(self.reject)
+        grid_layout.addWidget(button_box)
+
+    def _select_symbol(self, symbol):
+        self.selected_symbol = symbol
+        self.accept()
+
+    def get_selected_symbol(self):
+        return self.selected_symbol
+
+
+class SymbolDelegate(QStyledItemDelegate):
+    def __init__(self, appctxt: Any, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self.appctxt = appctxt
+
+    def createEditor(self, parent, option, index):
+        # Prevent inline editor
+        return None
+
+    def editorEvent(self, event, model, option, index):
+        if event.type() == QEvent.MouseButtonDblClick:
+            current_value = index.model().data(index, Qt.EditRole)
+            try:
+                current_symbol = MapSymbol(int(current_value))
+            except Exception:
+                current_symbol = None
+            dialog = SymbolPickerDialog(option.widget, self.appctxt, current_symbol)
+            if dialog.exec() == QDialog.Accepted:
+                symbol = dialog.get_selected_symbol()
+                if symbol is not None:
+                    model.setData(index, symbol.value, Qt.EditRole)
+            return True
+        return super().editorEvent(event, model, option, index)
+
+    def setEditorData(self, editor, index):
+        pass
+
+    def setModelData(self, editor, model, index):
+        pass
+
+
 class WaypointTableController(QWidget):
     def __init__(self, waypoint_table: QTableWidget, parent: QWidget, appctxt: Any) -> None:
         super().__init__(parent)
@@ -174,6 +294,12 @@ class WaypointTableController(QWidget):
         )
         self.waypoint_table.setItemDelegateForColumn(
             TableColumn.TIMESTAMP.value, DateTimeDelegate(parent=self)
+        )
+        self.waypoint_table.setItemDelegateForColumn(
+            TableColumn.DESCRIPTION.value, DescriptionDelegate(parent=self)
+        )
+        self.waypoint_table.setItemDelegateForColumn(
+            TableColumn.SYMBOL.value, SymbolDelegate(self.appctxt, parent=self)
         )
 
         header: QHeaderView = self.waypoint_table.horizontalHeader()
