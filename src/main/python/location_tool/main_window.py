@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .device.mtp import MTPDeviceManager
 from .fit.fit import FitFileHandler
 from .fit.fit_data import (
     FileCreatorMessageData,
@@ -21,7 +22,7 @@ from .fit.fit_data import (
 from .gpx.gpx import GpxFileHandler
 from .ui_layouts.ui_main_window import Ui_MainWindow
 from .utils import logger
-from .waypoints.table import WaypointTableController
+from .waypoints.table import WaypointTable
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -29,47 +30,59 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.appctxt = appctxt
+        self._init_logger()
+        self._init_handlers()
+        self._init_state()
+        self._init_waypoint_table()
+        self._init_mtp_device_manager()
+        self._init_actions()
+        self._init_log_dock()
+
+        self.logger.log("MainWindow initialized.")
+        self.logger.log("Application started.")
+
+    def _init_logger(self):
         self.logger = logger.Logger.get_logger(self.log_textedit)
-        self.fit_handler = FitFileHandler(appctxt)
-        self.gpx_handler = GpxFileHandler(appctxt)
 
-        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
+    def _init_handlers(self):
+        self.fit_handler = FitFileHandler(self.appctxt)
+        self.gpx_handler = GpxFileHandler(self.appctxt)
 
-        # Sync toggle action with log dock visibility
-        self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
-
-        # add all actions to the main window to enable shortcuts
-        for action in self.findChildren(QAction):
-            if isinstance(action, QAction):  # Ensure it's a QAction
-                self.addAction(action)
-
+    def _init_state(self):
         self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
         self.current_file_path: Optional[str] = None
 
-        # Setup the waypoint table
-        self.waypoint_table_controller = WaypointTableController(
-            self.waypoint_table, self, self.appctxt
-        )
+    def _init_waypoint_table(self):
+        self.waypoint_table = WaypointTable(self.waypoint_table, self, self.appctxt)
+        self.waypoint_table.setup_waypoint_table()
+
+    def _init_mtp_device_manager(self):
+        self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
+        self.mtp_device_manager.device_found.connect(self.slot_device_found)
+        self.mtp_device_manager.device_error.connect(self.slot_device_error)
+
+    def _init_actions(self):
+        # Add all actions to the main window to enable shortcuts
+        for action in self.findChildren(QAction):
+            if isinstance(action, QAction):
+                self.addAction(action)
 
         # Connect actions to slots
         self.import_locations_fit_action.triggered.connect(self.slot_import_locations_fit)
         self.import_gpx_action.triggered.connect(self.slot_import_gpx)
         self.save_locations_fit_action.triggered.connect(self.slot_save_locations_fit)
-
-        self.add_wpt_action.triggered.connect(self.waypoint_table_controller.slot_add_waypoint)
-        self.delete_wpt_action.triggered.connect(
-            self.waypoint_table_controller.slot_delete_selected_waypoints
-        )
+        self.add_wpt_action.triggered.connect(self.waypoint_table.slot_add_waypoint)
+        self.delete_wpt_action.triggered.connect(self.waypoint_table.slot_delete_selected_waypoints)
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
+        self.delete_all_wpts_action.triggered.connect(self.waypoint_table.slot_delete_all_waypoints)
 
-        self.delete_all_wpts_action.triggered.connect(
-            self.waypoint_table_controller.slot_delete_all_waypoints
-        )
+    def _init_log_dock(self):
+        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
+        # Sync toggle action with log dock visibility
+        self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
 
-        self.waypoint_table_controller.setup_waypoint_table()
-
-        self.logger.log("Application started.")
+    # Import / Export Slots
 
     @Slot()
     def slot_import_locations_fit(self) -> None:
@@ -92,8 +105,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.current_file_path = file_path
 
             # fit_file_data_container.locations is now List[WaypointData]
-            self.waypoint_table_controller.waypoints = (
-                self.waypoint_table_controller.waypoints + fit_file_data_container.locations
+            self.waypoint_table.waypoints = (
+                self.waypoint_table.waypoints + fit_file_data_container.locations
             )
 
             self.logger.log(
@@ -120,9 +133,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.current_file_path = file_path
             # waypoints is List[WaypointData]
-            self.waypoint_table_controller.waypoints = (
-                self.waypoint_table_controller.waypoints + waypoints
-            )
+            self.waypoint_table.waypoints = self.waypoint_table.waypoints + waypoints
 
             self.logger.log(
                 f"Successfully imported and appended from GPX file: {file_path}. Waypoints added: {len(waypoints)}"
@@ -136,7 +147,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def slot_save_locations_fit(self) -> None:
         from location_tool.save_fit_dialog import SaveFitDialog
 
-        current_waypoints = self.waypoint_table_controller.waypoints
+        current_waypoints = self.waypoint_table.waypoints
         if not current_waypoints:
             QMessageBox.information(self, "No Data", "There are no waypoints to save.")
             return
@@ -195,6 +206,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.logger.error(f"Failed to save FIT file: {e}")
             QMessageBox.critical(self, "Save Error", f"Could not save FIT file: {e}")
+
+    # MTP Device Manager Slots
+
+    @Slot(dict)
+    def slot_device_found(self, device_info: dict) -> None:
+        self.logger.log(f"Device found: {device_info}")
+
+    @Slot(str)
+    def slot_device_error(self, error: str) -> None:
+        self.logger.error(f"Device error: {error}")
 
     @Slot(bool)
     def slot_toggle_log_dock(self, checked: bool) -> None:

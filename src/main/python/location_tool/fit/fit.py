@@ -34,8 +34,9 @@ class FitFileHandler:
     def __init__(self, appctxt):
         self.appctxt = appctxt
         self.logger = logger.Logger.get_logger()
+        self.logger.log("FitFileHandler initialized.")
 
-    # --- Read Logic ---
+    # Parse Logic
 
     def parse_fit_file(
         self, file_path: str, logger: Optional[Callable[[str], None]] = None
@@ -133,8 +134,6 @@ class FitFileHandler:
 
                     fit_data.location_settings = LocationSettingsMessageData(
                         location_settings_enum=location_settings_enum
-                        # name and message_index are not directly part of this FIT message,
-                        # they might be set elsewhere or based on other logic if needed.
                     )
 
                 # process LocationMessage
@@ -156,9 +155,7 @@ class FitFileHandler:
 
                     waypoint = WaypointData(
                         name=getattr(msg, "location_name", None),
-                        description=getattr(
-                            msg, "description", None
-                        ),  # Not standard in FIT LocationMessage but can be custom
+                        description=getattr(msg, "description", None),
                         latitude=lat_degrees if lat_degrees is not None else 0.0,
                         longitude=lon_degrees if lon_degrees is not None else 0.0,
                         altitude=getattr(msg, "altitude", None),
@@ -181,7 +178,7 @@ class FitFileHandler:
         fit_data.locations = parsed_waypoints
         return fit_data
 
-    # --- Write Logic ---
+    # Write Logic
 
     def _build_file_id_message(self, file_id):
         fid_msg = FileIdMessage()
@@ -288,30 +285,21 @@ class FitFileHandler:
         errors: List[str] = []
         builder: FitFileBuilder = FitFileBuilder(auto_define=True, min_string_size=50)
 
-        # ============================================================
-        # ===================== File ID Message ======================
-        # ============================================================
-
+        # 1. FileIdMessage
         fid_msg: FileIdMessage = self._build_file_id_message(fit_data.file_id)
         builder.add(fid_msg)
 
-        # ============================================================
-        # =================== File Creator Message ===================
-        # ============================================================
+        # 2. FileCreatorMessage
         creator_msg: FileCreatorMessage = self._build_file_creator_message(fit_data.creator)
         builder.add(creator_msg)
 
-        # ============================================================
-        # =================== Location Settings Message ==============
-        # ============================================================
+        # 3. LocationSettingsMessage
         ls_msg: LocationSettingsMessage = self._build_location_settings_message(
             fit_data.location_settings
         )
         builder.add(ls_msg)
 
-        # ============================================================
-        # ===================== Location Messages ====================
-        # ============================================================
+        # 4. LocationMessage
         for index, wp_data in enumerate(fit_data.locations):
             loc_msg = self._build_location_message(index, wp_data)
             if loc_msg:
