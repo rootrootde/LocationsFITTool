@@ -17,16 +17,16 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QDockWidget, QGroupBox, QHBoxLayout,
-    QHeaderView, QLabel, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
-    QStatusBar, QTableWidget, QTableWidgetItem, QTextEdit,
-    QVBoxLayout, QWidget)
+    QHeaderView, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
+    QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(952, 705)
+        MainWindow.resize(720, 662)
         font = QFont()
         font.setFamilies([u"SF Pro"])
         font.setPointSize(12)
@@ -140,26 +140,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.waypoint_group_box)
 
-        self.device_group_box = QGroupBox(self.centralwidget)
-        self.device_group_box.setObjectName(u"device_group_box")
-        self.device_group_box.setFlat(False)
-        self.verticalLayout_2 = QVBoxLayout(self.device_group_box)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.device_area = QVBoxLayout()
-        self.device_area.setObjectName(u"device_area")
-        self.device_info_lbl = QLabel(self.device_group_box)
-        self.device_info_lbl.setObjectName(u"device_info_lbl")
-        self.device_info_lbl.setAlignment(Qt.AlignmentFlag.AlignJustify|Qt.AlignmentFlag.AlignTop)
-        self.device_info_lbl.setWordWrap(True)
-
-        self.device_area.addWidget(self.device_info_lbl)
-
-
-        self.verticalLayout_2.addLayout(self.device_area)
-
-
-        self.horizontalLayout_2.addWidget(self.device_group_box)
-
 
         self.verticalLayout_7.addLayout(self.horizontalLayout_2)
 
@@ -181,7 +161,7 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.log_dock)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 578, 24))
+        self.menuBar.setGeometry(QRect(0, 0, 720, 24))
         self.menuFile = QMenu(self.menuBar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuWaypoint = QMenu(self.menuBar)
@@ -272,8 +252,6 @@ class Ui_MainWindow(object):
         self.add_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.delete_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
         self.delete_all_wpts_btn.setText(QCoreApplication.translate("MainWindow", u"Delete All", None))
-        self.device_group_box.setTitle(QCoreApplication.translate("MainWindow", u"Device", None))
-        self.device_info_lbl.setText(QCoreApplication.translate("MainWindow", u"-", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuWaypoint.setTitle(QCoreApplication.translate("MainWindow", u"Waypoint", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
