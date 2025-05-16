@@ -33,12 +33,12 @@ class Ui_MainWindow(object):
         MainWindow.setFont(font)
         MainWindow.setStyleSheet(u"QWidget {\n"
 "        font-family: \"SF Pro\";\n"
-"        font-size: 12pt;\n"
+"        \n"
 "        }\n"
 "\n"
 "        QTextEdit {\n"
 "        font-family: \"SF Mono\";\n"
-"        font-size: 11pt;\n"
+"        \n"
 "        }\n"
 "")
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)

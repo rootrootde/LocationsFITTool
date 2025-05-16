@@ -2,10 +2,12 @@ from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QPixmap
 from PySide6.QtWidgets import (
     QDialog,
     QFileDialog,
+    QHBoxLayout,
+    QLabel,
     QMainWindow,
     QMessageBox,
     QWidget,
@@ -22,6 +24,7 @@ from .fit.fit_data import (
 from .gpx.gpx import GpxFileHandler
 from .ui_layouts.ui_main_window import Ui_MainWindow
 from .utils import logger
+from .utils.utils import get_resource_path
 from .waypoints.table import WaypointTable
 
 
@@ -30,6 +33,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.appctxt = appctxt
+        self.device_connected = None  # Track device connection state
         self._init_logger()
         self._init_handlers()
         self._init_state()
@@ -83,6 +87,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
         # Sync toggle action with log dock visibility
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
+
+    def _set_status_icon_message(self, icon_path, message):
+        # Remove previous status widget if exists
+        if hasattr(self, "_status_status_widget") and self._status_status_widget:
+            self.status_bar.removeWidget(self._status_status_widget)
+        # Create a container widget
+        status_widget = QWidget()
+        layout = QHBoxLayout()
+        layout.setContentsMargins(8, 4, 0, 4)
+        status_widget.setLayout(layout)
+        # Icon
+        icon_label = QLabel()
+        pixmap = QPixmap(icon_path)
+        icon_label.setPixmap(pixmap.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        # Text
+        text_label = QLabel(message)
+        text_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        # Add to layout
+        layout.addWidget(icon_label)
+        layout.addWidget(text_label)
+        layout.addStretch()
+        # Add to status bar
+        self.status_bar.addWidget(status_widget)
+        self._status_status_widget = status_widget
+        self.status_bar.showMessage("")
 
     @Slot()
     def slot_import_locations_fit(self) -> None:
@@ -208,15 +237,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(dict)
     def slot_device_found(self, device_info: dict) -> None:
+        if self.device_connected is True:
+            return  # No change, already connected
+        self.device_connected = True
         self.logger.log(f"Device found: {device_info['manufacturer']} {device_info['model']}")
-        self.status_bar.showMessage(
-            f"🟢 Device found: {device_info['manufacturer']} {device_info['model']}"
-        )
+        icon_path = get_resource_path(self.appctxt, "ui_icons/connected.png")
+        msg = f"Device found: {device_info['manufacturer']} {device_info['model']}"
+        self._set_status_icon_message(icon_path, msg)
 
     @Slot(str)
     def slot_device_error(self, error: str) -> None:
+        if self.device_connected is False:
+            return  # No change, already disconnected
+        self.device_connected = False
         self.logger.error(f"Device error: {error}")
-        self.status_bar.showMessage("🔴 No MTP device found")
+        icon_path = get_resource_path(self.appctxt, "ui_icons/disconnected.png")
+        msg = "No MTP device found"
+        self._set_status_icon_message(icon_path, msg)
 
     @Slot(bool)
     def slot_toggle_device_scan(self, checked: bool) -> None:

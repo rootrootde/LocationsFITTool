@@ -22,12 +22,12 @@
   <property name="styleSheet">
    <string notr="true">QWidget {
         font-family: &quot;SF Pro&quot;;
-        font-size: 12pt;
+        
         }
 
         QTextEdit {
         font-family: &quot;SF Mono&quot;;
-        font-size: 11pt;
+        
         }
 </string>
   </property>
