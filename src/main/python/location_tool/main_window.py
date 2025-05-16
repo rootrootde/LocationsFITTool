@@ -31,54 +31,54 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.appctxt = appctxt
         self.logger = logger.Logger.get_logger(self.log_textedit)
-        self.fit_handler = FitFileHandler(appctxt)
-        self.gpx_handler = GpxFileHandler(appctxt)
-        self.mtp_device_manager = MTPDeviceManager(appctxt, self)
 
-        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
+        self._setup_handlers()
+        self._setup_waypoint_table()
+        self._setup_ui_actions()
+        self._setup_mtp_device_signals()
+        self._setup_additional_connections()
 
-        # Sync toggle action with log dock visibility
+        self.logger.log("Application started.")
+
+    def _setup_handlers(self):
+        self.fit_handler = FitFileHandler(self.appctxt)
+        self.gpx_handler = GpxFileHandler(self.appctxt)
+        self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
+        # self.resizeDocks([self.log_dock], [150], Qt.Vertical)
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
-
-        # add all actions to the main window to enable shortcuts
-        for action in self.findChildren(QAction):
-            if isinstance(action, QAction):  # Ensure it's a QAction
-                self.addAction(action)
-
         self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
         self.current_file_path: Optional[str] = None
 
-        # Setup the waypoint table
-        self.waypoint_table_controller = WaypointTableController(
-            self.waypoint_table, self, self.appctxt
-        )
-
-        # Connect actions to slots
+    def _setup_ui_actions(self):
+        # add all actions to the main window to enable shortcuts
+        for action in self.findChildren(QAction):
+            if isinstance(action, QAction):
+                self.addAction(action)
         self.import_locations_fit_action.triggered.connect(self.slot_import_locations_fit)
         self.import_gpx_action.triggered.connect(self.slot_import_gpx)
         self.save_locations_fit_action.triggered.connect(self.slot_save_locations_fit)
-
         self.add_wpt_action.triggered.connect(self.waypoint_table_controller.slot_add_waypoint)
         self.delete_wpt_action.triggered.connect(
             self.waypoint_table_controller.slot_delete_selected_waypoints
         )
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
-
         self.delete_all_wpts_action.triggered.connect(
             self.waypoint_table_controller.slot_delete_all_waypoints
         )
 
-        # Connect MTP device signals
+    def _setup_waypoint_table(self):
+        self.waypoint_table_controller = WaypointTableController(
+            self.waypoint_table, self, self.appctxt
+        )
+        self.waypoint_table_controller.setup_waypoint_table()
+
+    def _setup_mtp_device_signals(self):
         self.mtp_device_manager.deviceFound.connect(self.slot_mtp_device_found)
         self.mtp_device_manager.deviceError.connect(self.slot_mtp_device_error)
 
-        # Connect scan_for_devices_action
+    def _setup_additional_connections(self):
         self.scan_for_devices_action.toggled.connect(self.slot_toggle_device_scanning)
-
-        self.waypoint_table_controller.setup_waypoint_table()
-
-        self.logger.log("Application started.")
 
     @Slot(bool)
     def slot_toggle_device_scanning(self, checked: bool) -> None:
