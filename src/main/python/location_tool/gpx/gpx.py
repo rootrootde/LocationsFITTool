@@ -18,12 +18,6 @@ class GpxFileHandler:
     def parse_gpx_file(
         self, file_path: str, logger: Optional[Callable[[str], None]] = None
     ) -> Tuple[List[WaypointData], List[str]]:
-        """
-        Parses a GPX file and extracts waypoint data from <wpt> (top-level waypoints)
-        and <rtept> (route points from all routes).
-        Track points (<trkpt>) are ignored.
-        Returns a tuple containing a list of WaypointData objects and a list of error/warning strings.
-        """
         waypoints: List[WaypointData] = []
         errors: List[str] = []
 
