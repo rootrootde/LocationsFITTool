@@ -21,7 +21,7 @@ from .fit.fit_data import (
 from .gpx.gpx import GpxFileHandler
 from .ui_layouts.ui_main_window import Ui_MainWindow
 from .utils import logger
-from .waypoints.table import WaypointData, WaypointTableController
+from .waypoints.table import WaypointTableController
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
