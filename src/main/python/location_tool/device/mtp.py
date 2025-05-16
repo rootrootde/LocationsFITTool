@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-from PySide6.QtCore import QObject, QThread, QTimer, Signal
+from PySide6.QtCore import QObject, QThread, QTimer, Signal, Slot
 
 from location_tool.utils.utils import get_resource_path
 
@@ -70,7 +70,19 @@ class MTPDeviceManager(QObject):
         self.scan_timer = QTimer()
         self.scan_timer.setInterval(3000)
         self.scan_timer.timeout.connect(self.check_device)
-        self.scan_timer.start()
+        self.scanning = False
+        self.start_scanning()
+        self.check_device()
+
+    def start_scanning(self):
+        if not self.scanning:
+            self.scan_timer.start()
+            self.scanning = True
+
+    def stop_scanning(self):
+        if self.scanning:
+            self.scan_timer.stop()
+            self.scanning = False
 
     def check_device(self):
         if self.worker and self.worker.isRunning():

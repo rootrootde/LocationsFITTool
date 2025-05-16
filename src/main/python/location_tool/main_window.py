@@ -51,6 +51,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def _init_state(self):
         self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
         self.current_file_path: Optional[str] = None
+        self.scan_for_devices_action.setChecked(True)
 
     def _init_waypoint_table(self):
         self.waypoint_table = WaypointTable(self.waypoint_table, self, self.appctxt)
@@ -76,17 +77,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
         self.delete_all_wpts_action.triggered.connect(self.waypoint_table.slot_delete_all_waypoints)
+        self.scan_for_devices_action.toggled.connect(self.slot_toggle_device_scan)
 
     def _init_log_dock(self):
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
         # Sync toggle action with log dock visibility
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
 
-    # Import / Export Slots
-
     @Slot()
     def slot_import_locations_fit(self) -> None:
-        file_path: Optional[str]
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Import Locations.fit File", "", "FIT Files (*.fit)"
         )
@@ -104,7 +103,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.current_file_path = file_path
 
-            # fit_file_data_container.locations is now List[WaypointData]
             self.waypoint_table.waypoints = (
                 self.waypoint_table.waypoints + fit_file_data_container.locations
             )
@@ -132,7 +130,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     QMessageBox.warning(self, "GPX Read Warning", str(error))
 
             self.current_file_path = file_path
-            # waypoints is List[WaypointData]
             self.waypoint_table.waypoints = self.waypoint_table.waypoints + waypoints
 
             self.logger.log(
@@ -211,11 +208,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(dict)
     def slot_device_found(self, device_info: dict) -> None:
-        self.logger.log(f"Device found: {device_info}")
+        self.logger.log(f"Device found: {device_info['manufacturer']} {device_info['model']}")
+        self.status_bar.showMessage(
+            f"🟢 Device found: {device_info['manufacturer']} {device_info['model']}"
+        )
 
     @Slot(str)
     def slot_device_error(self, error: str) -> None:
         self.logger.error(f"Device error: {error}")
+        self.status_bar.showMessage("🔴 No MTP device found")
+
+    @Slot(bool)
+    def slot_toggle_device_scan(self, checked: bool) -> None:
+        if checked:
+            self.mtp_device_manager.start_scanning()
+            self.logger.log("Device scanning started.")
+
+        else:
+            self.mtp_device_manager.stop_scanning()
+            self.logger.log("Device scanning stopped.")
 
     @Slot(bool)
     def slot_toggle_log_dock(self, checked: bool) -> None:
