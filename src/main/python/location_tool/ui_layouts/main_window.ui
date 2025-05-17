@@ -181,11 +181,14 @@
      <string>Device</string>
     </property>
     <addaction name="scan_for_devices_action"/>
+    <addaction name="separator"/>
+    <addaction name="download_locations_fit_action"/>
+    <addaction name="upload_locations_fit_action"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuWaypoint"/>
-   <addaction name="menuView"/>
    <addaction name="menuDevice"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="status_bar"/>
   <action name="save_locations_fit_action">
