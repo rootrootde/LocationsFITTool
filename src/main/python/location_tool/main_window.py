@@ -77,6 +77,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Connect actions to slots
         self.import_file_action.triggered.connect(self.slot_import_file)
         self.save_locations_fit_action.triggered.connect(self.slot_save_locations_fit)
+        self.save_gpx_action.triggered.connect(self.slot_save_gpx)
         self.add_wpt_action.triggered.connect(self.waypoint_table.slot_add_waypoint)
         self.delete_wpt_action.triggered.connect(self.waypoint_table.slot_delete_selected_waypoints)
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
@@ -236,6 +237,46 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.logger.error(f"Failed to save FIT file: {e}")
             QMessageBox.critical(self, "Save Error", f"Could not save FIT file: {e}")
+
+    @Slot()
+    def slot_save_gpx(self) -> None:
+        current_waypoints = self.waypoint_table.waypoints
+        if not current_waypoints:
+            QMessageBox.information(self, "No Data", "There are no waypoints to save.")
+            return
+
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save GPX File", "", "GPX Files (*.gpx)")
+        if not file_path:
+            QMessageBox.warning(self, "No Path", "Please select a save path.")
+            return
+
+        try:
+            success: bool
+            # warnings: List[str]
+            critical_errors: List[str]
+
+            # Save the GPX file using the gpx_handler
+            success, critical_errors = self.gpx_handler.write_gpx_file(file_path, current_waypoints)
+
+            if critical_errors:
+                for error in critical_errors:
+                    self.logger.error(f"Critical GPX Save Error: {error}")
+                    QMessageBox.critical(self, "GPX Save Error", str(error))
+                return False
+
+            if success:
+                self.logger.log(f"File saved successfully to {file_path}")
+                QMessageBox.information(
+                    self,
+                    "Save Successful",
+                    f"File saved successfully to {file_path}",
+                )
+                self.current_file_path = file_path
+            return success
+
+        except Exception as e:
+            self.logger.error(f"Failed to save GPX file: {e}")
+            QMessageBox.critical(self, "Save Error", f"Could not save GPX file: {e}")
 
     # MTP Device Manager Slots
 

@@ -103,7 +103,7 @@ class GpxFileHandler:
 
         return waypoints, errors
 
-    def save_gpx_file(
+    def write_gpx_file(
         self,
         file_path: str,
         waypoints: List[WaypointData],
@@ -120,7 +120,9 @@ class GpxFileHandler:
                     longitude=wp.longitude,
                     elevation=wp.altitude,
                     time=wp.timestamp,
-                    symbol=wp.symbol.name if isinstance(wp.symbol, MapSymbol) else str(wp.symbol),
+                    symbol=wp.symbol.name.lower()
+                    if isinstance(wp.symbol, MapSymbol)
+                    else str(wp.symbol).lower(),
                     description=wp.description,
                 )
                 gpx.waypoints.append(gpx_wp)
@@ -132,5 +134,6 @@ class GpxFileHandler:
             err_msg: str = f"Error saving GPX file '{file_path}': {e}"
             self.logger.error(err_msg)
             errors.append(err_msg)
+            return False, errors
 
-        return errors
+        return True, errors
