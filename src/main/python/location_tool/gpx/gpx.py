@@ -15,9 +15,7 @@ class GpxFileHandler:
         self.appctxt = appctxt
         self.logger = logger.Logger.get_logger()
 
-    def parse_gpx_file(
-        self, file_path: str, logger: Optional[Callable[[str], None]] = None
-    ) -> Tuple[List[WaypointData], List[str]]:
+    def parse_gpx_file(self, file_path: str) -> Tuple[List[WaypointData], List[str]]:
         waypoints: List[WaypointData] = []
         errors: List[str] = []
 
@@ -104,3 +102,35 @@ class GpxFileHandler:
             errors.append(err_msg)
 
         return waypoints, errors
+
+    def save_gpx_file(
+        self,
+        file_path: str,
+        waypoints: List[WaypointData],
+    ) -> List[str]:
+        errors: List[str] = []
+
+        try:
+            gpx = gpxpy.gpx.GPX()
+
+            for i, wp in enumerate(waypoints):
+                gpx_wp = gpxpy.gpx.GPXWaypoint(
+                    name=wp.name,
+                    latitude=wp.latitude,
+                    longitude=wp.longitude,
+                    elevation=wp.altitude,
+                    time=wp.timestamp,
+                    symbol=wp.symbol.name if isinstance(wp.symbol, MapSymbol) else str(wp.symbol),
+                    description=wp.description,
+                )
+                gpx.waypoints.append(gpx_wp)
+
+            with open(file_path, "w", encoding="utf-8") as gpx_file_content:
+                gpx_file_content.write(gpx.to_xml(prettyprint=True))
+
+        except Exception as e:
+            err_msg: str = f"Error saving GPX file '{file_path}': {e}"
+            self.logger.error(err_msg)
+            errors.append(err_msg)
+
+        return errors

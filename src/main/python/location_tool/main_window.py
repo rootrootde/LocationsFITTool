@@ -2,7 +2,7 @@ from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtGui import QAction, QPixmap
+from PySide6.QtGui import QAction, QPalette, QPixmap
 from PySide6.QtWidgets import (
     QDialog,
     QFileDialog,
@@ -32,6 +32,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, appctxt: Any, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.setupUi(self)
+
         self.appctxt = appctxt
         self.device_connected = None  # Track device connection state
         self._init_logger()
@@ -41,7 +42,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._init_mtp_device_manager()
         self._init_actions()
         self._init_log_dock()
-
+        self.palette = QPalette()
+        self.logger.log(self.palette.light())
         self.logger.log("MainWindow initialized.")
         self.logger.log("Application started.")
 
@@ -73,14 +75,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.addAction(action)
 
         # Connect actions to slots
-        self.import_locations_fit_action.triggered.connect(self.slot_import_locations_fit)
-        self.import_gpx_action.triggered.connect(self.slot_import_gpx)
+        self.import_file_action.triggered.connect(self.slot_import_file)
         self.save_locations_fit_action.triggered.connect(self.slot_save_locations_fit)
         self.add_wpt_action.triggered.connect(self.waypoint_table.slot_add_waypoint)
         self.delete_wpt_action.triggered.connect(self.waypoint_table.slot_delete_selected_waypoints)
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
-        self.delete_all_wpts_action.triggered.connect(self.waypoint_table.slot_delete_all_waypoints)
         self.scan_for_devices_action.toggled.connect(self.slot_toggle_device_scan)
 
     def _init_log_dock(self):
@@ -114,13 +114,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.status_bar.showMessage("")
 
     @Slot()
-    def slot_import_locations_fit(self) -> None:
+    def slot_import_file(self) -> None:
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "Import Locations.fit File", "", "FIT Files (*.fit)"
+            self, "Import File", "", "FIT Files (*.fit);;GPX Files (*.gpx)"
         )
         if not file_path:
             return
 
+        if file_path.endswith(".fit"):
+            self.current_file_path = file_path
+            self.import_locations_fit(file_path)
+
+        elif file_path.endswith(".gpx"):
+            self.current_file_path = file_path
+            self.slot_import_gpx(file_path)
+        else:
+            QMessageBox.critical(self, "Import Error", "Unsupported file type.")
+
+    def import_locations_fit(self, file_path) -> None:
         try:
             fit_file_data_container = self.fit_handler.parse_fit_file(
                 file_path, logger=self.logger.log
@@ -139,20 +150,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.log(
                 f"Successfully imported and appended from FIT file: {file_path}. Waypoints added: {len(fit_file_data_container.locations)}"
             )
-
         except Exception as e:
             self.logger.error(f"Failed to import FIT file: {e}")
             QMessageBox.critical(self, "Import Error", f"Could not import FIT file: {e}")
 
-    @Slot()
-    def slot_import_gpx(self) -> None:
-        file_path: Optional[str]
-        file_path, _ = QFileDialog.getOpenFileName(self, "Import GPX File", "", "GPX Files (*.gpx)")
-        if not file_path:
-            return
-
+    def slot_import_gpx(self, file_path) -> None:
         try:
-            waypoints, errors = self.gpx_handler.parse_gpx_file(file_path, logger=self.logger.log)
+            waypoints, errors = self.gpx_handler.parse_gpx_file(file_path)
             if errors:
                 for error in errors:
                     self.logger.warning(f"GPX Read Error/Warning: {error}")
