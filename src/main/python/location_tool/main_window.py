@@ -83,6 +83,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
         self.scan_for_devices_action.toggled.connect(self.slot_toggle_device_scan)
+        self.download_locations_fit_action.triggered.connect(self.download_locations_fit)
+        self.upload_locations_fit_action.triggered.connect(self.upload_locations_fit)
 
     def _init_log_dock(self):
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
@@ -175,6 +177,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, "Import Error", f"Could not import GPX file: {e}")
 
     @Slot()
+    def download_locations_fit(self) -> None:
+        self.logger.log("Downloading locations from FIT file.")
+        pass
+
+    @Slot()
+    def upload_locations_fit(self) -> None:
+        self.logger.log("Uploading locations to FIT file.")
+        pass
+
+    @Slot()
     def slot_save_locations_fit(self) -> None:
         from location_tool.save_fit_dialog import SaveFitDialog
 
@@ -209,6 +221,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             critical_errors: List[str]
 
             # Save the FIT file using the fit_handler
+            # TODO: remove warnings (debug log them)
             success, warnings, critical_errors = self.fit_handler.write_fit_file(
                 file_path, fit_data_container
             )

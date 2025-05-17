@@ -160,8 +160,8 @@ class Ui_MainWindow(object):
 
         self.menuBar.addAction(self.menuFile.menuAction())
         self.menuBar.addAction(self.menuWaypoint.menuAction())
-        self.menuBar.addAction(self.menuView.menuAction())
         self.menuBar.addAction(self.menuDevice.menuAction())
+        self.menuBar.addAction(self.menuView.menuAction())
         self.menuFile.addAction(self.import_file_action)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.save_locations_fit_action)
@@ -171,6 +171,9 @@ class Ui_MainWindow(object):
         self.menuWaypoint.addAction(self.delete_wpt_action)
         self.menuView.addAction(self.toggle_debug_log_action)
         self.menuDevice.addAction(self.scan_for_devices_action)
+        self.menuDevice.addSeparator()
+        self.menuDevice.addAction(self.download_locations_fit_action)
+        self.menuDevice.addAction(self.upload_locations_fit_action)
 
         self.retranslateUi(MainWindow)
         self.toggle_debug_log_action.toggled.connect(self.log_dock.setVisible)

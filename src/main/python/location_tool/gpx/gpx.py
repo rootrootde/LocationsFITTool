@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Callable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import gpxpy.gpx  # For GPXXMLSyntaxException
 from fit_tool.profile.profile_type import (
