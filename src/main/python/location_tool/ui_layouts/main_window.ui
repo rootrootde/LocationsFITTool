@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>662</height>
+    <width>783</width>
+    <height>615</height>
    </rect>
   </property>
   <property name="font">
@@ -22,125 +22,111 @@
   <property name="styleSheet">
    <string notr="true">QWidget {
         font-family: &quot;SF Pro&quot;;
-        
+
         }
 
         QTextEdit {
         font-family: &quot;SF Mono&quot;;
-        
+
         }
 </string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>48</width>
+    <height>48</height>
+   </size>
   </property>
   <property name="dockOptions">
    <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_7">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <layout class="QHBoxLayout" name="file_btns_layout">
-      <item>
-       <widget class="QPushButton" name="import_locations_fit_btn">
-        <property name="text">
-         <string>Import Locations.fit</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="import_gpx_btn">
-        <property name="text">
-         <string>Import GPX</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="save_locations_fit_btn">
-        <property name="text">
-         <string>Save Locations.fit</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QGroupBox" name="waypoint_group_box">
-        <property name="title">
-         <string>Waypoints</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+     <widget class="QWidget" name="waypoint_group_box" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>-1</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTableWidget" name="waypoint_table"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <layout class="QVBoxLayout" name="waypoint_area">
-           <property name="rightMargin">
-            <number>0</number>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
-           <item>
-            <widget class="QTableWidget" name="waypoint_table"/>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="wpt_btns_layout">
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="add_wpt_btn">
-               <property name="text">
-                <string>Add</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="delete_wpt_btn">
-               <property name="text">
-                <string>Delete</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="delete_all_wpts_btn">
-               <property name="text">
-                <string>Delete All</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="add_wpt_btn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Add</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="delete_wpt_btn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LayoutDirection::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Delete</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-     </layout>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>
   <widget class="QDockWidget" name="log_dock">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
@@ -163,7 +149,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>720</width>
+     <width>783</width>
      <height>24</height>
     </rect>
    </property>
@@ -171,10 +157,10 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="import_locations_fit_action"/>
-    <addaction name="import_gpx_action"/>
+    <addaction name="import_file_action"/>
     <addaction name="separator"/>
     <addaction name="save_locations_fit_action"/>
+    <addaction name="save_gpx_action"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuWaypoint">
@@ -183,7 +169,6 @@
     </property>
     <addaction name="add_wpt_action"/>
     <addaction name="delete_wpt_action"/>
-    <addaction name="delete_all_wpts_action"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -203,34 +188,6 @@
    <addaction name="menuDevice"/>
   </widget>
   <widget class="QStatusBar" name="status_bar"/>
-  <action name="import_locations_fit_action">
-   <property name="text">
-    <string>Import Locations.fit</string>
-   </property>
-   <property name="toolTip">
-    <string>Import Waypoints from Locations.fit file</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
-  <action name="import_gpx_action">
-   <property name="text">
-    <string>Import GPX</string>
-   </property>
-   <property name="toolTip">
-    <string>Import Waypoints from GPX file</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+L</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
   <action name="save_locations_fit_action">
    <property name="text">
     <string>Save Locations.fit</string>
@@ -246,6 +203,10 @@
    </property>
   </action>
   <action name="add_wpt_action">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/ui_icons/ui_icons/circle-plus-solid.png</normaloff>:/ui_icons/ui_icons/circle-plus-solid.png</iconset>
+   </property>
    <property name="text">
     <string>Add Waypoint</string>
    </property>
@@ -257,22 +218,15 @@
    </property>
   </action>
   <action name="delete_wpt_action">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/ui_icons/ui_icons/circle-minus-solid.png</normaloff>:/ui_icons/ui_icons/circle-minus-solid.png</iconset>
+   </property>
    <property name="text">
     <string>Delete Waypoint</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Backspace</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
-  <action name="delete_all_wpts_action">
-   <property name="text">
-    <string>Delete All Waypoints</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+Backspace</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -306,8 +260,45 @@
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
+  <action name="import_file_action">
+   <property name="text">
+    <string>Import File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="download_locations_fit_action">
+   <property name="text">
+    <string>Download Locations.fit</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="upload_locations_fit_action">
+   <property name="text">
+    <string>Upload Locations.fit</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="save_gpx_action">
+   <property name="text">
+    <string>Save GPX File</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../resources/base/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>toggle_debug_log_action</sender>
@@ -326,78 +317,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>save_locations_fit_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>save_locations_fit_action</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>717</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>import_gpx_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>import_gpx_action</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>225</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>import_locations_fit_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>import_locations_fit_action</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>87</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>add_wpt_btn</sender>
    <signal>clicked()</signal>
    <receiver>add_wpt_action</receiver>
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>137</x>
-     <y>544</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>delete_all_wpts_btn</sender>
-   <signal>clicked()</signal>
-   <receiver>delete_all_wpts_action</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>662</x>
-     <y>544</y>
+     <x>658</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -412,8 +339,8 @@
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>399</x>
-     <y>544</y>
+     <x>734</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>

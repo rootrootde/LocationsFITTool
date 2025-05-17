@@ -430,23 +430,6 @@ class WaypointTable(QWidget):
             if num_deleted > 0:
                 self.logger.log(f"Deleted {num_deleted} waypoint(s).")
 
-    @Slot()
-    def slot_delete_all_waypoints(self) -> None:
-        if not self._waypoints:
-            QMessageBox.information(self, "No Data", "There are no waypoints to delete.")
-            return
-
-        reply = QMessageBox.question(
-            self,
-            "Confirm Delete All",
-            "Are you sure you want to delete ALL waypoints?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No,
-        )
-        if reply == QMessageBox.StandardButton.Yes:
-            self.waypoints = []
-            self.logger.log("Deleted all waypoints.")
-
     @Slot(int, int)
     def slot_waypoint_data_changed(self, row: int, column: int) -> None:
         self.logger.log(f"Waypoint data changed at row {row}, column {column}.")
