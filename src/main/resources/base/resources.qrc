@@ -65,6 +65,9 @@
     <file>icons/navaid_white_red.png</file>
   </qresource>
   <qresource prefix="ui_icons">
+    <file>ui_icons/svg/add.svg</file>
+    <file>ui_icons/svg/delete.svg</file>
+    <file>ui_icons/svg/replace.svg</file>
     <file>ui_icons/connected.png</file>
     <file>ui_icons/disconnected.png</file>
   </qresource>

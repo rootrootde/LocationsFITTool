@@ -4,7 +4,6 @@ from fit_tool.profile.profile_type import LocationSettings as FitLocationSetting
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction, QPalette, QPixmap
 from PySide6.QtWidgets import (
-    QDialog,
     QFileDialog,
     QHBoxLayout,
     QLabel,
@@ -22,7 +21,8 @@ from .fit.fit_data import (
     LocationsFitFileData,
 )
 from .gpx.gpx import GpxFileHandler
-from .ui_layouts.ui_main_window import Ui_MainWindow
+from .mode_select_dialog import ModeSelectDialog
+from .ui.ui_main_window import Ui_MainWindow
 from .utils import logger
 from .utils.utils import get_resource_path
 from .waypoints.table import WaypointTable
@@ -44,7 +44,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._init_log_dock()
         self.palette = QPalette()
         self.logger.log(self.palette.light())
-        self.logger.log("MainWindow initialized.")
         self.logger.log("Application started.")
 
     def _init_logger(self):
@@ -93,8 +92,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _set_status_icon_message(self, icon_path, message):
         # Remove previous status widget if exists
-        if hasattr(self, "_status_status_widget") and self._status_status_widget:
-            self.status_bar.removeWidget(self._status_status_widget)
+        if hasattr(self, "_status_widget") and self._status_widget:
+            self.status_bar.removeWidget(self._status_widget)
         # Create a container widget
         status_widget = QWidget()
         layout = QHBoxLayout()
@@ -113,7 +112,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         layout.addStretch()
         # Add to status bar
         self.status_bar.addWidget(status_widget)
-        self._status_status_widget = status_widget
+        self._status_widget = status_widget
         self.status_bar.showMessage("")
 
     @Slot()
@@ -179,7 +178,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @Slot()
     def download_locations_fit(self) -> None:
         self.logger.log("Downloading locations from FIT file.")
-        pass
+
+        if self.device_connected is False:
+            QMessageBox.critical(self, "No Device", "No MTP device connected.")
+            return
+        # Temporarily stop scanning
+        self.mtp_device_manager.stop_scanning()
+        # Download to current directory (can be changed to a temp dir if needed)
+        target_path = "."
+        fit_filename = "Locations.fit"
+
+        def on_done():
+            self.logger.log("Download finished. Importing Locations.fit...")
+            self.import_locations_fit(fit_filename)
+            self.mtp_device_manager.start_scanning()
+            self.mtp_device_manager.download_worker = None  # Clean up reference
+
+        def on_error(err):
+            self.logger.error(f"Download failed: {err}")
+            self.mtp_device_manager.start_scanning()
+            self.mtp_device_manager.download_worker = None  # Clean up reference
+
+        self.mtp_device_manager.start_download(
+            "Garmin/Locations/Locations.fit", target_path, on_done, on_error
+        )
 
     @Slot()
     def upload_locations_fit(self) -> None:
@@ -188,54 +210,46 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def slot_save_locations_fit(self) -> None:
-        from location_tool.save_fit_dialog import SaveFitDialog
-
         current_waypoints = self.waypoint_table.waypoints
         if not current_waypoints:
             QMessageBox.information(self, "No Data", "There are no waypoints to save.")
             return
 
-        dlg = SaveFitDialog(self)
-        if dlg.exec() != QDialog.Accepted:
-            return
-
-        file_path = dlg.get_save_path()
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Save Locations.fit File", "", "FIT Files (*.fit)"
+        )
         if not file_path:
             QMessageBox.warning(self, "No Path", "Please select a save path.")
             return
 
-        mode_str = dlg.get_mode()
-
-        mode_enum = FitLocationSettingsEnum[mode_str]
+        mode_str = ModeSelectDialog.get_mode(self)
+        if not mode_str:
+            QMessageBox.warning(self, "No Mode", "Please select a save mode.")
+            return
+        else:
+            mode_enum = FitLocationSettingsEnum[mode_str]
 
         fit_data_container = LocationsFitFileData(
             file_id=FileIdMessageData(),
             creator=FileCreatorMessageData(),
             location_settings=LocationSettingsMessageData(location_settings_enum=mode_enum),
-            locations=current_waypoints,  # current_waypoints is List[WaypointData]
+            locations=current_waypoints,
         )
 
         try:
             success: bool
-            warnings: List[str]
-            critical_errors: List[str]
+            errors: List[str]
 
             # Save the FIT file using the fit_handler
-            # TODO: remove warnings (debug log them)
-            success, warnings, critical_errors = self.fit_handler.write_fit_file(
+            success, warnings, errors = self.fit_handler.write_fit_file(
                 file_path, fit_data_container
             )
 
-            if critical_errors:
-                for error in critical_errors:
+            if errors:
+                for error in errors:
                     self.logger.error(f"Critical FIT Save Error: {error}")
                     QMessageBox.critical(self, "FIT Save Error", str(error))
                 return False
-
-            if warnings:
-                for warning in warnings:
-                    self.logger.warning(f"FIT Save Warning: {warning}")
-                    QMessageBox.warning(self, "FIT Save Warning", str(warning))
 
             if success:
                 self.logger.log(f"File saved successfully to {file_path}")
@@ -266,13 +280,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             success: bool
             # warnings: List[str]
-            critical_errors: List[str]
+            errors: List[str]
 
-            # Save the GPX file using the gpx_handler
-            success, critical_errors = self.gpx_handler.write_gpx_file(file_path, current_waypoints)
+            success, errors = self.gpx_handler.write_gpx_file(file_path, current_waypoints)
 
-            if critical_errors:
-                for error in critical_errors:
+            if errors:
+                for error in errors:
                     self.logger.error(f"Critical GPX Save Error: {error}")
                     QMessageBox.critical(self, "GPX Save Error", str(error))
                 return False

@@ -100,3 +100,19 @@ class MTPDeviceManager(QObject):
                 "raw": info,
             }
         )
+
+    def start_download(self, source_path, target_path, on_done, on_error):
+        # Store the worker as an instance attribute
+        self.download_worker = MTPCommandWorker(
+            self.appctxt, ["download", source_path, target_path]
+        )
+        self.download_worker.done.connect(on_done)
+        self.download_worker.error.connect(on_error)
+        self.download_worker.start()
+
+    def start_upload(self, source_path, target_path, on_done, on_error):
+        # Store the worker as an instance attribute
+        self.upload_worker = MTPCommandWorker(self.appctxt, ["upload", source_path, target_path])
+        self.upload_worker.done.connect(on_done)
+        self.upload_worker.error.connect(on_error)
+        self.upload_worker.start()

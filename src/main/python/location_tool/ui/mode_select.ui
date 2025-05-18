@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>mode_select_dialog</class>
+ <widget class="QDialog" name="mode_select_dialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModality::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>565</width>
+    <height>265</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QToolButton {
+font-size: 18pt;
+
+}
+
+QLabel {
+font-size: 14pt;
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+   </property>
+   <property name="leftMargin">
+    <number>30</number>
+   </property>
+   <property name="topMargin">
+    <number>30</number>
+   </property>
+   <property name="rightMargin">
+    <number>30</number>
+   </property>
+   <property name="bottomMargin">
+    <number>30</number>
+   </property>
+   <property name="spacing">
+    <number>30</number>
+   </property>
+   <item row="0" column="1">
+    <widget class="QToolButton" name="mode_replace_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Replace</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/ui_icons/ui_icons/svg/replace.svg</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="mode_delete_all_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Delete all waypoints on device.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="mode_replace_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Delete all Waypoints on device and replace them with the new waypoints.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QToolButton" name="mode_delete_all_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Delete All</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/ui_icons/ui_icons/svg/delete.svg</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="mode_add_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Add new waypoints to the existing ones on the device.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QToolButton" name="mode_add_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Add</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/ui_icons/ui_icons/svg/add.svg</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../../resources/base/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

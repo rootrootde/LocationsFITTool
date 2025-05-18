@@ -281,7 +281,6 @@ class FitFileHandler:
     ) -> Tuple[bool, List[str], List[str]]:
         """Writes the provided LocationsFitFileData to a .fit file."""
 
-        warnings: List[str] = []
         errors: List[str] = []
         builder: FitFileBuilder = FitFileBuilder(auto_define=True, min_string_size=50)
 
@@ -308,16 +307,16 @@ class FitFileHandler:
         if errors:
             for err in errors:
                 self.logger.error(f"Critical FIT Write Error: {err}")
-            return False, warnings, errors
+            return False, errors
 
         try:
             fit_file_result: FitFile = builder.build()
             fit_file_result.to_file(file_path)
             self.logger.log(f"Successfully wrote FIT file to: {file_path}")
-            return True, warnings, errors
+            return True, errors
 
         except Exception as e:
             err_msg: str = f"Failed to build or write FIT file: {e}"
             self.logger.error(err_msg)
             errors.append(err_msg)
-            return False, warnings, errors
+            return False, errors
