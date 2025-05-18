@@ -1,3 +1,5 @@
+import tempfile
+from pathlib import Path
 from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
@@ -43,7 +45,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._init_actions()
         self._init_log_dock()
         self.palette = QPalette()
-        self.logger.log(self.palette.light())
         self.logger.log("Application started.")
 
     def _init_logger(self):
@@ -184,23 +185,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
         # Temporarily stop scanning
         self.mtp_device_manager.stop_scanning()
-        # Download to current directory (can be changed to a temp dir if needed)
-        target_path = "."
+        # Use a temporary directory for the download
+        temp_dir = tempfile.TemporaryDirectory()
+        target_path = Path(temp_dir.name)
         fit_filename = "Locations.fit"
+        fit_file_path = target_path / fit_filename
 
         def on_done():
             self.logger.log("Download finished. Importing Locations.fit...")
-            self.import_locations_fit(fit_filename)
+            self.import_locations_fit(str(fit_file_path))
             self.mtp_device_manager.start_scanning()
             self.mtp_device_manager.download_worker = None  # Clean up reference
+            temp_dir.cleanup()
 
         def on_error(err):
             self.logger.error(f"Download failed: {err}")
             self.mtp_device_manager.start_scanning()
             self.mtp_device_manager.download_worker = None  # Clean up reference
+            temp_dir.cleanup()
 
         self.mtp_device_manager.start_download(
-            "Garmin/Locations/Locations.fit", target_path, on_done, on_error
+            "Garmin/Locations/Locations.fit", str(target_path), on_done, on_error
         )
 
     @Slot()
@@ -241,9 +246,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             errors: List[str]
 
             # Save the FIT file using the fit_handler
-            success, warnings, errors = self.fit_handler.write_fit_file(
-                file_path, fit_data_container
-            )
+            success, errors = self.fit_handler.write_fit_file(file_path, fit_data_container)
 
             if errors:
                 for error in errors:

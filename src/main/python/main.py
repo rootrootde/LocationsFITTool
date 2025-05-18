@@ -5,7 +5,7 @@ import platform
 import sys
 
 # Add the ui_layouts directory to sys.path so import resources_rc works in generated UI files
-ui_layouts_path = os.path.join(os.path.dirname(__file__), "location_tool", "ui_layouts")
+ui_layouts_path = os.path.join(os.path.dirname(__file__), "location_tool", "ui")
 if ui_layouts_path not in sys.path:
     sys.path.insert(0, ui_layouts_path)
 
