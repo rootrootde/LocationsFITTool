@@ -13,3 +13,5 @@ wheels/
 .python-version
 target/
 fbs/
+
+*.sh

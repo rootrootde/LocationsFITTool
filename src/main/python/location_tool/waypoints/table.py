@@ -274,31 +274,24 @@ class WaypointTable(QWidget):
         self.refresh_waypoint_table()
 
     def setup_waypoint_table(self) -> None:
-        self.waypoint_table.setColumnCount(7)
         headers: List[str] = [name.lower() for name in TableColumn.__members__.keys()]
         self.waypoint_table.setHorizontalHeaderLabels(headers)
-        self.waypoint_table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.waypoint_table.setEditTriggers(
-            QAbstractItemView.DoubleClicked
-            | QAbstractItemView.SelectedClicked
-            | QAbstractItemView.EditKeyPressed
-        )
-        self.waypoint_table.setItemDelegateForColumn(
+        self.waypoint_table.setItemDelegateForColumn(       # Name
             TableColumn.LATITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(
+        self.waypoint_table.setItemDelegateForColumn(       # Longitude
             TableColumn.LONGITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(
+        self.waypoint_table.setItemDelegateForColumn(       # Altitude
             TableColumn.ALTITUDE.value, FloatDelegate(decimals=2, parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(
+        self.waypoint_table.setItemDelegateForColumn(       # Timestamp
             TableColumn.TIMESTAMP.value, DateTimeDelegate(parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(
+        self.waypoint_table.setItemDelegateForColumn(       # Description
+        self.waypoint_table.setItemDelegateForColumn(       # Symbol
             TableColumn.DESCRIPTION.value, DescriptionDelegate(parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(
             TableColumn.SYMBOL.value, SymbolDelegate(self.appctxt, parent=self)
         )
 
@@ -341,9 +334,9 @@ class WaypointTable(QWidget):
         )
         alt_item = QTableWidgetItem()
         if wp_data.altitude is not None:
-            alt_item.setData(Qt.EditRole, float(wp_data.altitude))
+            alt_item.setData(Qt.EditRole, int(wp_data.altitude))
         else:
-            alt_item.setData(Qt.EditRole, "")  # Or some placeholder for None
+            alt_item.setData(Qt.EditRole, 0)  # Or some placeholder for None
         alt_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.waypoint_table.setItem(row_idx, TableColumn.ALTITUDE.value, alt_item)
 

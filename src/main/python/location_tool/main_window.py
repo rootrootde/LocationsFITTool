@@ -60,7 +60,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _init_waypoint_table(self):
         self.waypoint_table = WaypointTable(self.waypoint_table, self, self.appctxt)
-        self.waypoint_table.setup_waypoint_table()
 
     def _init_mtp_device_manager(self):
         self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
@@ -88,32 +87,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def _init_log_dock(self):
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
         # Sync toggle action with log dock visibility
+        self.log_dock.setVisible(False)
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
-
-    def _set_status_icon_message(self, icon_path, message):
-        # Remove previous status widget if exists
-        if hasattr(self, "_status_widget") and self._status_widget:
-            self.status_bar.removeWidget(self._status_widget)
-        # Create a container widget
-        status_widget = QWidget()
-        layout = QHBoxLayout()
-        layout.setContentsMargins(8, 4, 0, 4)
-        status_widget.setLayout(layout)
-        # Icon
-        icon_label = QLabel()
-        pixmap = QPixmap(icon_path)
-        icon_label.setPixmap(pixmap.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        # Text
-        text_label = QLabel(message)
-        text_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        # Add to layout
-        layout.addWidget(icon_label)
-        layout.addWidget(text_label)
-        layout.addStretch()
-        # Add to status bar
-        self.status_bar.addWidget(status_widget)
-        self._status_widget = status_widget
-        self.status_bar.showMessage("")
 
     @Slot()
     def slot_import_file(self) -> None:
@@ -174,6 +149,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.logger.error(f"Failed to import GPX file: {e}")
             QMessageBox.critical(self, "Import Error", f"Could not import GPX file: {e}")
+
+    def _set_status_icon_message(self, icon_path, message):
+        # Remove previous status widget if exists
+        if hasattr(self, "_status_widget") and self._status_widget:
+            self.status_bar.removeWidget(self._status_widget)
+        # Create a container widget
+        status_widget = QWidget()
+        layout = QHBoxLayout()
+        layout.setContentsMargins(8, 4, 0, 4)
+        status_widget.setLayout(layout)
+        # Icon
+        icon_label = QLabel()
+        pixmap = QPixmap(icon_path)
+        icon_label.setPixmap(pixmap.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        # Text
+        text_label = QLabel(message)
+        text_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        # Add to layout
+        layout.addWidget(icon_label)
+        layout.addWidget(text_label)
+        layout.addStretch()
+        # Add to status bar
+        self.status_bar.addWidget(status_widget)
+        self._status_widget = status_widget
+        self.status_bar.showMessage("")
 
     @Slot()
     def download_locations_fit(self) -> None:

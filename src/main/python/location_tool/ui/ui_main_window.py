@@ -16,10 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QDockWidget, QHBoxLayout, QHeaderView,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QSizePolicy, QSpacerItem, QStatusBar, QTableWidget,
-    QTableWidgetItem, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDockWidget, QHBoxLayout,
+    QHeaderView, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
+    QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout,
+    QWidget)
 import resources_rc
 
 class Ui_MainWindow(object):
@@ -91,7 +92,18 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.waypoint_table = QTableWidget(self.waypoint_group_box)
+        if (self.waypoint_table.columnCount() < 7):
+            self.waypoint_table.setColumnCount(7)
         self.waypoint_table.setObjectName(u"waypoint_table")
+        self.waypoint_table.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked|QAbstractItemView.EditTrigger.EditKeyPressed|QAbstractItemView.EditTrigger.SelectedClicked)
+        self.waypoint_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.waypoint_table.setCornerButtonEnabled(False)
+        self.waypoint_table.setColumnCount(7)
+        self.waypoint_table.horizontalHeader().setVisible(True)
+        self.waypoint_table.horizontalHeader().setHighlightSections(False)
+        self.waypoint_table.horizontalHeader().setStretchLastSection(True)
+        self.waypoint_table.verticalHeader().setVisible(True)
+        self.waypoint_table.verticalHeader().setMinimumSectionSize(24)
 
         self.verticalLayout_2.addWidget(self.waypoint_table)
 
@@ -130,6 +142,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.log_dock = QDockWidget(MainWindow)
         self.log_dock.setObjectName(u"log_dock")
+        self.log_dock.setEnabled(True)
         self.log_dock_contents = QWidget()
         self.log_dock_contents.setObjectName(u"log_dock_contents")
         self.log_dock_contents.setMinimumSize(QSize(0, 100))
