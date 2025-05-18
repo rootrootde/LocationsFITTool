@@ -75,10 +75,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Connect actions to slots
         self.import_file_action.triggered.connect(self.slot_import_file)
-
-        self.save_locations_fit_action.triggered.connect(lambda: self.slot_save("fit"))
-        self.save_gpx_action.triggered.connect(lambda: self.slot_save("gpx"))
-
+        self.save_locations_fit_action.triggered.connect(lambda: self.slot_save_file("fit"))
+        self.save_gpx_action.triggered.connect(lambda: self.slot_save_file("gpx"))
         self.add_wpt_action.triggered.connect(self.waypoint_table.slot_add_waypoint)
         self.delete_wpt_action.triggered.connect(self.waypoint_table.slot_delete_selected_waypoints)
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
@@ -194,15 +192,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         def on_done():
             self.logger.log("Download finished. Importing Locations.fit...")
-            self.import_locations_fit(str(fit_file_path))
+            self._import_locations_fit(str(fit_file_path))
             self.mtp_device_manager.start_scanning()
-            self.mtp_device_manager.download_worker = None  # Clean up reference
             temp_dir.cleanup()
 
         def on_error(err):
             self.logger.error(f"Download failed: {err}")
             self.mtp_device_manager.start_scanning()
-            self.mtp_device_manager.download_worker = None  # Clean up reference
             temp_dir.cleanup()
 
         self.mtp_device_manager.start_download(
@@ -212,10 +208,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @Slot()
     def upload_locations_fit(self) -> None:
         self.logger.log("Uploading locations to FIT file.")
-        pass
+
+        if self.device_connected is False:
+            QMessageBox.critical(self, "No Device", "No MTP device connected.")
+            return
+        self.mtp_device_manager.stop_scanning()
+        # Use a temporary file for the upload
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".fit") as temp_file:
+            temp_file_path = Path(temp_file.name)
+        self._save_locations_fit(str(temp_file_path))
+
+        def on_done():
+            self.logger.log("Upload finished.")
+            self.mtp_device_manager.start_scanning()
+            try:
+                temp_file_path.unlink()
+            except Exception as e:
+                self.logger.warning(f"Could not remove temp file: {e}")
+
+        def on_error(err):
+            self.logger.error(f"Upload failed: {err}")
+            self.mtp_device_manager.start_scanning()
+            try:
+                temp_file_path.unlink()
+            except Exception as e:
+                self.logger.warning(f"Could not remove temp file: {e}")
+
+        self.mtp_device_manager.start_upload(
+            str(temp_file_path), "Garmin/NewFiles/", on_done, on_error
+        )
 
     @Slot(str)
-    def slot_save(self, file_type: str) -> None:
+    def slot_save_file(self, file_type: str) -> None:
         if file_type == "fit":
             self._save_locations_fit()
         elif file_type == "gpx":
@@ -254,7 +278,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             success: bool
             errors: List[str]
 
-            # Save the FIT file using the fit_handler
             success, errors = self.fit_handler.write_fit_file(file_path, fit_data_container)
 
             if errors:
@@ -290,7 +313,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         try:
             success: bool
-            # warnings: List[str]
             errors: List[str]
 
             success, errors = self.gpx_handler.write_gpx_file(file_path, current_waypoints)

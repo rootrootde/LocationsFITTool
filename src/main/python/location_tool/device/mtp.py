@@ -57,7 +57,9 @@ class MTPDeviceManager(QObject):
     def __init__(self, appctxt, parent=None):
         super().__init__(parent)
         self.appctxt = appctxt
-        self.worker = None
+        self.worker = None  # For device-info scanning
+        self.download_worker = None
+        self.upload_worker = None
         self.scan_timer = QTimer()
         self.scan_timer.setInterval(3000)
         self.scan_timer.timeout.connect(self.check_device)
@@ -75,12 +77,25 @@ class MTPDeviceManager(QObject):
             self.scan_timer.stop()
             self.scanning = False
 
+    def _on_worker_finished(self):
+        sender = self.sender()
+        if sender:
+            if sender == self.download_worker:
+                self.download_worker = None
+            elif sender == self.upload_worker:
+                self.upload_worker = None
+            elif sender == self.worker:  # Also handle the device scanning worker
+                self.worker = None
+            sender.deleteLater()
+
     def check_device(self):
         if self.worker and self.worker.isRunning():
             return  # Already running
+        # If there's an old worker, it should be cleaned up by _on_worker_finished
         self.worker = MTPCommandWorker(self.appctxt, ["device-info"])
         self.worker.result.connect(self._handle_device_info_result)
         self.worker.error.connect(self.device_error.emit)
+        self.worker.finished.connect(self._on_worker_finished)  # Connect finished signal
         self.worker.start()
 
     def _handle_device_info_result(self, info):
@@ -102,17 +117,23 @@ class MTPDeviceManager(QObject):
         )
 
     def start_download(self, source_path, target_path, on_done, on_error):
-        # Store the worker as an instance attribute
+        if self.download_worker and self.download_worker.isRunning():
+            self.device_error.emit("Download already in progress.")  # Or queue, etc.
+            return
         self.download_worker = MTPCommandWorker(
             self.appctxt, ["download", source_path, target_path]
         )
         self.download_worker.done.connect(on_done)
         self.download_worker.error.connect(on_error)
+        self.download_worker.finished.connect(self._on_worker_finished)  # Connect finished signal
         self.download_worker.start()
 
     def start_upload(self, source_path, target_path, on_done, on_error):
-        # Store the worker as an instance attribute
+        if self.upload_worker and self.upload_worker.isRunning():
+            self.device_error.emit("Upload already in progress.")  # Or queue, etc.
+            return
         self.upload_worker = MTPCommandWorker(self.appctxt, ["upload", source_path, target_path])
         self.upload_worker.done.connect(on_done)
         self.upload_worker.error.connect(on_error)
+        self.upload_worker.finished.connect(self._on_worker_finished)  # Connect finished signal
         self.upload_worker.start()

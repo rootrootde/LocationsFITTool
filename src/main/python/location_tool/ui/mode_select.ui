@@ -110,33 +110,6 @@ font-size: 14pt;
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QToolButton" name="mode_delete_all_btn">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Delete All</string>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normalon>:/ui_icons/ui_icons/svg/delete.svg</normalon>
-      </iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>64</width>
-       <height>64</height>
-      </size>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="mode_add_lbl">
      <property name="sizePolicy">
@@ -170,6 +143,33 @@ font-size: 14pt;
      <property name="icon">
       <iconset>
        <normalon>:/ui_icons/ui_icons/svg/add.svg</normalon>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QToolButton" name="mode_delete_all_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Delete All</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/ui_icons/ui_icons/svg/delete.svg</normalon>
       </iconset>
      </property>
      <property name="iconSize">
