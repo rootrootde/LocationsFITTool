@@ -20,9 +20,13 @@ font-size: 12pt;
 }
 
 QTextEdit {
-font-family: monospace;
+font-family: &quot;SF Mono&quot;;
+}
+
+QHeaderView::section {
 
 
+padding: 4px;
 }</string>
   </property>
   <property name="iconSize">
@@ -84,7 +88,7 @@ font-family: monospace;
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
           <number>24</number>

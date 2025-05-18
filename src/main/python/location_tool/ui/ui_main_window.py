@@ -34,9 +34,13 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QTextEdit {\n"
-"font-family: monospace;\n"
+"font-family: \"SF Mono\";\n"
+"}\n"
+"\n"
+"QHeaderView::section {\n"
 "\n"
 "\n"
+"padding: 4px;\n"
 "}")
         MainWindow.setIconSize(QSize(48, 48))
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
@@ -100,7 +104,7 @@ class Ui_MainWindow(object):
         self.waypoint_table.horizontalHeader().setMinimumSectionSize(100)
         self.waypoint_table.horizontalHeader().setHighlightSections(False)
         self.waypoint_table.horizontalHeader().setStretchLastSection(True)
-        self.waypoint_table.verticalHeader().setVisible(True)
+        self.waypoint_table.verticalHeader().setVisible(False)
         self.waypoint_table.verticalHeader().setMinimumSectionSize(24)
 
         self.verticalLayout_2.addWidget(self.waypoint_table)
