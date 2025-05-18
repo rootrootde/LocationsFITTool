@@ -27,21 +27,17 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(783, 615)
-        font = QFont()
-        font.setFamilies([u"SF Pro"])
-        font.setPointSize(12)
-        MainWindow.setFont(font)
-        MainWindow.setStyleSheet(u"QWidget {\n"
-"        font-family: \"SF Pro\";\n"
+        MainWindow.resize(1000, 615)
+        MainWindow.setStyleSheet(u"QMainWindow{\n"
+"font-family:sans-serif;\n"
+"font-size: 12pt;\n"
+"}\n"
 "\n"
-"        }\n"
+"QTextEdit {\n"
+"font-family: monospace;\n"
 "\n"
-"        QTextEdit {\n"
-"        font-family: \"SF Mono\";\n"
 "\n"
-"        }\n"
-"")
+"}")
         MainWindow.setIconSize(QSize(48, 48))
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
         self.save_locations_fit_action = QAction(MainWindow)
@@ -97,9 +93,11 @@ class Ui_MainWindow(object):
         self.waypoint_table.setObjectName(u"waypoint_table")
         self.waypoint_table.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked|QAbstractItemView.EditTrigger.EditKeyPressed|QAbstractItemView.EditTrigger.SelectedClicked)
         self.waypoint_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.waypoint_table.setShowGrid(False)
         self.waypoint_table.setCornerButtonEnabled(False)
         self.waypoint_table.setColumnCount(7)
         self.waypoint_table.horizontalHeader().setVisible(True)
+        self.waypoint_table.horizontalHeader().setMinimumSectionSize(100)
         self.waypoint_table.horizontalHeader().setHighlightSections(False)
         self.waypoint_table.horizontalHeader().setStretchLastSection(True)
         self.waypoint_table.verticalHeader().setVisible(True)
@@ -157,7 +155,7 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.log_dock)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 783, 24))
+        self.menuBar.setGeometry(QRect(0, 0, 1000, 24))
         self.menuFile = QMenu(self.menuBar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuWaypoint = QMenu(self.menuBar)
@@ -169,6 +167,7 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menuBar)
         self.status_bar = QStatusBar(MainWindow)
         self.status_bar.setObjectName(u"status_bar")
+        self.status_bar.setSizeGripEnabled(False)
         MainWindow.setStatusBar(self.status_bar)
 
         self.menuBar.addAction(self.menuFile.menuAction())

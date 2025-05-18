@@ -20,7 +20,7 @@ except ImportError:
 
 from location_tool.main_window import MainWindow
 
-FORCE_LIGHT_MODE = True
+FORCE_LIGHT_MODE = False
 
 if __name__ == "__main__":
     if USE_FBS:

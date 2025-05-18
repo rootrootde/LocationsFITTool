@@ -8,7 +8,6 @@ from fit_tool.profile.profile_type import MapSymbol
 from PySide6.QtCore import QDateTime, QEvent, QModelIndex, QSize, Qt, Slot
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
-    QAbstractItemView,
     QDateTimeEdit,
     QDialog,
     QDialogButtonBox,
@@ -117,25 +116,56 @@ class FloatDelegate(QStyledItemDelegate):
     ) -> QDoubleSpinBox:
         editor = QDoubleSpinBox(parent)
         editor.setFrame(False)
-        editor.setDecimals(self.decimals)
         if index.column() == 1:  # Latitude
+            editor.setDecimals(self.decimals)
             editor.setRange(-90.0, 90.0)
         elif index.column() == 2:  # Longitude
+            editor.setDecimals(self.decimals)
             editor.setRange(-180.0, 180.0)
         elif index.column() == 3:  # Altitude
-            editor.setRange(-500.0, 9200.0)
-            editor.setDecimals(2)  # Altitude typically has 2 decimals
+            editor.setDecimals(0)  # Altitude as int, no decimals
+            editor.setRange(-500, 9200)
         return editor
 
     def setEditorData(self, editor: QDoubleSpinBox, index: QModelIndex) -> None:
         value: Any = index.model().data(index, Qt.EditRole)
         try:
-            editor.setValue(float(value))
+            if index.column() == 3:  # Altitude
+                editor.setValue(int(float(value)))
+            else:
+                editor.setValue(float(value))
         except (ValueError, TypeError):
             editor.setValue(0.0)
 
     def setModelData(self, editor: QDoubleSpinBox, model: Any, index: QModelIndex) -> None:
-        model.setData(index, f"{editor.value():.{self.decimals}f}", Qt.EditRole)
+        if index.column() == 3:  # Altitude
+            model.setData(index, str(int(editor.value())), Qt.EditRole)
+        else:
+            model.setData(index, f"{editor.value():.{self.decimals}f}", Qt.EditRole)
+
+
+class AltitudeDelegate(QStyledItemDelegate):
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+
+    def createEditor(
+        self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ) -> QDoubleSpinBox:
+        editor = QDoubleSpinBox(parent)
+        editor.setDecimals(0)
+        editor.setRange(-500, 9200)
+        editor.setFrame(False)
+        return editor
+
+    def setEditorData(self, editor: QDoubleSpinBox, index: QModelIndex) -> None:
+        value: Any = index.model().data(index, Qt.EditRole)
+        try:
+            editor.setValue(int(float(value)))
+        except (ValueError, TypeError):
+            editor.setValue(0)
+
+    def setModelData(self, editor: QDoubleSpinBox, model: Any, index: QModelIndex) -> None:
+        model.setData(index, str(int(editor.value())), Qt.EditRole)
 
 
 class DescriptionDialog(QDialog):
@@ -274,25 +304,25 @@ class WaypointTable(QWidget):
         self.refresh_waypoint_table()
 
     def setup_waypoint_table(self) -> None:
-        headers: List[str] = [name.lower() for name in TableColumn.__members__.keys()]
+        headers: List[str] = [name for name in TableColumn.__members__.keys()]
         self.waypoint_table.setHorizontalHeaderLabels(headers)
-        self.waypoint_table.setItemDelegateForColumn(       # Name
+        self.waypoint_table.setItemDelegateForColumn(  # Name
             TableColumn.LATITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(       # Longitude
+        self.waypoint_table.setItemDelegateForColumn(  # Longitude
             TableColumn.LONGITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(       # Altitude
-            TableColumn.ALTITUDE.value, FloatDelegate(decimals=2, parent=self)
+        self.waypoint_table.setItemDelegateForColumn(  # Altitude
+            TableColumn.ALTITUDE.value, AltitudeDelegate(parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(       # Timestamp
+        self.waypoint_table.setItemDelegateForColumn(  # Timestamp
             TableColumn.TIMESTAMP.value, DateTimeDelegate(parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(       # Description
-        self.waypoint_table.setItemDelegateForColumn(       # Symbol
-            TableColumn.DESCRIPTION.value, DescriptionDelegate(parent=self)
-        )
+        self.waypoint_table.setItemDelegateForColumn(  # Symbol
             TableColumn.SYMBOL.value, SymbolDelegate(self.appctxt, parent=self)
+        )
+        self.waypoint_table.setItemDelegateForColumn(  # Description
+            TableColumn.DESCRIPTION.value, DescriptionDelegate(parent=self)
         )
 
         header: QHeaderView = self.waypoint_table.horizontalHeader()
@@ -447,7 +477,7 @@ class WaypointTable(QWidget):
                 new_value = float(item.text())
                 wp_data.longitude = new_value
             elif column == TableColumn.ALTITUDE.value:
-                new_value = float(item.text())
+                new_value = int(item.text())
                 wp_data.altitude = new_value
             elif column == TableColumn.TIMESTAMP.value:
                 cell_widget = self.waypoint_table.cellWidget(row, column)

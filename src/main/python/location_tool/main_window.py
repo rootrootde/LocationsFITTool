@@ -118,8 +118,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.logger.warning(f"FIT Read Warning: {error}")
                     QMessageBox.warning(self, "FIT Read Warning", str(error))
 
-            self.current_file_path = file_path
-
             self.waypoint_table.waypoints = (
                 self.waypoint_table.waypoints + fit_file_data_container.locations
             )
@@ -139,7 +137,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.logger.warning(f"GPX Read Error/Warning: {error}")
                     QMessageBox.warning(self, "GPX Read Warning", str(error))
 
-            self.current_file_path = file_path
             self.waypoint_table.waypoints = self.waypoint_table.waypoints + waypoints
 
             self.logger.log(
@@ -286,14 +283,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     QMessageBox.critical(self, "FIT Save Error", str(error))
                 return False
 
-            if success:
-                self.logger.log(f"File saved successfully to {file_path}")
-                QMessageBox.information(
-                    self,
-                    "Save Successful",
-                    f"File saved successfully to {file_path}",
-                )
-                self.current_file_path = file_path
+            # if success:
+            #     self.logger.log(f"File saved successfully to {file_path}")
+            #     QMessageBox.information(
+            #         self,
+            #         "Save Successful",
+            #         f"File saved successfully to {file_path}",
+            #     )
+            #     self.current_file_path = file_path
             return success
 
         except Exception as e:

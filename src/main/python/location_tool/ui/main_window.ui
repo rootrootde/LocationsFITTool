@@ -6,30 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>783</width>
+    <width>1000</width>
     <height>615</height>
    </rect>
-  </property>
-  <property name="font">
-   <font>
-    <family>SF Pro</family>
-    <pointsize>12</pointsize>
-   </font>
   </property>
   <property name="windowTitle">
    <string>LocationsFITTool</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
-        font-family: &quot;SF Pro&quot;;
+   <string notr="true">QMainWindow{
+font-family:sans-serif;
+font-size: 12pt;
+}
 
-        }
+QTextEdit {
+font-family: monospace;
 
-        QTextEdit {
-        font-family: &quot;SF Mono&quot;;
 
-        }
-</string>
+}</string>
   </property>
   <property name="iconSize">
    <size>
@@ -68,6 +62,9 @@
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
+         <property name="showGrid">
+          <bool>false</bool>
+         </property>
          <property name="cornerButtonEnabled">
           <bool>false</bool>
          </property>
@@ -76,6 +73,9 @@
          </property>
          <attribute name="horizontalHeaderVisible">
           <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>100</number>
          </attribute>
          <attribute name="horizontalHeaderHighlightSections">
           <bool>false</bool>
@@ -187,7 +187,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>783</width>
+     <width>1000</width>
      <height>24</height>
     </rect>
    </property>
@@ -228,7 +228,11 @@
    <addaction name="menuDevice"/>
    <addaction name="menuView"/>
   </widget>
-  <widget class="QStatusBar" name="status_bar"/>
+  <widget class="QStatusBar" name="status_bar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
   <action name="save_locations_fit_action">
    <property name="text">
     <string>Save Locations.fit</string>
