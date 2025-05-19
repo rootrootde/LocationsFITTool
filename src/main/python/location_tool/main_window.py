@@ -36,35 +36,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.appctxt = appctxt
-        self.device_connected = None
-        self._init_logger()
-        self._init_handlers()
-        self._init_state()
-        self._init_waypoint_table()
-        self._init_mtp_device_manager()
-        self._init_actions()
-        self._init_log_dock()
+        self._init_logger()  # Initialize logger first
+
+        # Initialize core application state and handlers
+        self._init_internal_state()
+        self._init_file_handlers()
+
+        # Initialize UI elements and their specific configurations
+        self._configure_ui_elements()
+
+        # Initialize actions and connect signals
+        self._setup_actions_and_connections()
+
+        # Initialize MTP device management
+        self._init_mtp_manager()
+
+        # Set initial UI states that depend on actions or other setup
+        self._set_initial_ui_states()
+
         self.logger.log("Application started.")
 
     def _init_logger(self):
         self.logger = logger.Logger.get_logger(self.log_textedit)
 
-    def _init_handlers(self):
+    def _init_internal_state(self):
+        """Initializes core internal state variables."""
+        self.device_connected: Optional[bool] = None
+        self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
+        self.current_file_path: Optional[str] = None
+
+    def _init_file_handlers(self):
+        """Initializes file handlers for FIT and GPX files."""
         self.fit_handler = FitFileHandler(self.appctxt)
         self.gpx_handler = GpxFileHandler(self.appctxt)
 
-    def _init_state(self):
-        self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
-        self.current_file_path: Optional[str] = None
-        self.scan_for_devices_action.setChecked(True)
-
-    def _init_waypoint_table(self):
-        self.waypoint_table = WaypointTable(self.waypoint_table, self, self.appctxt)
-
-    def _init_mtp_device_manager(self):
-        self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
-        self.mtp_device_manager.device_found.connect(self.slot_device_found)
-        self.mtp_device_manager.device_error.connect(self.slot_device_error)
+    def _configure_ui_elements(self):
+        """Configures various UI elements like icons, tables, and docks."""
+        self._init_icons()
+        self._init_waypoint_table()
+        self._configure_log_dock()
 
     def _init_icons(self):
         s = QSize(48, 48)
@@ -72,7 +82,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             colored_icon(self.appctxt, "ui_icons/file_open.svg", s),
         )
         self.save_file_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/file_save.svg", s),
+            colored_icon(self.appctxt, "ui_icons/save.svg", s),
         )
 
         self.toggle_debug_log_action.setIcon(colored_icon(self.appctxt, "ui_icons/terminal.svg", s))
@@ -86,11 +96,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             colored_icon(self.appctxt, "ui_icons/mobile_arrow_up.svg", s)
         )
 
-        self.add_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/add_location.svg", s))
+        self.add_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/add_2.svg", s))
+        self.delete_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/remove_2.svg", s))
+        self.add_wpt_action.setIcon(colored_icon(self.appctxt, "ui_icons/add_location.svg", s))
+        self.delete_wpt_action.setIcon(
+            colored_icon(self.appctxt, "ui_icons/remove_location.svg", s)
+        )
 
-        self.delete_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/remove_location.svg", s))
+    def _init_waypoint_table(self):
+        """Initializes the waypoint table."""
+        self.waypoint_table = WaypointTable(self.waypoint_table, self, self.appctxt)
 
-    def _init_actions(self):
+    def _configure_log_dock(self):
+        """Configures the properties of the log dock."""
+        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
+
+    def _setup_actions_and_connections(self):
+        """Sets up QActions, adds them to the window, and connects their signals."""
         # Add all actions to the main window to enable shortcuts
         for action in self.findChildren(QAction):
             if isinstance(action, QAction):
@@ -107,9 +129,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_locations_fit_action.triggered.connect(self.download_locations_fit)
         self.upload_locations_fit_action.triggered.connect(self.upload_locations_fit)
 
-    def _init_log_dock(self):
-        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
-        # Sync toggle action with log dock visibility
+    def _init_mtp_manager(self):
+        """Initializes the MTP device manager and connects its signals."""
+        self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
+        self.mtp_device_manager.device_found.connect(self.slot_device_found)
+        self.mtp_device_manager.device_error.connect(self.slot_device_error)
+
+    def _set_initial_ui_states(self):
+        """Sets the initial states for various UI elements."""
+        self.scan_for_devices_action.setChecked(True)
         self.log_dock.setVisible(False)
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
 
@@ -312,14 +340,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     QMessageBox.critical(self, "FIT Save Error", str(error))
                 return False
 
-            # if success:
-            #     self.logger.log(f"File saved successfully to {file_path}")
-            #     QMessageBox.information(
-            #         self,
-            #         "Save Successful",
-            #         f"File saved successfully to {file_path}",
-            #     )
-            #     self.current_file_path = file_path
             return success
 
         except Exception as e:
