@@ -19,9 +19,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDockWidget, QHBoxLayout,
     QHeaderView, QMainWindow, QMenu, QMenuBar,
     QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
-    QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout,
-    QWidget)
-import resources_rc
+    QTableWidget, QTableWidgetItem, QTextEdit, QToolBar,
+    QVBoxLayout, QWidget)
+from . import resources_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -46,18 +46,28 @@ class Ui_MainWindow(object):
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
         self.save_locations_fit_action = QAction(MainWindow)
         self.save_locations_fit_action.setObjectName(u"save_locations_fit_action")
+        icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.DocumentSave))
+        self.save_locations_fit_action.setIcon(icon)
         self.save_locations_fit_action.setMenuRole(QAction.MenuRole.NoRole)
         self.add_wpt_action = QAction(MainWindow)
         self.add_wpt_action.setObjectName(u"add_wpt_action")
-        icon = QIcon()
-        icon.addFile(u":/ui_icons/ui_icons/circle-plus-solid.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.add_wpt_action.setIcon(icon)
+        icon1 = QIcon()
+        if QIcon.hasThemeIcon(QIcon.ThemeIcon.ListAdd):
+            icon1 = QIcon.fromTheme(QIcon.ThemeIcon.ListAdd)
+        else:
+            icon1.addFile(u":/ui_icons/ui_icons/circle-plus-solid.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+
+        self.add_wpt_action.setIcon(icon1)
         self.add_wpt_action.setMenuRole(QAction.MenuRole.NoRole)
         self.delete_wpt_action = QAction(MainWindow)
         self.delete_wpt_action.setObjectName(u"delete_wpt_action")
-        icon1 = QIcon()
-        icon1.addFile(u":/ui_icons/ui_icons/circle-minus-solid.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.delete_wpt_action.setIcon(icon1)
+        icon2 = QIcon()
+        if QIcon.hasThemeIcon(QIcon.ThemeIcon.ListRemove):
+            icon2 = QIcon.fromTheme(QIcon.ThemeIcon.ListRemove)
+        else:
+            icon2.addFile(u":/ui_icons/ui_icons/circle-minus-solid.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+
+        self.delete_wpt_action.setIcon(icon2)
         self.delete_wpt_action.setMenuRole(QAction.MenuRole.NoRole)
         self.toggle_debug_log_action = QAction(MainWindow)
         self.toggle_debug_log_action.setObjectName(u"toggle_debug_log_action")
@@ -66,18 +76,27 @@ class Ui_MainWindow(object):
         self.scan_for_devices_action = QAction(MainWindow)
         self.scan_for_devices_action.setObjectName(u"scan_for_devices_action")
         self.scan_for_devices_action.setCheckable(True)
+        icon3 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.NetworkWired))
+        self.scan_for_devices_action.setIcon(icon3)
         self.scan_for_devices_action.setMenuRole(QAction.MenuRole.NoRole)
         self.import_file_action = QAction(MainWindow)
         self.import_file_action.setObjectName(u"import_file_action")
+        icon4 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.DocumentOpen))
+        self.import_file_action.setIcon(icon4)
         self.import_file_action.setMenuRole(QAction.MenuRole.NoRole)
         self.download_locations_fit_action = QAction(MainWindow)
         self.download_locations_fit_action.setObjectName(u"download_locations_fit_action")
+        icon5 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.GoDown))
+        self.download_locations_fit_action.setIcon(icon5)
         self.download_locations_fit_action.setMenuRole(QAction.MenuRole.NoRole)
         self.upload_locations_fit_action = QAction(MainWindow)
         self.upload_locations_fit_action.setObjectName(u"upload_locations_fit_action")
+        icon6 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.GoUp))
+        self.upload_locations_fit_action.setIcon(icon6)
         self.upload_locations_fit_action.setMenuRole(QAction.MenuRole.NoRole)
         self.save_gpx_action = QAction(MainWindow)
         self.save_gpx_action.setObjectName(u"save_gpx_action")
+        self.save_gpx_action.setIcon(icon)
         self.save_gpx_action.setMenuRole(QAction.MenuRole.NoRole)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -173,6 +192,10 @@ class Ui_MainWindow(object):
         self.status_bar.setObjectName(u"status_bar")
         self.status_bar.setSizeGripEnabled(False)
         MainWindow.setStatusBar(self.status_bar)
+        self.toolBar = QToolBar(MainWindow)
+        self.toolBar.setObjectName(u"toolBar")
+        self.toolBar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+        MainWindow.addToolBar(Qt.ToolBarArea.LeftToolBarArea, self.toolBar)
 
         self.menuBar.addAction(self.menuFile.menuAction())
         self.menuBar.addAction(self.menuWaypoint.menuAction())
@@ -190,6 +213,16 @@ class Ui_MainWindow(object):
         self.menuDevice.addSeparator()
         self.menuDevice.addAction(self.download_locations_fit_action)
         self.menuDevice.addAction(self.upload_locations_fit_action)
+        self.toolBar.addAction(self.import_file_action)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.add_wpt_action)
+        self.toolBar.addAction(self.delete_wpt_action)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.download_locations_fit_action)
+        self.toolBar.addAction(self.upload_locations_fit_action)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.save_gpx_action)
+        self.toolBar.addAction(self.save_locations_fit_action)
 
         self.retranslateUi(MainWindow)
         self.toggle_debug_log_action.toggled.connect(self.log_dock.setVisible)
@@ -228,8 +261,11 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(shortcut)
         self.import_file_action.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+I", None))
 #endif // QT_CONFIG(shortcut)
-        self.download_locations_fit_action.setText(QCoreApplication.translate("MainWindow", u"Download Locations.fit", None))
-        self.upload_locations_fit_action.setText(QCoreApplication.translate("MainWindow", u"Upload Locations.fit", None))
+        self.download_locations_fit_action.setText(QCoreApplication.translate("MainWindow", u"Download", None))
+        self.upload_locations_fit_action.setText(QCoreApplication.translate("MainWindow", u"Upload", None))
+#if QT_CONFIG(tooltip)
+        self.upload_locations_fit_action.setToolTip(QCoreApplication.translate("MainWindow", u"Upload Locations.fit", None))
+#endif // QT_CONFIG(tooltip)
         self.save_gpx_action.setText(QCoreApplication.translate("MainWindow", u"Save GPX File", None))
         self.add_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.delete_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
@@ -237,5 +273,6 @@ class Ui_MainWindow(object):
         self.menuWaypoint.setTitle(QCoreApplication.translate("MainWindow", u"Waypoint", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
         self.menuDevice.setTitle(QCoreApplication.translate("MainWindow", u"Device", None))
+        self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 
