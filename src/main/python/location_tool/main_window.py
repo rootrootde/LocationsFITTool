@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import QSize, Qt, Slot
 from PySide6.QtGui import QAction, QPixmap
 from PySide6.QtWidgets import (
     QFileDialog,
@@ -26,7 +26,7 @@ from .gpx.gpx import GpxFileHandler
 from .mode_select_dialog import ModeSelectDialog
 from .ui.ui_main_window import Ui_MainWindow
 from .utils import logger
-from .utils.utils import get_resource_path
+from .utils.utils import colored_svg_icon, get_resource_path
 from .waypoints.table import WaypointTable
 
 
@@ -72,10 +72,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if isinstance(action, QAction):
                 self.addAction(action)
 
+        self.import_file_action.setIcon(
+            colored_svg_icon(self.appctxt, "ui_icons/file_open.svg", QSize(48, 48))
+        )
+        self.save_file_action.setIcon(
+            colored_svg_icon(self.appctxt, "ui_icons/file_save.svg", QSize(48, 48))
+        )
+
+        self.toggle_debug_log_action.setIcon(
+            colored_svg_icon(self.appctxt, "ui_icons/terminal.svg", QSize(48, 48))
+        )
+        self.scan_for_devices_action.setIcon(
+            colored_svg_icon(self.appctxt, "ui_icons/devices_wearables.svg", QSize(48, 48))
+        )
+        self.download_locations_fit_action.setIcon(
+            colored_svg_icon(self.appctxt, "ui_icons/mobile_arrow_down.svg", QSize(48, 48))
+        )
+        self.upload_locations_fit_action.setIcon(
+            colored_svg_icon(self.appctxt, "ui_icons/mobile_arrow_up.svg", QSize(48, 48))
+        )
+
+        self.add_wpt_btn.setIcon(
+            colored_svg_icon(self.appctxt, "ui_icons/add_location.svg", QSize(48, 48))
+        )
+
+        self.delete_wpt_btn.setIcon(
+            colored_svg_icon(self.appctxt, "ui_icons/remove_location.svg", QSize(48, 48))
+        )
+
         # Connect actions to slots
         self.import_file_action.triggered.connect(self.slot_import_file)
-        self.save_locations_fit_action.triggered.connect(lambda: self.slot_save_file("fit"))
-        self.save_gpx_action.triggered.connect(lambda: self.slot_save_file("gpx"))
+        # self.save_locations_fit_action.triggered.connect(lambda: self.slot_save_file("fit"))
+        # self.save_gpx_action.triggered.connect(lambda: self.slot_save_file("gpx"))
+        self.save_file_action.triggered.connect(self.slot_save_file)
         self.add_wpt_action.triggered.connect(self.waypoint_table.slot_add_waypoint)
         self.delete_wpt_action.triggered.connect(self.waypoint_table.slot_delete_selected_waypoints)
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
@@ -213,10 +242,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Use a temporary file for the upload
         with tempfile.NamedTemporaryFile(delete=False, suffix=".fit") as temp_file:
             temp_file_path = Path(temp_file.name)
-        self._save_locations_fit(str(temp_file_path))
+        self._save_locations_fit(self.waypoint_table.waypoints, str(temp_file_path))
 
         def on_done():
-            self.logger.log("Upload finished.")
+            QMessageBox.information(
+                self,
+                "Upload Successful",
+                f"File {temp_file_path} uploaded successfully to {temp_file_path}",
+            )
             self.mtp_device_manager.start_scanning()
             try:
                 temp_file_path.unlink()
@@ -236,27 +269,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
     @Slot(str)
-    def slot_save_file(self, file_type: str) -> None:
-        if file_type == "fit":
-            self._save_locations_fit()
-        elif file_type == "gpx":
-            self._save_gpx()
-        else:
-            QMessageBox.warning(self, "Unsupported File Type", "Please select a valid file type.")
-
-    def _save_locations_fit(self, file_path=None) -> None:
+    def slot_save_file(self) -> None:
         current_waypoints = self.waypoint_table.waypoints
         if not current_waypoints:
             QMessageBox.information(self, "No Data", "There are no waypoints to save.")
             return
-        if not file_path:
-            file_path, _ = QFileDialog.getSaveFileName(
-                self, "Save Locations.fit File", "", "FIT Files (*.fit)"
-            )
-            if not file_path:
-                QMessageBox.warning(self, "No Path", "Please select a save path.")
-                return
 
+        # Allow user to choose either .fit or .gpx file
+        file_path, selected_filter = QFileDialog.getSaveFileName(
+            self, "Save Locations File", "", "FIT Files (*.fit);;GPX Files (*.gpx)"
+        )
+        if not file_path:
+            QMessageBox.warning(self, "No Path", "Please select a save path.")
+            return
+
+        # Determine file type based on extension or selected filter
+        if file_path.endswith(".fit") or "FIT" in selected_filter:
+            self._save_locations_fit(current_waypoints, file_path)
+        elif file_path.endswith(".gpx") or "GPX" in selected_filter:
+            self._save_gpx(current_waypoints, file_path)
+        else:
+            QMessageBox.warning(self, "Unsupported File Type", "Please select a valid file type.")
+
+    def _save_locations_fit(self, current_waypoints, file_path) -> None:
         mode_str = ModeSelectDialog.get_mode(self)
         if not mode_str:
             QMessageBox.warning(self, "No Mode", "Please select a save mode.")
@@ -297,12 +332,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.error(f"Failed to save FIT file: {e}")
             QMessageBox.critical(self, "Save Error", f"Could not save FIT file: {e}")
 
-    def _save_gpx(self) -> None:
-        current_waypoints = self.waypoint_table.waypoints
-        if not current_waypoints:
-            QMessageBox.information(self, "No Data", "There are no waypoints to save.")
-            return
-
+    def _save_gpx(self, current_waypoints, file_path) -> None:
         file_path, _ = QFileDialog.getSaveFileName(self, "Save GPX File", "", "GPX Files (*.gpx)")
         if not file_path:
             QMessageBox.warning(self, "No Path", "Please select a save path.")
@@ -343,6 +373,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         icon_path = get_resource_path(self.appctxt, "ui_icons/connected.png")
         msg = f"Device found: {device_info['manufacturer']} {device_info['model']}"
         self._set_status_icon_message(icon_path, msg)
+        self.download_locations_fit_action.setEnabled(True)
+        self.upload_locations_fit_action.setEnabled(True)
 
     @Slot(str)
     def slot_device_error(self, error: str) -> None:
@@ -353,6 +385,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         icon_path = get_resource_path(self.appctxt, "ui_icons/disconnected.png")
         msg = "No MTP device found"
         self._set_status_icon_message(icon_path, msg)
+        self.download_locations_fit_action.setEnabled(False)
+        self.upload_locations_fit_action.setEnabled(False)
 
     @Slot(bool)
     def slot_toggle_device_scan(self, checked: bool) -> None:

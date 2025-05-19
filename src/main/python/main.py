@@ -30,7 +30,7 @@ if __name__ == "__main__":
         app = appctxt.app
     else:
         app = QApplication(sys.argv)
-        qdarktheme.setup_theme("auto", corner_shape="sharp")
+        qdarktheme.setup_theme("light")
 
         appctxt = None
 
