@@ -9,7 +9,7 @@ from PySide6.QtSvg import QSvgRenderer
 _BASE_PATH: Path = Path(__file__).resolve().parent
 
 
-def colored_svg_icon(appctxt, svg_path, size, color=None):
+def colored_icon(appctxt, svg_path, size, color=None):
     if color is None:
         # Use application palette's text color
         color = QGuiApplication.palette().color(QPalette.Text)

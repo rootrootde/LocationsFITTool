@@ -26,7 +26,7 @@ from .gpx.gpx import GpxFileHandler
 from .mode_select_dialog import ModeSelectDialog
 from .ui.ui_main_window import Ui_MainWindow
 from .utils import logger
-from .utils.utils import colored_svg_icon, get_resource_path
+from .utils.utils import colored_icon, get_resource_path
 from .waypoints.table import WaypointTable
 
 
@@ -66,44 +66,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mtp_device_manager.device_found.connect(self.slot_device_found)
         self.mtp_device_manager.device_error.connect(self.slot_device_error)
 
+    def _init_icons(self):
+        s = QSize(48, 48)
+        self.import_file_action.setIcon(
+            colored_icon(self.appctxt, "ui_icons/file_open.svg", s),
+        )
+        self.save_file_action.setIcon(
+            colored_icon(self.appctxt, "ui_icons/file_save.svg", s),
+        )
+
+        self.toggle_debug_log_action.setIcon(colored_icon(self.appctxt, "ui_icons/terminal.svg", s))
+        self.scan_for_devices_action.setIcon(
+            colored_icon(self.appctxt, "ui_icons/devices_wearables.svg", s)
+        )
+        self.download_locations_fit_action.setIcon(
+            colored_icon(self.appctxt, "ui_icons/mobile_arrow_down.svg", s)
+        )
+        self.upload_locations_fit_action.setIcon(
+            colored_icon(self.appctxt, "ui_icons/mobile_arrow_up.svg", s)
+        )
+
+        self.add_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/add_location.svg", s))
+
+        self.delete_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/remove_location.svg", s))
+
     def _init_actions(self):
         # Add all actions to the main window to enable shortcuts
         for action in self.findChildren(QAction):
             if isinstance(action, QAction):
                 self.addAction(action)
 
-        self.import_file_action.setIcon(
-            colored_svg_icon(self.appctxt, "ui_icons/file_open.svg", QSize(48, 48))
-        )
-        self.save_file_action.setIcon(
-            colored_svg_icon(self.appctxt, "ui_icons/file_save.svg", QSize(48, 48))
-        )
-
-        self.toggle_debug_log_action.setIcon(
-            colored_svg_icon(self.appctxt, "ui_icons/terminal.svg", QSize(48, 48))
-        )
-        self.scan_for_devices_action.setIcon(
-            colored_svg_icon(self.appctxt, "ui_icons/devices_wearables.svg", QSize(48, 48))
-        )
-        self.download_locations_fit_action.setIcon(
-            colored_svg_icon(self.appctxt, "ui_icons/mobile_arrow_down.svg", QSize(48, 48))
-        )
-        self.upload_locations_fit_action.setIcon(
-            colored_svg_icon(self.appctxt, "ui_icons/mobile_arrow_up.svg", QSize(48, 48))
-        )
-
-        self.add_wpt_btn.setIcon(
-            colored_svg_icon(self.appctxt, "ui_icons/add_location.svg", QSize(48, 48))
-        )
-
-        self.delete_wpt_btn.setIcon(
-            colored_svg_icon(self.appctxt, "ui_icons/remove_location.svg", QSize(48, 48))
-        )
-
         # Connect actions to slots
         self.import_file_action.triggered.connect(self.slot_import_file)
-        # self.save_locations_fit_action.triggered.connect(lambda: self.slot_save_file("fit"))
-        # self.save_gpx_action.triggered.connect(lambda: self.slot_save_file("gpx"))
         self.save_file_action.triggered.connect(self.slot_save_file)
         self.add_wpt_action.triggered.connect(self.waypoint_table.slot_add_waypoint)
         self.delete_wpt_action.triggered.connect(self.waypoint_table.slot_delete_selected_waypoints)
