@@ -38,9 +38,8 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QHeaderView::section {\n"
-"\n"
-"\n"
-"padding: 4px;\n"
+"padding-left: 8px;\n"
+"padding-right: 8px;\n"
 "}")
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
         self.add_wpt_action = QAction(MainWindow)
@@ -109,13 +108,13 @@ class Ui_MainWindow(object):
 
         self.delete_wpt_btn = QToolButton(self.waypoint_group_box)
         self.delete_wpt_btn.setObjectName(u"delete_wpt_btn")
-        self.delete_wpt_btn.setIconSize(QSize(24, 24))
+        self.delete_wpt_btn.setIconSize(QSize(16, 16))
 
         self.horizontalLayout.addWidget(self.delete_wpt_btn)
 
         self.add_wpt_btn = QToolButton(self.waypoint_group_box)
         self.add_wpt_btn.setObjectName(u"add_wpt_btn")
-        self.add_wpt_btn.setIconSize(QSize(24, 24))
+        self.add_wpt_btn.setIconSize(QSize(16, 16))
 
         self.horizontalLayout.addWidget(self.add_wpt_btn)
 
@@ -176,8 +175,8 @@ class Ui_MainWindow(object):
         self.menuDevice.addSeparator()
         self.menuDevice.addAction(self.download_locations_fit_action)
         self.menuDevice.addAction(self.upload_locations_fit_action)
-        self.toolBar.addAction(self.save_file_action)
         self.toolBar.addAction(self.import_file_action)
+        self.toolBar.addAction(self.save_file_action)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.add_wpt_action)
         self.toolBar.addAction(self.delete_wpt_action)

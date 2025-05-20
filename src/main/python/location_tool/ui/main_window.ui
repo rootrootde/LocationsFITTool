@@ -24,9 +24,8 @@ QTextEdit {
 }
 
 QHeaderView::section {
-
-
-padding: 4px;
+padding-left: 8px;
+padding-right: 8px;
 }</string>
   </property>
   <property name="dockOptions">
@@ -121,8 +120,8 @@ padding: 4px;
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>16</width>
+             <height>16</height>
             </size>
            </property>
           </widget>
@@ -134,8 +133,8 @@ padding: 4px;
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>16</width>
+             <height>16</height>
             </size>
            </property>
           </widget>
@@ -230,8 +229,8 @@ padding: 4px;
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="save_file_action"/>
    <addaction name="import_file_action"/>
+   <addaction name="save_file_action"/>
    <addaction name="separator"/>
    <addaction name="add_wpt_action"/>
    <addaction name="delete_wpt_action"/>

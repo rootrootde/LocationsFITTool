@@ -79,10 +79,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def _init_icons(self):
         s = QSize(48, 48)
         self.import_file_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/file_open.svg", s),
+            colored_icon(self.appctxt, "ui_icons/folder_open.svg", s),
         )
         self.save_file_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/save.svg", s),
+            colored_icon(self.appctxt, "ui_icons/file_save.svg", s),
         )
 
         self.toggle_debug_log_action.setIcon(colored_icon(self.appctxt, "ui_icons/terminal.svg", s))
@@ -96,8 +96,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             colored_icon(self.appctxt, "ui_icons/mobile_arrow_up.svg", s)
         )
 
-        self.add_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/add_2.svg", s))
-        self.delete_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/remove_2.svg", s))
+        self.add_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/add_2.svg", QSize(16, 16)))
+        self.delete_wpt_btn.setIcon(
+            colored_icon(self.appctxt, "ui_icons/remove_2.svg", QSize(16, 16))
+        )
         self.add_wpt_action.setIcon(colored_icon(self.appctxt, "ui_icons/add_location.svg", s))
         self.delete_wpt_action.setIcon(
             colored_icon(self.appctxt, "ui_icons/remove_location.svg", s)
