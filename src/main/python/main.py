@@ -4,6 +4,8 @@ import os
 import platform
 import sys
 
+import qdarktheme
+
 # Add the ui_layouts directory to sys.path so import resources_rc works in generated UI files
 ui_layouts_path = os.path.join(os.path.dirname(__file__), "location_tool", "ui")
 if ui_layouts_path not in sys.path:
@@ -28,6 +30,8 @@ if __name__ == "__main__":
         app = appctxt.app
     else:
         app = QApplication(sys.argv)
+        qdarktheme.setup_theme("light")
+
         appctxt = None
 
     # Force light mode on macOS

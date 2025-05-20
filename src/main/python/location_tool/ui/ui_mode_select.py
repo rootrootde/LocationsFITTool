@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QDialog, QGridLayout, QLabel,
     QLayout, QSizePolicy, QToolButton, QWidget)
-import resources_rc
+from . import resources_rc
 
 class Ui_mode_select_dialog(object):
     def setupUi(self, mode_select_dialog):
@@ -46,7 +46,11 @@ class Ui_mode_select_dialog(object):
         sizePolicy.setHeightForWidth(self.mode_replace_btn.sizePolicy().hasHeightForWidth())
         self.mode_replace_btn.setSizePolicy(sizePolicy)
         icon = QIcon()
-        icon.addFile(u":/ui_icons/ui_icons/svg/replace.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
+        if QIcon.hasThemeIcon(QIcon.ThemeIcon.ViewRefresh):
+            icon = QIcon.fromTheme(QIcon.ThemeIcon.ViewRefresh)
+        else:
+            icon.addFile(u":/ui_icons/ui_icons/svg/replace.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
+
         self.mode_replace_btn.setIcon(icon)
         self.mode_replace_btn.setIconSize(QSize(64, 64))
         self.mode_replace_btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
@@ -83,29 +87,37 @@ class Ui_mode_select_dialog(object):
 
         self.gridLayout.addWidget(self.mode_add_lbl, 1, 0, 1, 1)
 
-        self.mode_add_btn = QToolButton(mode_select_dialog)
-        self.mode_add_btn.setObjectName(u"mode_add_btn")
-        sizePolicy.setHeightForWidth(self.mode_add_btn.sizePolicy().hasHeightForWidth())
-        self.mode_add_btn.setSizePolicy(sizePolicy)
-        icon1 = QIcon()
-        icon1.addFile(u":/ui_icons/ui_icons/svg/add.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
-        self.mode_add_btn.setIcon(icon1)
-        self.mode_add_btn.setIconSize(QSize(64, 64))
-        self.mode_add_btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-
-        self.gridLayout.addWidget(self.mode_add_btn, 0, 0, 1, 1)
-
         self.mode_delete_all_btn = QToolButton(mode_select_dialog)
         self.mode_delete_all_btn.setObjectName(u"mode_delete_all_btn")
         sizePolicy.setHeightForWidth(self.mode_delete_all_btn.sizePolicy().hasHeightForWidth())
         self.mode_delete_all_btn.setSizePolicy(sizePolicy)
-        icon2 = QIcon()
-        icon2.addFile(u":/ui_icons/ui_icons/svg/delete.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
-        self.mode_delete_all_btn.setIcon(icon2)
+        icon1 = QIcon()
+        if QIcon.hasThemeIcon(QIcon.ThemeIcon.EditClear):
+            icon1 = QIcon.fromTheme(QIcon.ThemeIcon.EditClear)
+        else:
+            icon1.addFile(u":/ui_icons/ui_icons/svg/delete.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
+
+        self.mode_delete_all_btn.setIcon(icon1)
         self.mode_delete_all_btn.setIconSize(QSize(64, 64))
         self.mode_delete_all_btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
 
         self.gridLayout.addWidget(self.mode_delete_all_btn, 0, 2, 1, 1)
+
+        self.mode_add_btn = QToolButton(mode_select_dialog)
+        self.mode_add_btn.setObjectName(u"mode_add_btn")
+        sizePolicy.setHeightForWidth(self.mode_add_btn.sizePolicy().hasHeightForWidth())
+        self.mode_add_btn.setSizePolicy(sizePolicy)
+        icon2 = QIcon()
+        if QIcon.hasThemeIcon(QIcon.ThemeIcon.ListAdd):
+            icon2 = QIcon.fromTheme(QIcon.ThemeIcon.ListAdd)
+        else:
+            icon2.addFile(u":/ui_icons/ui_icons/svg/add.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
+
+        self.mode_add_btn.setIcon(icon2)
+        self.mode_add_btn.setIconSize(QSize(64, 64))
+        self.mode_add_btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+
+        self.gridLayout.addWidget(self.mode_add_btn, 0, 0, 1, 1)
 
 
         self.retranslateUi(mode_select_dialog)
@@ -119,7 +131,7 @@ class Ui_mode_select_dialog(object):
         self.mode_delete_all_lbl.setText(QCoreApplication.translate("mode_select_dialog", u"Delete all waypoints on device.", None))
         self.mode_replace_lbl.setText(QCoreApplication.translate("mode_select_dialog", u"Delete all Waypoints on device and replace them with the new waypoints.", None))
         self.mode_add_lbl.setText(QCoreApplication.translate("mode_select_dialog", u"Add new waypoints to the existing ones on the device.", None))
-        self.mode_add_btn.setText(QCoreApplication.translate("mode_select_dialog", u"Add", None))
         self.mode_delete_all_btn.setText(QCoreApplication.translate("mode_select_dialog", u"Delete All", None))
+        self.mode_add_btn.setText(QCoreApplication.translate("mode_select_dialog", u"Add", None))
     # retranslateUi
 

@@ -64,11 +64,11 @@ class MTPDeviceManager(QObject):
         self.scan_timer.setInterval(3000)
         self.scan_timer.timeout.connect(self.check_device)
         self.scanning = False
-        self.start_scanning()
-        self.check_device()
+        # self.start_scanning()
 
     def start_scanning(self):
         if not self.scanning:
+            self.check_device()
             self.scan_timer.start()
             self.scanning = True
 

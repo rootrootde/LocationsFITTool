@@ -1,8 +1,32 @@
 from pathlib import Path
-from typing import Any, Optional  # Added Any, Callable
+from typing import Any, Optional
+
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor, QGuiApplication, QIcon, QPainter, QPalette, QPixmap
+from PySide6.QtSvg import QSvgRenderer
 
 # This _BASE_PATH will be the directory of utils.py, i.e., .../location_tool/
 _BASE_PATH: Path = Path(__file__).resolve().parent
+
+
+def colored_icon(appctxt, svg_path, size, color=None):
+    if color is None:
+        # Use application palette's text color
+        color = QGuiApplication.palette().color(QPalette.Text)
+
+    abs_path = get_resource_path(appctxt, svg_path)
+
+    renderer = QSvgRenderer(abs_path)
+    pixmap = QPixmap(size)
+    pixmap.fill(Qt.transparent)
+
+    painter = QPainter(pixmap)
+    renderer.render(painter)
+    painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
+    painter.fillRect(pixmap.rect(), QColor(color))
+    painter.end()
+
+    return QIcon(pixmap)
 
 
 def get_resource_path(
