@@ -16,3 +16,5 @@ fbs/
 
 *.sh
 *.gpg
+
+src/build/settings/secret.json
