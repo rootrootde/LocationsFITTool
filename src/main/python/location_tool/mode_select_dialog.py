@@ -1,15 +1,20 @@
 from PySide6.QtWidgets import QDialog
 
 from .ui.ui_mode_select import Ui_mode_select_dialog
+from .utils.utils import colored_icon
 
 
 class ModeSelectDialog(QDialog, Ui_mode_select_dialog):
-    def __init__(self, parent=None):
+    def __init__(self, appctxt, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.mode_add_btn.setIcon(self.colored_icon("icons/add.svg", 32, "green"))
-        self.mode_replace_btn.setIcon(self.colored_icon("icons/replace.svg", 32, "blue"))
-        self.mode_delete_all_btn.setIcon(self.colored_icon("icons/delete.svg", 32, "red"))
+        self.appctxt = appctxt
+        self.mode_add_btn.setIcon(colored_icon(self.appctxt, "ui_icons/add_2.svg", (64, 64)))
+        self.mode_replace_btn.setIcon(colored_icon(self.appctxt, "ui_icons/refresh.svg", (64, 64)))
+
+        self.mode_delete_all_btn.setIcon(
+            colored_icon(self.appctxt, "ui_icons/remove_2.svg", (64, 64))
+        )
         self._result = None
 
         self.mode_add_btn.clicked.connect(lambda: self._select("ADD"))
@@ -21,8 +26,8 @@ class ModeSelectDialog(QDialog, Ui_mode_select_dialog):
         self.accept()
 
     @staticmethod
-    def get_mode(parent=None):
-        dialog = ModeSelectDialog(parent)
+    def get_mode(appctxt, parent=None):
+        dialog = ModeSelectDialog(appctxt, parent)
         if dialog.exec() == QDialog.Accepted:
             return dialog._result
         return None

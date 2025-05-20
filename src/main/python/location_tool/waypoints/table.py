@@ -283,7 +283,7 @@ class SymbolDelegate(QStyledItemDelegate):
 
 
 class WaypointTable(QWidget):
-    def __init__(self, waypoint_table: QTableWidget, parent: QWidget, appctxt: Any) -> None:
+    def __init__(self, appctxt: Any, waypoint_table: QTableWidget, parent: QWidget) -> None:
         super().__init__(parent)
         self.waypoint_table: QTableWidget = waypoint_table
         self.parent_widget: QWidget = parent

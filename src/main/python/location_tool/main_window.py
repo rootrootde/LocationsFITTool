@@ -3,16 +3,9 @@ from pathlib import Path
 from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
-from PySide6.QtCore import QSize, Qt, Slot
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction, QPixmap
-from PySide6.QtWidgets import (
-    QFileDialog,
-    QHBoxLayout,
-    QLabel,
-    QMainWindow,
-    QMessageBox,
-    QWidget,
-)
+from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QWidget
 
 from .device.mtp import MTPDeviceManager
 from .fit.fit import FitFileHandler
@@ -36,82 +29,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.appctxt = appctxt
-        self._init_logger()  # Initialize logger first
+        self.logger = logger.Logger.get_logger(self.log_textedit)
 
         # Initialize core application state and handlers
-        self._init_internal_state()
-        self._init_file_handlers()
+        self.current_file_path: Optional[str] = None
+
+        # Initialize file handlers
+        self.fit_handler = FitFileHandler(self.appctxt)
+        self.gpx_handler = GpxFileHandler(self.appctxt)
+
+        # Initialize MTP device management
+        self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
 
         # Initialize UI elements and their specific configurations
-        self._configure_ui_elements()
+        self.waypoint_table = WaypointTable(self.appctxt, self.waypoint_table, self)
+        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
+
+        self._set_icons()
 
         # Initialize actions and connect signals
         self._setup_actions_and_connections()
 
-        # Initialize MTP device management
-        self._init_mtp_manager()
-
         # Set initial UI states that depend on actions or other setup
-        self._set_initial_ui_states()
+        self.scan_for_devices_action.setChecked(True)
+        self.log_dock.setVisible(False)
+        self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
 
         self.logger.log("Application started.")
 
-    def _init_logger(self):
-        self.logger = logger.Logger.get_logger(self.log_textedit)
+    def _set_icons(self):
+        icon_mapping = {
+            "import_file_action": ("ui_icons/folder_open.svg", (48, 48)),
+            "save_file_action": ("ui_icons/file_save.svg", (48, 48)),
+            "toggle_debug_log_action": ("ui_icons/terminal.svg", (48, 48)),
+            "scan_for_devices_action": ("ui_icons/devices_wearables.svg", (48, 48)),
+            "download_locations_fit_action": ("ui_icons/mobile_arrow_down.svg", (48, 48)),
+            "upload_locations_fit_action": ("ui_icons/mobile_arrow_up.svg", (48, 48)),
+            "add_wpt_btn": ("ui_icons/add_2.svg", (16, 16)),
+            "delete_wpt_btn": ("ui_icons/remove_2.svg", (16, 16)),
+            "add_wpt_action": ("ui_icons/add_location.svg", (48, 48)),
+            "delete_wpt_action": ("ui_icons/remove_location.svg", (48, 48)),
+        }
 
-    def _init_internal_state(self):
-        """Initializes core internal state variables."""
-        self.device_connected: Optional[bool] = None
-        self.loaded_location_settings: Optional[FitLocationSettingsEnum] = None
-        self.current_file_path: Optional[str] = None
-
-    def _init_file_handlers(self):
-        """Initializes file handlers for FIT and GPX files."""
-        self.fit_handler = FitFileHandler(self.appctxt)
-        self.gpx_handler = GpxFileHandler(self.appctxt)
-
-    def _configure_ui_elements(self):
-        """Configures various UI elements like icons, tables, and docks."""
-        self._init_icons()
-        self._init_waypoint_table()
-        self._configure_log_dock()
-
-    def _init_icons(self):
-        s = QSize(48, 48)
-        self.import_file_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/folder_open.svg", s),
-        )
-        self.save_file_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/file_save.svg", s),
-        )
-
-        self.toggle_debug_log_action.setIcon(colored_icon(self.appctxt, "ui_icons/terminal.svg", s))
-        self.scan_for_devices_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/devices_wearables.svg", s)
-        )
-        self.download_locations_fit_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/mobile_arrow_down.svg", s)
-        )
-        self.upload_locations_fit_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/mobile_arrow_up.svg", s)
-        )
-
-        self.add_wpt_btn.setIcon(colored_icon(self.appctxt, "ui_icons/add_2.svg", QSize(16, 16)))
-        self.delete_wpt_btn.setIcon(
-            colored_icon(self.appctxt, "ui_icons/remove_2.svg", QSize(16, 16))
-        )
-        self.add_wpt_action.setIcon(colored_icon(self.appctxt, "ui_icons/add_location.svg", s))
-        self.delete_wpt_action.setIcon(
-            colored_icon(self.appctxt, "ui_icons/remove_location.svg", s)
-        )
-
-    def _init_waypoint_table(self):
-        """Initializes the waypoint table."""
-        self.waypoint_table = WaypointTable(self.waypoint_table, self, self.appctxt)
-
-    def _configure_log_dock(self):
-        """Configures the properties of the log dock."""
-        self.resizeDocks([self.log_dock], [150], Qt.Vertical)
+        for action_name, (icon_path, size) in icon_mapping.items():
+            action = getattr(self, action_name, None)
+            if action:
+                action.setIcon(colored_icon(self.appctxt, icon_path, size))
 
     def _setup_actions_and_connections(self):
         """Sets up QActions, adds them to the window, and connects their signals."""
@@ -131,17 +94,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_locations_fit_action.triggered.connect(self.download_locations_fit)
         self.upload_locations_fit_action.triggered.connect(self.upload_locations_fit)
 
-    def _init_mtp_manager(self):
-        """Initializes the MTP device manager and connects its signals."""
-        self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
         self.mtp_device_manager.device_found.connect(self.slot_device_found)
         self.mtp_device_manager.device_error.connect(self.slot_device_error)
-
-    def _set_initial_ui_states(self):
-        """Sets the initial states for various UI elements."""
-        self.scan_for_devices_action.setChecked(True)
-        self.log_dock.setVisible(False)
-        self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
 
     @Slot()
     def slot_import_file(self) -> None:
@@ -229,7 +183,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def download_locations_fit(self) -> None:
         self.logger.log("Downloading locations from FIT file.")
 
-        if self.device_connected is False:
+        if self.mtp_device_manager.device_connected is False:
             QMessageBox.critical(self, "No Device", "No MTP device connected.")
             return
         # Temporarily stop scanning
@@ -259,21 +213,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def upload_locations_fit(self) -> None:
         self.logger.log("Uploading locations to FIT file.")
 
-        if self.device_connected is False:
+        # Set the target path for the upload
+        target_path = "Garmin/NewFiles/"
+
+        if self.mtp_device_manager.device_connected is False:
             QMessageBox.critical(self, "No Device", "No MTP device connected.")
             return
         self.mtp_device_manager.stop_scanning()
         # Use a temporary file for the upload
         with tempfile.NamedTemporaryFile(delete=False, suffix=".fit") as temp_file:
             temp_file_path = Path(temp_file.name)
-        self._save_locations_fit(self.waypoint_table.waypoints, str(temp_file_path))
+        success = self._save_locations_fit(self.waypoint_table.waypoints, str(temp_file_path))
+        if not success:
+            return
 
         def on_done():
-            QMessageBox.information(
-                self,
-                "Upload Successful",
-                f"File {temp_file_path} uploaded successfully to {temp_file_path}",
-            )
+            QMessageBox.information(self, "Upload Successful", "Please disconnect device now.")
+            self.logger.log(f"File {temp_file_path} uploaded successfully to {target_path}")
             self.mtp_device_manager.start_scanning()
             try:
                 temp_file_path.unlink()
@@ -288,9 +244,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             except Exception as e:
                 self.logger.warning(f"Could not remove temp file: {e}")
 
-        self.mtp_device_manager.start_upload(
-            str(temp_file_path), "Garmin/NewFiles/", on_done, on_error
-        )
+        self.mtp_device_manager.start_upload(str(temp_file_path), target_path, on_done, on_error)
 
     @Slot(str)
     def slot_save_file(self) -> None:
@@ -316,10 +270,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, "Unsupported File Type", "Please select a valid file type.")
 
     def _save_locations_fit(self, current_waypoints, file_path) -> None:
-        mode_str = ModeSelectDialog.get_mode(self)
+        mode_str = ModeSelectDialog.get_mode(self.appctxt, parent=self)
         if not mode_str:
             QMessageBox.warning(self, "No Mode", "Please select a save mode.")
-            return
+            return False
         else:
             mode_enum = FitLocationSettingsEnum[mode_str]
 
@@ -382,9 +336,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(dict)
     def slot_device_found(self, device_info: dict) -> None:
-        if self.device_connected is True:
+        if self.mtp_device_manager.device_connected is True:
             return  # No change, already connected
-        self.device_connected = True
+        self.mtp_device_manager.device_connected = True
         self.logger.log(f"Device found: {device_info['manufacturer']} {device_info['model']}")
         icon_path = get_resource_path(self.appctxt, "ui_icons/connected.png")
         msg = f"Device found: {device_info['manufacturer']} {device_info['model']}"
@@ -394,9 +348,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(str)
     def slot_device_error(self, error: str) -> None:
-        if self.device_connected is False:
+        if self.mtp_device_manager.device_connected is False:
             return  # No change, already disconnected
-        self.device_connected = False
+        self.mtp_device_manager.device_connected = False
         self.logger.error(f"Device error: {error}")
         icon_path = get_resource_path(self.appctxt, "ui_icons/disconnected.png")
         msg = "No MTP device found"

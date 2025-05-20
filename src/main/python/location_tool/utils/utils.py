@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Optional
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QColor, QGuiApplication, QIcon, QPainter, QPalette, QPixmap
 from PySide6.QtSvg import QSvgRenderer
 
@@ -9,7 +9,7 @@ from PySide6.QtSvg import QSvgRenderer
 _BASE_PATH: Path = Path(__file__).resolve().parent
 
 
-def colored_icon(appctxt, svg_path, size, color=None):
+def colored_icon(appctxt, svg_path, size: tuple, color=None):
     if color is None:
         # Use application palette's text color
         color = QGuiApplication.palette().color(QPalette.Text)
@@ -17,7 +17,7 @@ def colored_icon(appctxt, svg_path, size, color=None):
     abs_path = get_resource_path(appctxt, svg_path)
 
     renderer = QSvgRenderer(abs_path)
-    pixmap = QPixmap(size)
+    pixmap = QPixmap(QSize(size[0], size[1]))
     pixmap.fill(Qt.transparent)
 
     painter = QPainter(pixmap)
