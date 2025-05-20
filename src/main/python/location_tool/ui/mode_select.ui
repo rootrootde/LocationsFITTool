@@ -57,7 +57,7 @@ font-size: 14pt;
       <string>Replace</string>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset theme="QIcon::ThemeIcon::ViewRefresh">
        <normalon>:/ui_icons/ui_icons/svg/replace.svg</normalon>
       </iconset>
      </property>
@@ -129,8 +129,8 @@ font-size: 14pt;
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QToolButton" name="mode_add_btn">
+   <item row="0" column="2">
+    <widget class="QToolButton" name="mode_delete_all_btn">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
@@ -138,11 +138,11 @@ font-size: 14pt;
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Add</string>
+      <string>Delete All</string>
      </property>
      <property name="icon">
-      <iconset>
-       <normalon>:/ui_icons/ui_icons/svg/add.svg</normalon>
+      <iconset theme="QIcon::ThemeIcon::EditClear">
+       <normalon>:/ui_icons/ui_icons/svg/delete.svg</normalon>
       </iconset>
      </property>
      <property name="iconSize">
@@ -156,8 +156,8 @@ font-size: 14pt;
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QToolButton" name="mode_delete_all_btn">
+   <item row="0" column="0">
+    <widget class="QToolButton" name="mode_add_btn">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
@@ -165,11 +165,11 @@ font-size: 14pt;
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Delete All</string>
+      <string>Add</string>
      </property>
      <property name="icon">
-      <iconset>
-       <normalon>:/ui_icons/ui_icons/svg/delete.svg</normalon>
+      <iconset theme="QIcon::ThemeIcon::ListAdd">
+       <normalon>:/ui_icons/ui_icons/svg/add.svg</normalon>
       </iconset>
      </property>
      <property name="iconSize">

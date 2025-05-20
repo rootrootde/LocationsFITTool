@@ -34,7 +34,6 @@ class FitFileHandler:
     def __init__(self, appctxt):
         self.appctxt = appctxt
         self.logger = logger.Logger.get_logger()
-        self.logger.log("FitFileHandler initialized.")
 
     # Parse Logic
 

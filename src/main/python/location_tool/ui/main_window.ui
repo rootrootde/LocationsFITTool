@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>615</height>
+    <width>789</width>
+    <height>577</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,21 +15,18 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{
-font-family:sans-serif;
-font-size: 12pt;
+	font: 13pt &quot;SF Pro&quot;;
 }
 
 QTextEdit {
-font-family: monospace;
+	font: 11pt &quot;SF Mono&quot;;
 
+}
 
+QHeaderView::section {
+padding-left: 8px;
+padding-right: 8px;
 }</string>
-  </property>
-  <property name="iconSize">
-   <size>
-    <width>48</width>
-    <height>48</height>
-   </size>
   </property>
   <property name="dockOptions">
    <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
@@ -62,6 +59,12 @@ font-family: monospace;
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="showGrid">
           <bool>false</bool>
          </property>
@@ -74,9 +77,6 @@ font-family: monospace;
          <attribute name="horizontalHeaderVisible">
           <bool>true</bool>
          </attribute>
-         <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>100</number>
-         </attribute>
          <attribute name="horizontalHeaderHighlightSections">
           <bool>false</bool>
          </attribute>
@@ -84,10 +84,10 @@ font-family: monospace;
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
-          <number>24</number>
+          <number>40</number>
          </attribute>
          <column/>
          <column/>
@@ -101,7 +101,7 @@ font-family: monospace;
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <spacer name="horizontalSpacer_2">
+          <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -114,42 +114,27 @@ font-family: monospace;
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="add_wpt_btn">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QToolButton" name="delete_wpt_btn">
            <property name="text">
-            <string>Add</string>
+            <string>...</string>
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>16</width>
+             <height>16</height>
             </size>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="delete_wpt_btn">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::LeftToRight</enum>
-           </property>
+          <widget class="QToolButton" name="add_wpt_btn">
            <property name="text">
-            <string>Delete</string>
+            <string>...</string>
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>16</width>
+             <height>16</height>
             </size>
            </property>
           </widget>
@@ -187,7 +172,7 @@ font-family: monospace;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>789</width>
      <height>24</height>
     </rect>
    </property>
@@ -197,8 +182,7 @@ font-family: monospace;
     </property>
     <addaction name="import_file_action"/>
     <addaction name="separator"/>
-    <addaction name="save_locations_fit_action"/>
-    <addaction name="save_gpx_action"/>
+    <addaction name="save_file_action"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuWaypoint">
@@ -228,45 +212,46 @@ font-family: monospace;
    <addaction name="menuDevice"/>
    <addaction name="menuView"/>
   </widget>
-  <widget class="QStatusBar" name="status_bar">
-   <property name="sizeGripEnabled">
+  <widget class="QStatusBar" name="status_bar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>48</width>
+     <height>48</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
     <bool>false</bool>
-   </property>
+   </attribute>
+   <addaction name="import_file_action"/>
+   <addaction name="save_file_action"/>
+   <addaction name="separator"/>
+   <addaction name="add_wpt_action"/>
+   <addaction name="delete_wpt_action"/>
+   <addaction name="separator"/>
+   <addaction name="scan_for_devices_action"/>
+   <addaction name="download_locations_fit_action"/>
+   <addaction name="upload_locations_fit_action"/>
+   <addaction name="separator"/>
   </widget>
-  <action name="save_locations_fit_action">
-   <property name="text">
-    <string>Save Locations.fit</string>
-   </property>
-   <property name="toolTip">
-    <string>Save Waypoints to new Locations.fit file</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
   <action name="add_wpt_action">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/ui_icons/ui_icons/circle-plus-solid.png</normaloff>:/ui_icons/ui_icons/circle-plus-solid.png</iconset>
-   </property>
    <property name="text">
     <string>Add Waypoint</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl++</string>
+    <string>Ctrl+N</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="delete_wpt_action">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/ui_icons/ui_icons/circle-minus-solid.png</normaloff>:/ui_icons/ui_icons/circle-minus-solid.png</iconset>
-   </property>
    <property name="text">
     <string>Delete Waypoint</string>
    </property>
@@ -285,7 +270,7 @@ font-family: monospace;
     <string>Toggle Debug Log</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+D</string>
+    <string>Ctrl+Shift+L</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -299,7 +284,7 @@ font-family: monospace;
     <string>Scan For Devices</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+C</string>
+    <string>Ctrl+Shift+S</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -310,31 +295,46 @@ font-family: monospace;
     <string>Import File</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+I</string>
+    <string>Ctrl+O</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="download_locations_fit_action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>Download Locations.fit</string>
+    <string>Download</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="upload_locations_fit_action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
+    <string>Upload</string>
+   </property>
+   <property name="toolTip">
     <string>Upload Locations.fit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+U</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
-  <action name="save_gpx_action">
+  <action name="save_file_action">
    <property name="text">
-    <string>Save GPX File</string>
+    <string>Save File</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -368,8 +368,8 @@ font-family: monospace;
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>658</x>
-     <y>319</y>
+     <x>762</x>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -384,8 +384,8 @@ font-family: monospace;
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>734</x>
-     <y>319</y>
+     <x>728</x>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
