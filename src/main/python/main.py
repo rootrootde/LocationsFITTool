@@ -4,12 +4,10 @@ import os
 import platform
 import sys
 
-import qdarktheme
-
 # Add the ui_layouts directory to sys.path so import resources_rc works in generated UI files
-ui_layouts_path = os.path.join(os.path.dirname(__file__), "location_tool", "ui")
-if ui_layouts_path not in sys.path:
-    sys.path.insert(0, ui_layouts_path)
+# ui_layouts_path = os.path.join(os.path.dirname(__file__), "location_tool", "ui")
+# if ui_layouts_path not in sys.path:
+#     sys.path.insert(0, ui_layouts_path)
 
 try:
     from fbs_runtime.application_context.PySide6 import ApplicationContext
@@ -22,7 +20,7 @@ except ImportError:
 
 from location_tool.main_window import MainWindow
 
-FORCE_LIGHT_MODE = False
+FORCE_LIGHT_MODE = True
 
 if __name__ == "__main__":
     if USE_FBS:
@@ -30,7 +28,6 @@ if __name__ == "__main__":
         app = appctxt.app
     else:
         app = QApplication(sys.argv)
-        qdarktheme.setup_theme("light")
 
         appctxt = None
 

@@ -2,5 +2,7 @@
     "app_name": "LocationsFITTool",
     "author": "rootrootde",
     "main_module": "src/main/python/main.py",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "gpg_key": "B6E88DCA79C9481E07D9A16F1F1E63F7937CBBD7",
+    "gpg_name": "rootrootde"
 }

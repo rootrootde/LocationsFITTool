@@ -3,8 +3,8 @@ name = "locationsfittool"
 version = "0.1.0"
 requires-python = ">=3.9"
 dependencies = [
+    "fbs",
     "gpxpy>=1.6.2",
-    "pyqtdarktheme>=2.1.0",
     "pyside6>=6.8.0",
 ]
 
@@ -17,3 +17,6 @@ genprofile = [
 
 [tool.ruff]
 line-length = 100
+
+[tool.uv.sources]
+fbs = { path = "fbs-1.2.7.tar.gz" }
