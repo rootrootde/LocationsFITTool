@@ -1,27 +1,33 @@
 # LocationsFITTool
 
+## Table of Contents
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Modes](#modes)
+- [License](#license)
+- [Third-party components](#third-party-components)
+
+## Overview
+
 LocationsFITTool is a desktop app for managing "Favorite Locations" (Locations.fit) on certain Garmin GPS devices.
 
 It allows you to 
-- import waypoints from the Locations.fit file on your device (app cannot manage the file transfer itself)
-- import waypoints from GPX files (experimental)
-- manually add, edit or delete waypoints
-
-and create a new Locations-type FIT file that can be copied to your device to update the internal Locations.fit file.
-
-## ⚠️ Important Notes ⚠️
-- This app **cannot directly edit** the Locations.fit file in `Garmin/Locations`. In Fact, on the Edge Explore 2, the file seems to be read-only.
-- Instead, it creates a new Locations-type FIT file that you can copy to your device (Garmin/NewFiles). The device will process it on next startup.
-- I only tested this on a Garmin Edge Explore 2, it _should_ work on other devices since it follows the FIT protocol, but I can't guarantee it.
-Proceed at your own risk. This might corrupt your device data, brick it or set your house on fire. I don't know.
-
+- **Directly download `Locations.fit`** from your connected Garmin device.
+- Import waypoints from local `Locations.fit` or GPX files.
+- Manually add, edit, or delete waypoints (including detailed descriptions and map symbols).
+- **Directly upload** the generated FIT file to your device's `Garmin/NewFiles` directory.
+- Save the waypoints to a local Locations-type FIT or GPX file.
 
 ## Requirements
+
 - Python 3.9+
 - [PySide6](https://pypi.org/project/PySide6/)
 - [gpxpy](https://pypi.org/project/gpxpy/)
+- [`libusb`](https://github.com/libusb/libusb) (especially for Linux/macOS for MTP device access)
 
-⚠️ Currently only tested on macOS 15.4.1.
+⚠️ This tool is primarily designed for **Linux and macOS**. It has been tested on macOS 15.4.1. Windows is not officially supported, and MTP functionality may vary significantly or not work.
 
 ## Setup
 
@@ -41,7 +47,7 @@ uv sync
 ```sh
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements/base.txt
 ```
 
 ## Usage
@@ -56,17 +62,32 @@ uv run src/main/python/main.py
 python src/main/python/main.py
 ```
 
-2. Import Waypoints from Locations.fit or GPX files (optional)
+2. **Connect your Garmin device.** The app will attempt to automatically detect it via MTP. The status bar will indicate the connection status.
 
-3. Review and edit the waypoints
+3. **Download from Device (Recommended for existing locations):**
+   - Click the "Download" button/action.
+   - This will fetch `Garmin/Locations/Locations.fit` from your device and load the waypoints into the table.
 
-4. Select the mode (ADD, REPLACE, DELETE_ALL, see below)
+4. **Import from File (Optional):**
+   - Use "File > Import" or the import button to load waypoints from a local `.fit` or `.gpx` file. Waypoints will be appended to the current list.
 
-5. Save waypoints to a Locations-type FIT file
+5. **Manage Waypoints:**
+   - Review the waypoints in the table.
+   - Manually add new waypoints.
+   - Edit existing waypoints by double-clicking cells (including name, coordinates, altitude, timestamp, symbol, and description).
+   - Delete selected waypoints.
 
-6. Copy the new Locations.fit file to the NewFiles directory of your device (Garmin/NewFiles)
+6. **Upload to Device:**
+   - Click the "Upload" button/action.
+   - You will be prompted to select a mode (ADD, REPLACE, DELETE_ALL - see below).
+   - The app will generate a new FIT file based on the current waypoints and the selected mode, then upload it to `Garmin/NewFiles/` on your device.
 
-7. Disconnect the device and restart it. The internal Locations.fit file will be updated.
+7. **Save to File (Optional):**
+   - Use "File > Save" or the save button to save the current waypoints to a local `.fit` or `.gpx` file. You will be prompted for the mode if saving as FIT.
+
+8. **Finalize on Device:**
+   - Disconnect your Garmin device.
+   - Restart the device. It will process the file from `Garmin/NewFiles` and update its internal `Locations.fit`.
 
 ## Modes
 - **ADD**: Add new waypoints to the existing ones on the device.
