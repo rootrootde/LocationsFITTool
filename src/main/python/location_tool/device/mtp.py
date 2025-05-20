@@ -57,7 +57,7 @@ class MTPDeviceManager(QObject):
     def __init__(self, appctxt, parent=None):
         super().__init__(parent)
         self.appctxt = appctxt
-        self.device_connected = False
+        self.device_connected = None
         self.worker = None  # For device-info scanning
         self.download_worker = None
         self.upload_worker = None
