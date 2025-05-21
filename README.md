@@ -1,6 +1,5 @@
 # LocationsFITTool
 
-## Table of Contents
 - [Overview](#overview)
 - [Requirements](#requirements)
 - [Setup](#setup)
@@ -27,7 +26,7 @@ It allows you to
 - [gpxpy](https://pypi.org/project/gpxpy/)
 - [`libusb`](https://github.com/libusb/libusb) (especially for Linux/macOS for MTP device access)
 
-⚠️ This tool is primarily designed for **Linux and macOS**. It has been tested on macOS 15.4.1. Windows is not officially supported, and MTP functionality may vary significantly or not work.
+⚠️ This tool is primarily designed for **Linux and macOS**. It has only been tested extensively on macOS. Windows is not officially supported, and MTP functionality may not work.
 
 ## Setup
 

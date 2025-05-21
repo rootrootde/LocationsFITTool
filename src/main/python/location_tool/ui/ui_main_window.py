@@ -158,7 +158,7 @@ class Ui_MainWindow(object):
         self.toolBar = QToolBar(MainWindow)
         self.toolBar.setObjectName(u"toolBar")
         self.toolBar.setIconSize(QSize(48, 48))
-        MainWindow.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.toolBar)
+        MainWindow.addToolBar(Qt.ToolBarArea.LeftToolBarArea, self.toolBar)
 
         self.menuBar.addAction(self.menuFile.menuAction())
         self.menuBar.addAction(self.menuWaypoint.menuAction())
@@ -181,7 +181,6 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.add_wpt_action)
         self.toolBar.addAction(self.delete_wpt_action)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.scan_for_devices_action)
         self.toolBar.addAction(self.download_locations_fit_action)
         self.toolBar.addAction(self.upload_locations_fit_action)
         self.toolBar.addSeparator()
