@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-import platform
 import sys
-
-# Add the ui_layouts directory to sys.path so import resources_rc works in generated UI files
-# ui_layouts_path = os.path.join(os.path.dirname(__file__), "location_tool", "ui")
-# if ui_layouts_path not in sys.path:
-#     sys.path.insert(0, ui_layouts_path)
 
 try:
     from fbs_runtime.application_context.PySide6 import ApplicationContext
@@ -19,8 +12,7 @@ except ImportError:
     USE_FBS = False
 
 from location_tool.main_window import MainWindow
-
-FORCE_LIGHT_MODE = True
+from qt_material import export_theme
 
 if __name__ == "__main__":
     if USE_FBS:
@@ -28,21 +20,36 @@ if __name__ == "__main__":
         app = appctxt.app
     else:
         app = QApplication(sys.argv)
-
         appctxt = None
 
-    # Force light mode on macOS
-    if FORCE_LIGHT_MODE:
-        if platform.system() == "Darwin":
-            try:
-                from AppKit import NSApp, NSAppearance
-
-                appearance = NSAppearance.appearanceNamed_("NSAppearanceNameAqua")
-                NSApp.setAppearance_(appearance)
-            except Exception as e:
-                print(f"Failed to force light mode: {e}")
-
     try:
+        extra = {
+            # Button colors
+            "danger": "#dc3545",
+            "warning": "#ffc107",
+            "success": "#17a2b8",
+            # Font
+            "font_family": "SF Pro",
+            "font_size": "13px",
+            "line_height": "13px",
+            # Density Scale
+            "density_scale": "-1",
+            # Environment hints
+            "pyside6": True,
+            # 'linux': True,
+            "darwin": True,
+        }
+
+        export_theme(
+            theme="light_blue_500.xml",
+            qss="light_blue_500.qss",
+            rcc="resources.rcc",
+            output="theme",
+            prefix=":/icon/theme/",
+            invert_secondary=True,
+            extra=extra,
+        )
+
         window = MainWindow(appctxt)
         window.show()
     except Exception as e:

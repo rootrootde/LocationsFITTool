@@ -9,12 +9,7 @@ class ModeSelectDialog(QDialog, Ui_mode_select_dialog):
         super().__init__(parent)
         self.setupUi(self)
         self.appctxt = appctxt
-        self.mode_add_btn.setIcon(colored_icon(self.appctxt, "ui_icons/add_2.svg", (64, 64)))
-        self.mode_replace_btn.setIcon(colored_icon(self.appctxt, "ui_icons/refresh.svg", (64, 64)))
-
-        self.mode_delete_all_btn.setIcon(
-            colored_icon(self.appctxt, "ui_icons/remove_2.svg", (64, 64))
-        )
+        # self.mode_add_btn.setI
         self._result = None
 
         self.mode_add_btn.clicked.connect(lambda: self._select("ADD"))

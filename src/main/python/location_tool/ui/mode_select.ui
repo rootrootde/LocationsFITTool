@@ -17,14 +17,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QToolButton {
-font-size: 18pt;
-
-}
-
-QLabel {
-font-size: 14pt;
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="sizeConstraint">
@@ -45,39 +38,12 @@ font-size: 14pt;
    <property name="spacing">
     <number>30</number>
    </property>
-   <item row="0" column="1">
-    <widget class="QToolButton" name="mode_replace_btn">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Replace</string>
-     </property>
-     <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::ViewRefresh">
-       <normalon>:/ui_icons/ui_icons/svg/replace.svg</normalon>
-      </iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>64</width>
-       <height>64</height>
-      </size>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="2">
     <widget class="QLabel" name="mode_delete_all_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>1</horstretch>
-       <verstretch>1</verstretch>
+       <verstretch>2</verstretch>
       </sizepolicy>
      </property>
      <property name="text">
@@ -96,7 +62,7 @@ font-size: 14pt;
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>1</horstretch>
-       <verstretch>1</verstretch>
+       <verstretch>2</verstretch>
       </sizepolicy>
      </property>
      <property name="text">
@@ -115,7 +81,7 @@ font-size: 14pt;
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>1</horstretch>
-       <verstretch>1</verstretch>
+       <verstretch>2</verstretch>
       </sizepolicy>
      </property>
      <property name="text">
@@ -129,48 +95,35 @@ font-size: 14pt;
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QToolButton" name="mode_delete_all_btn">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Delete All</string>
-     </property>
-     <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::EditClear">
-       <normalon>:/ui_icons/ui_icons/svg/delete.svg</normalon>
-      </iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>64</width>
-       <height>64</height>
-      </size>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
-    <widget class="QToolButton" name="mode_add_btn">
+    <widget class="QPushButton" name="mode_add_btn">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
      </property>
      <property name="text">
       <string>Add</string>
      </property>
-     <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::ListAdd">
-       <normalon>:/ui_icons/ui_icons/svg/add.svg</normalon>
-      </iconset>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="mode_replace_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Replace</string>
      </property>
      <property name="iconSize">
       <size>
@@ -178,8 +131,24 @@ font-size: 14pt;
        <height>64</height>
       </size>
      </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="mode_delete_all_btn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Delete All</string>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
    </item>

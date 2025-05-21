@@ -19,7 +19,7 @@ from .gpx.gpx import GpxFileHandler
 from .mode_select_dialog import ModeSelectDialog
 from .ui.ui_main_window import Ui_MainWindow
 from .utils import logger
-from .utils.utils import colored_icon, get_resource_path
+from .utils.utils import get_resource_path
 from .waypoints.table import WaypointTable
 
 
@@ -45,8 +45,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.waypoint_table = WaypointTable(self.appctxt, self.waypoint_table, self)
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
-        self._set_icons()
-
         # Initialize actions and connect signals
         self._setup_actions_and_connections()
 
@@ -56,25 +54,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
 
         self.logger.log("Application started.")
-
-    def _set_icons(self):
-        icon_mapping = {
-            "import_file_action": ("ui_icons/folder_open.svg", (48, 48)),
-            "save_file_action": ("ui_icons/file_save.svg", (48, 48)),
-            "toggle_debug_log_action": ("ui_icons/terminal.svg", (48, 48)),
-            "scan_for_devices_action": ("ui_icons/devices_wearables.svg", (48, 48)),
-            "download_locations_fit_action": ("ui_icons/download.svg", (48, 48)),
-            "upload_locations_fit_action": ("ui_icons/upload.svg", (48, 48)),
-            "add_wpt_btn": ("ui_icons/add_2.svg", (16, 16)),
-            "delete_wpt_btn": ("ui_icons/remove_2.svg", (16, 16)),
-            "add_wpt_action": ("ui_icons/add_location.svg", (48, 48)),
-            "delete_wpt_action": ("ui_icons/remove_location.svg", (48, 48)),
-        }
-
-        for action_name, (icon_path, size) in icon_mapping.items():
-            action = getattr(self, action_name, None)
-            if action:
-                action.setIcon(colored_icon(self.appctxt, icon_path, size))
 
     def _setup_actions_and_connections(self):
         """Sets up QActions, adds them to the window, and connects their signals."""
@@ -153,31 +132,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.logger.error(f"Failed to import GPX file: {e}")
             QMessageBox.critical(self, "Import Error", f"Could not import GPX file: {e}")
-
-    def _set_status_icon_message(self, icon_path, message):
-        # Remove previous status widget if exists
-        if hasattr(self, "_status_widget") and self._status_widget:
-            self.status_bar.removeWidget(self._status_widget)
-        # Create a container widget
-        status_widget = QWidget()
-        layout = QHBoxLayout()
-        layout.setContentsMargins(8, 4, 0, 4)
-        status_widget.setLayout(layout)
-        # Icon
-        icon_label = QLabel()
-        pixmap = QPixmap(icon_path)
-        icon_label.setPixmap(pixmap.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        # Text
-        text_label = QLabel(message)
-        text_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        # Add to layout
-        layout.addWidget(icon_label)
-        layout.addWidget(text_label)
-        layout.addStretch()
-        # Add to status bar
-        self.status_bar.addWidget(status_widget)
-        self._status_widget = status_widget
-        self.status_bar.showMessage("")
 
     @Slot()
     def download_locations_fit(self) -> None:
@@ -340,9 +294,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return  # No change, already connected
         self.mtp_device_manager.device_connected = True
         self.logger.log(f"Device found: {device_info['manufacturer']} {device_info['model']}")
-        icon_path = get_resource_path(self.appctxt, "ui_icons/connected.png")
         msg = f"Device found: {device_info['manufacturer']} {device_info['model']}"
-        self._set_status_icon_message(icon_path, msg)
+        self.status_bar.showMessage(msg)
         self.download_locations_fit_action.setEnabled(True)
         self.upload_locations_fit_action.setEnabled(True)
 
@@ -352,9 +305,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return  # No change, already disconnected
         self.mtp_device_manager.device_connected = False
         self.logger.error(f"Device error: {error}")
-        icon_path = get_resource_path(self.appctxt, "ui_icons/disconnected.png")
         msg = "No MTP device found"
-        self._set_status_icon_message(icon_path, msg)
+        self.status_bar.showMessage(msg)
         self.download_locations_fit_action.setEnabled(False)
         self.upload_locations_fit_action.setEnabled(False)
 
