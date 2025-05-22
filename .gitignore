@@ -18,3 +18,4 @@ fbs/
 *.gpg
 
 src/build/settings/secret.json
+uv.lock
