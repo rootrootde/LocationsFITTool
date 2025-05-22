@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog
 
 from .ui.ui_mode_select import Ui_mode_select_dialog
-from .utils.utils import colored_icon
+from .utils import colored_icon
 
 
 class ModeSelectDialog(QDialog, Ui_mode_select_dialog):

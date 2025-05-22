@@ -4,23 +4,23 @@ from typing import Any, List, Optional
 
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtGui import QAction, QPixmap
-from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QWidget
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QFileDialog, QMainWindow, QMessageBox, QWidget
 
-from .device.mtp import MTPDeviceManager
-from .fit.fit import FitFileHandler
-from .fit.fit_data import (
+from .fit import FitFileHandler
+from .fit_data import (
     FileCreatorMessageData,
     FileIdMessageData,
     LocationSettingsMessageData,
     LocationsFitFileData,
 )
-from .gpx.gpx import GpxFileHandler
+from .gpx import GpxFileHandler
+from .logger import Logger
 from .mode_select_dialog import ModeSelectDialog
+from .mtp import MTPDeviceManager
 from .ui.ui_main_window import Ui_MainWindow
-from .utils import logger
-from .utils.utils import get_resource_path
-from .waypoints.table import WaypointTable
+from .utils import colored_icon
+from .waypoints import WaypointTable
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -29,7 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.appctxt = appctxt
-        self.logger = logger.Logger.get_logger(self.log_textedit)
+        self.logger = Logger.get_logger(self.log_textedit)
 
         # Initialize core application state and handlers
         self.current_file_path: Optional[str] = None
@@ -78,6 +78,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.mtp_device_manager.device_found.connect(self.slot_device_found)
         self.mtp_device_manager.device_error.connect(self.slot_device_error)
+
+        testicon = colored_icon(self.appctxt, "ui_icons/download.svg", (48, 48), "#7f7f7f")
+
+        self.import_file_action.setIcon(testicon)
 
     @Slot()
     def slot_import_file(self) -> None:

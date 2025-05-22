@@ -12,7 +12,7 @@ except ImportError:
     USE_FBS = False
 
 from location_tool.main_window import MainWindow
-from qt_material import export_theme
+from location_tool.utils import get_resource_path, is_dark_mode
 
 if __name__ == "__main__":
     if USE_FBS:
@@ -23,32 +23,11 @@ if __name__ == "__main__":
         appctxt = None
 
     try:
-        extra = {
-            # Button colors
-            "danger": "#dc3545",
-            "warning": "#ffc107",
-            "success": "#17a2b8",
-            # Font
-            "font_family": "SF Pro",
-            "font_size": "13px",
-            "line_height": "13px",
-            # Density Scale
-            "density_scale": "-1",
-            # Environment hints
-            "pyside6": True,
-            # 'linux': True,
-            "darwin": True,
-        }
-
-        export_theme(
-            theme="light_blue_500.xml",
-            qss="light_blue_500.qss",
-            rcc="resources.rcc",
-            output="theme",
-            prefix=":/icon/theme/",
-            invert_secondary=True,
-            extra=extra,
-        )
+        # Load stylesheet
+        if is_dark_mode():
+            stylesheet = get_resource_path(appctxt, "theme.qss")
+            with open(stylesheet, "r") as file:
+                app.setStyleSheet(file.read())
 
         window = MainWindow(appctxt)
         window.show()
