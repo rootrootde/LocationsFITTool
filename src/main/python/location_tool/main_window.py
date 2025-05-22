@@ -73,6 +73,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_locations_fit_action.triggered.connect(self.download_locations_fit)
         self.upload_locations_fit_action.triggered.connect(self.upload_locations_fit)
 
+        self.add_wpt_btn.clicked.connect(self.add_wpt_action.trigger)
+        self.delete_wpt_btn.clicked.connect(self.delete_wpt_action.trigger)
+
         self.mtp_device_manager.device_found.connect(self.slot_device_found)
         self.mtp_device_manager.device_error.connect(self.slot_device_error)
 

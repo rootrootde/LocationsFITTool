@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>912</width>
-    <height>701</height>
+    <width>1046</width>
+    <height>708</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1499,115 +1499,96 @@ QCheckBox::indicator:focus {
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <widget class="QStackedWidget" name="stackedWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="stackedWidgetPage1">
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QTableWidget" name="waypoint_table">
+        <property name="editTriggers">
+         <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed|QAbstractItemView::EditTrigger::SelectedClicked</set>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="showGrid">
+         <bool>false</bool>
+        </property>
+        <property name="cornerButtonEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="columnCount">
+         <number>7</number>
+        </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderHighlightSections">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>40</number>
+        </attribute>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QTableWidget" name="waypoint_table">
-          <property name="editTriggers">
-           <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed|QAbstractItemView::EditTrigger::SelectedClicked</set>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-          </property>
-          <property name="iconSize">
+          <property name="sizeHint" stdset="0">
            <size>
-            <width>24</width>
-            <height>24</height>
+            <width>40</width>
+            <height>20</height>
            </size>
           </property>
-          <property name="showGrid">
-           <bool>false</bool>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="delete_wpt_btn">
+          <property name="text">
+           <string>-</string>
           </property>
-          <property name="cornerButtonEnabled">
-           <bool>false</bool>
+          <property name="icon">
+           <iconset>
+            <normalon>:/gis/gis/minus.svg</normalon>
+           </iconset>
           </property>
-          <property name="columnCount">
-           <number>7</number>
-          </property>
-          <attribute name="horizontalHeaderVisible">
-           <bool>true</bool>
-          </attribute>
-          <attribute name="horizontalHeaderHighlightSections">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="horizontalHeaderStretchLastSection">
-           <bool>true</bool>
-          </attribute>
-          <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="verticalHeaderMinimumSectionSize">
-           <number>40</number>
-          </attribute>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QToolButton" name="delete_wpt_btn">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="add_wpt_btn">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QToolButton" name="add_wpt_btn">
+          <property name="text">
+           <string>+</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normalon>:/gis/gis/plus.svg</normalon>
+           </iconset>
+          </property>
+         </widget>
         </item>
        </layout>
-      </widget>
-      <widget class="QWidget" name="stackedWidgetPage2"/>
-     </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="waypoint_group_box" native="true">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>-1</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-      </layout>
-     </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -1637,8 +1618,8 @@ QCheckBox::indicator:focus {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>912</width>
-     <height>24</height>
+     <width>1046</width>
+     <height>37</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1682,24 +1663,23 @@ QCheckBox::indicator:focus {
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
-   <property name="iconSize">
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
-   </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="show_waypoints_action"/>
+   <addaction name="import_file_action"/>
+   <addaction name="save_file_action"/>
+   <addaction name="separator"/>
+   <addaction name="download_locations_fit_action"/>
+   <addaction name="upload_locations_fit_action"/>
   </widget>
   <action name="add_wpt_action">
+   <property name="icon">
+    <iconset resource="../../../resources/base/resources.qrc">
+     <normaloff>:/gis/gis/plus.svg</normaloff>:/gis/gis/plus.svg</iconset>
+   </property>
    <property name="text">
     <string>Add Waypoint</string>
    </property>
@@ -1750,6 +1730,10 @@ QCheckBox::indicator:focus {
    </property>
   </action>
   <action name="import_file_action">
+   <property name="icon">
+    <iconset resource="../../../resources/base/resources.qrc">
+     <normaloff>:/gis/gis/import_locations.svg</normaloff>:/gis/gis/import_locations.svg</iconset>
+   </property>
    <property name="text">
     <string>Import File</string>
    </property>
@@ -1763,6 +1747,10 @@ QCheckBox::indicator:focus {
   <action name="download_locations_fit_action">
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resources/base/resources.qrc">
+     <normaloff>:/gis/gis/download.svg</normaloff>:/gis/gis/download.svg</iconset>
    </property>
    <property name="text">
     <string>Download</string>
@@ -1778,6 +1766,10 @@ QCheckBox::indicator:focus {
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../../../resources/base/resources.qrc">
+     <normaloff>:/gis/gis/upload_device.svg</normaloff>:/gis/gis/upload_device.svg</iconset>
+   </property>
    <property name="text">
     <string>Upload</string>
    </property>
@@ -1792,23 +1784,12 @@ QCheckBox::indicator:focus {
    </property>
   </action>
   <action name="save_file_action">
-   <property name="text">
-    <string>Save File</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
-  <action name="show_waypoints_action">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="icon">
     <iconset resource="../../../resources/base/resources.qrc">
-     <normaloff>:/gis/gis/location.svg</normaloff>:/gis/gis/location.svg</iconset>
+     <normaloff>:/gis/gis/save_file.svg</normaloff>:/gis/gis/save_file.svg</iconset>
    </property>
    <property name="text">
-    <string>WAYPOINTS</string>
+    <string>Save File</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

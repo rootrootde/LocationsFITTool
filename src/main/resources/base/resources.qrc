@@ -65,7 +65,17 @@
     <file>icons/navaid_white_red.png</file>
   </qresource>
   <qresource prefix="gis">
+    <file>gis/minus.svg</file>
+    <file>gis/plus.svg</file>
+    <file>gis/save_file.svg</file>
+    <file>gis/bla.svg</file>
+    <file>gis/download.svg</file>
+    <file>gis/import_locations.svg</file>
     <file>gis/location.svg</file>
+    <file>gis/pois-o.svg</file>
+    <file>gis/POIS.svg</file>
+    <file>gis/upload_device.svg</file>
+    <file>gis/upload.svg</file>
   </qresource>
   <qresource prefix="icon">
     <file>theme/primary/checkbox_checked.svg</file>
