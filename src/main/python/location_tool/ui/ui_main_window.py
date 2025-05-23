@@ -27,20 +27,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(789, 577)
-        MainWindow.setStyleSheet(u"QMainWindow{\n"
-"	font: 13pt \"SF Pro\";\n"
-"}\n"
-"\n"
-"QTextEdit {\n"
-"	font: 11pt \"SF Mono\";\n"
-"\n"
-"}\n"
-"\n"
-"QHeaderView::section {\n"
-"padding-left: 8px;\n"
-"padding-right: 8px;\n"
-"}")
+        MainWindow.resize(1046, 708)
+        MainWindow.setStyleSheet(u"")
         MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
         self.add_wpt_action = QAction(MainWindow)
         self.add_wpt_action.setObjectName(u"add_wpt_action")
@@ -74,15 +62,9 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout_3 = QVBoxLayout(self.centralwidget)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.waypoint_group_box = QWidget(self.centralwidget)
-        self.waypoint_group_box.setObjectName(u"waypoint_group_box")
-        self.verticalLayout_2 = QVBoxLayout(self.waypoint_group_box)
-#ifndef Q_OS_MAC
-        self.verticalLayout_2.setSpacing(-1)
-#endif
+        self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.waypoint_table = QTableWidget(self.waypoint_group_box)
+        self.waypoint_table = QTableWidget(self.centralwidget)
         if (self.waypoint_table.columnCount() < 7):
             self.waypoint_table.setColumnCount(7)
         self.waypoint_table.setObjectName(u"waypoint_table")
@@ -106,15 +88,13 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
-        self.delete_wpt_btn = QToolButton(self.waypoint_group_box)
+        self.delete_wpt_btn = QToolButton(self.centralwidget)
         self.delete_wpt_btn.setObjectName(u"delete_wpt_btn")
-        self.delete_wpt_btn.setIconSize(QSize(16, 16))
 
         self.horizontalLayout.addWidget(self.delete_wpt_btn)
 
-        self.add_wpt_btn = QToolButton(self.waypoint_group_box)
+        self.add_wpt_btn = QToolButton(self.centralwidget)
         self.add_wpt_btn.setObjectName(u"add_wpt_btn")
-        self.add_wpt_btn.setIconSize(QSize(16, 16))
 
         self.horizontalLayout.addWidget(self.add_wpt_btn)
 
@@ -122,12 +102,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout)
 
 
-        self.verticalLayout_3.addWidget(self.waypoint_group_box)
+        self.verticalLayout_3.addLayout(self.verticalLayout_2)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.log_dock = QDockWidget(MainWindow)
         self.log_dock.setObjectName(u"log_dock")
         self.log_dock.setEnabled(True)
+        self.log_dock.setFeatures(QDockWidget.DockWidgetFeature.NoDockWidgetFeatures)
         self.log_dock_contents = QWidget()
         self.log_dock_contents.setObjectName(u"log_dock_contents")
         self.log_dock_contents.setMinimumSize(QSize(0, 100))
@@ -142,7 +123,7 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.log_dock)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 789, 24))
+        self.menuBar.setGeometry(QRect(0, 0, 1046, 37))
         self.menuFile = QMenu(self.menuBar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuWaypoint = QMenu(self.menuBar)
@@ -157,7 +138,13 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.status_bar)
         self.toolBar = QToolBar(MainWindow)
         self.toolBar.setObjectName(u"toolBar")
-        self.toolBar.setIconSize(QSize(48, 48))
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.toolBar.sizePolicy().hasHeightForWidth())
+        self.toolBar.setSizePolicy(sizePolicy)
+        self.toolBar.setMovable(False)
+        self.toolBar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
         MainWindow.addToolBar(Qt.ToolBarArea.LeftToolBarArea, self.toolBar)
 
         self.menuBar.addAction(self.menuFile.menuAction())
@@ -178,17 +165,12 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.import_file_action)
         self.toolBar.addAction(self.save_file_action)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.add_wpt_action)
-        self.toolBar.addAction(self.delete_wpt_action)
-        self.toolBar.addSeparator()
         self.toolBar.addAction(self.download_locations_fit_action)
         self.toolBar.addAction(self.upload_locations_fit_action)
         self.toolBar.addSeparator()
 
         self.retranslateUi(MainWindow)
         self.toggle_debug_log_action.toggled.connect(self.log_dock.setVisible)
-        self.add_wpt_btn.clicked.connect(self.add_wpt_action.trigger)
-        self.delete_wpt_btn.clicked.connect(self.delete_wpt_action.trigger)
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
@@ -227,12 +209,12 @@ class Ui_MainWindow(object):
         self.upload_locations_fit_action.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Shift+U", None))
 #endif // QT_CONFIG(shortcut)
         self.save_file_action.setText(QCoreApplication.translate("MainWindow", u"Save File", None))
-        self.delete_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.add_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"...", None))
+        self.delete_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"-", None))
+        self.add_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"+", None))
+        self.log_dock.setWindowTitle(QCoreApplication.translate("MainWindow", u"Debug Log", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuWaypoint.setTitle(QCoreApplication.translate("MainWindow", u"Waypoint", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
         self.menuDevice.setTitle(QCoreApplication.translate("MainWindow", u"Device", None))
-        self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 
