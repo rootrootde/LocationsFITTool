@@ -74,7 +74,7 @@ class GpxFileHandler:
                     description=description,
                     latitude=gpx_wp.latitude,
                     longitude=gpx_wp.longitude,
-                    altitude=altitude,
+                    elevation=altitude,
                     timestamp=timestamp,
                     symbol=symbol_to_assign,
                     message_index=len(waypoints),
@@ -114,7 +114,7 @@ class GpxFileHandler:
                     name=wp.name,
                     latitude=wp.latitude,
                     longitude=wp.longitude,
-                    elevation=wp.altitude,
+                    elevation=wp.elevation,
                     time=wp.timestamp,
                     symbol=wp.symbol.name.lower()
                     if isinstance(wp.symbol, MapSymbol)

@@ -34,7 +34,7 @@ class WaypointData:
     name: Optional[str] = "Waypoint"
     latitude: float = 0.0
     longitude: float = 0.0
-    altitude: Optional[float] = None
+    elevation: Optional[float] = None
     timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     symbol: MapSymbol = MapSymbol.AIRPORT
     message_index: Optional[int] = None
@@ -45,7 +45,7 @@ class TableColumn(Enum):
     NAME = 0
     LATITUDE = 1
     LONGITUDE = 2
-    ALTITUDE = 3
+    ELEVATION = 3
     TIMESTAMP = 4
     SYMBOL = 5
     DESCRIPTION = 6
@@ -340,7 +340,7 @@ class WaypointTable(QWidget):
             TableColumn.LONGITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
         self.waypoint_table.setItemDelegateForColumn(
-            TableColumn.ALTITUDE.value, AltitudeDelegate(parent=self)
+            TableColumn.ELEVATION.value, AltitudeDelegate(parent=self)
         )
         self.waypoint_table.setItemDelegateForColumn(
             TableColumn.TIMESTAMP.value, DateTimeDelegate(parent=self)
@@ -385,12 +385,12 @@ class WaypointTable(QWidget):
             ),
         )
         alt_item = QTableWidgetItem()
-        if wp_data.altitude is not None:
-            alt_item.setData(Qt.EditRole, int(wp_data.altitude))
+        if wp_data.elevation is not None:
+            alt_item.setData(Qt.EditRole, int(wp_data.elevation))
         else:
             alt_item.setData(Qt.EditRole, 0)
         alt_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.waypoint_table.setItem(row_idx, TableColumn.ALTITUDE.value, alt_item)
+        self.waypoint_table.setItem(row_idx, TableColumn.ELEVATION.value, alt_item)
         ts_str: str = (
             wp_data.timestamp.strftime("%Y-%m-%d %H:%M:%S")
             if wp_data.timestamp
@@ -494,9 +494,14 @@ class WaypointTable(QWidget):
             elif column == TableColumn.LONGITUDE.value:
                 new_value = float(item.text())
                 wp_data.longitude = new_value
-            elif column == TableColumn.ALTITUDE.value:
+            elif column == TableColumn.ELEVATION.value:
                 new_value = int(item.text())
-                wp_data.altitude = new_value
+                wp_data.elevation = new_value
+                self.waypoint_table.blockSignals(True)
+                elevation_item = self.waypoint_table.item(row, TableColumn.ELEVATION.value)
+                if elevation_item:
+                    elevation_item.setText(f"{wp_data.elevation}")
+                self.waypoint_table.blockSignals(False)
             elif column == TableColumn.TIMESTAMP.value:
                 cell_widget = self.waypoint_table.cellWidget(row, column)
                 if isinstance(cell_widget, QDateTimeEdit):

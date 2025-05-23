@@ -149,7 +149,7 @@ class FitFileHandler:
                         description=getattr(msg, "description", None),
                         latitude=lat_degrees if lat_degrees is not None else 0.0,
                         longitude=lon_degrees if lon_degrees is not None else 0.0,
-                        altitude=getattr(msg, "altitude", None),
+                        elevation=getattr(msg, "altitude", None),
                         timestamp=location_datetime_object
                         if location_datetime_object
                         else datetime.now(timezone.utc),
@@ -234,8 +234,8 @@ class FitFileHandler:
         else:
             return None
 
-        if wp_data.altitude is not None:
-            loc_msg.altitude = wp_data.altitude
+        if wp_data.elevation is not None:
+            loc_msg.altitude = wp_data.elevation
 
         loc_msg.timestamp = wp_data.timestamp if wp_data.timestamp else datetime.now(timezone.utc)
 
