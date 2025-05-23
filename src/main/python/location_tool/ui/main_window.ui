@@ -109,6 +109,12 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::NoDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Debug Log</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
@@ -173,8 +179,17 @@
   </widget>
   <widget class="QStatusBar" name="status_bar"/>
   <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
@@ -187,6 +202,7 @@
    <addaction name="separator"/>
    <addaction name="download_locations_fit_action"/>
    <addaction name="upload_locations_fit_action"/>
+   <addaction name="separator"/>
   </widget>
   <action name="add_wpt_action">
    <property name="text">

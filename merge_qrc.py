@@ -1,61 +1,30 @@
-#!/usr/bin/env python3
-
-import re
 import sys
-import xml.etree.ElementTree as ET
-from collections import defaultdict
-
-THEME_QRC = "resources_theme.qrc"
-TARGET_QRC = "src/main/resources/base/resources_dist.qrc"
-OUTPUT_QRC = "src/main/resources/base/resources.qrc"
+from pathlib import Path
+from xml.etree import ElementTree as ET
 
 
-def parse_qrc(path):
-    tree = ET.parse(path)
-    root = tree.getroot()
-    return root.findall("qresource")
+def merge_qrc_files(output_file: Path, *input_files: Path):
+    ET.register_namespace("", "http://www.qt-project.org/namespace")  # Optional, clean output
+    root = ET.Element("RCC")
 
+    for input_file in input_files:
+        tree = ET.parse(input_file)
+        rcc = tree.getroot()
 
-def collect_files(qresources):
-    merged = defaultdict(set)
-    for qres in qresources:
-        prefix = qres.attrib.get("prefix", "")
-        for f in qres.findall("file"):
-            merged[prefix].add(f.text)
-    return merged
+        for qresource in rcc.findall("qresource"):
+            root.append(qresource)
 
-
-def write_merged_qrc(merged, output_path):
-    new_root = ET.Element("RCC")
-    for prefix, files in merged.items():
-        qres = ET.SubElement(new_root, "qresource", {"prefix": prefix})
-        for fname in sorted(files):
-            ET.SubElement(qres, "file").text = fname
-    tree = ET.ElementTree(new_root)
-    tree.write(output_path, encoding="unicode", xml_declaration=False)
-    print(f"✅ Merged QRC written to: {output_path}")
-
-
-def fix_image_urls_in_qss(qss_path):
-    with open(qss_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    # Fix URLs like: url(theme_icons  active/downarrow.svg)
-    content = re.sub(
-        r"url\(theme_icons\s+([^\)]+)\)", r"url(:/theme_icons/theme_icons/\1)", content
-    )
-    with open(qss_path, "w", encoding="utf-8") as f:
-        f.write(content)
-    print(f"🔧 Fixed image URLs in QSS: {qss_path}")
+    tree = ET.ElementTree(root)
+    tree.write(output_file, encoding="utf-8", xml_declaration=True)
 
 
 if __name__ == "__main__":
-    try:
-        theme_qresources = parse_qrc(THEME_QRC)
-        target_qresources = parse_qrc(TARGET_QRC)
-        all_qresources = theme_qresources + target_qresources
-        merged = collect_files(all_qresources)
-        write_merged_qrc(merged, OUTPUT_QRC)
-        fix_image_urls_in_qss("src/main/resources/base/theme.qss")
-    except Exception as e:
-        print(f"❌ Error: {e}", file=sys.stderr)
+    if len(sys.argv) < 5:
+        print("Usage: python merge_qrc.py output.qrc input1.qrc input2.qrc input3.qrc")
         sys.exit(1)
+
+    output = Path(sys.argv[1])
+    inputs = [Path(arg) for arg in sys.argv[2:]]
+
+    merge_qrc_files(output, *inputs)
+    print(f"✅ Merged QRC written to: {output}")

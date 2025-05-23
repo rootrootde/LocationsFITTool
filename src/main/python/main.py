@@ -12,7 +12,7 @@ except ImportError:
     USE_FBS = False
 
 from location_tool.main_window import MainWindow
-from location_tool.utils import get_resource_path, is_dark_mode
+from location_tool.theme import ThemeManager
 
 if __name__ == "__main__":
     if USE_FBS:
@@ -23,16 +23,16 @@ if __name__ == "__main__":
         appctxt = None
 
     try:
-        # Load stylesheet
-        if is_dark_mode():
-            stylesheet = get_resource_path(appctxt, "theme.qss")
-            with open(stylesheet, "r") as file:
-                app.setStyleSheet(file.read())
+        # Create theme manager and apply theme
+        theme_manager = ThemeManager(appctxt)
+        theme_manager.apply_theme(app)
 
-        window = MainWindow(appctxt)
+        # Create main window with theme manager
+        window = MainWindow(appctxt, theme_manager)
         window.show()
+
     except Exception as e:
-        print(f"Error initializing MainWindow: {e}")
+        print(f"Error initializing application: {e}")
         sys.exit(1)
 
     exit_code = app.exec()

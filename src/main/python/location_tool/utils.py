@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import Any, Optional
 
@@ -9,26 +10,14 @@ from PySide6.QtSvg import QSvgRenderer
 _BASE_PATH: Path = Path(__file__).resolve().parent
 
 _dark_mode = None
-
-
-def is_dark_mode() -> bool:
-    global _dark_mode
-    if _dark_mode is not None:
-        return _dark_mode
-
-    palette = QGuiApplication.palette()
-    window_color = palette.color(QPalette.Window)
-    text_color = palette.color(QPalette.Text)
-    # Simple heuristic: if window color is darker than text color, assume dark mode
-    _dark_mode = window_color.value() < text_color.value()
-    return _dark_mode
+_icon_color = None
 
 
 def colored_icon(appctxt, svg_path, size: tuple, color=None) -> QIcon:
     if color is None:
         # Use application palette's text color
-        color = QGuiApplication.palette().color(QPalette.Text)
-        print(f"Using default color for icon: {color}")
+        palette = QGuiApplication.palette()
+        color = palette.color(QPalette.Text)
 
     abs_path = get_resource_path(appctxt, svg_path)
 

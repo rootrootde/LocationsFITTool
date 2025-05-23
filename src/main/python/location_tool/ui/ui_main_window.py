@@ -108,6 +108,7 @@ class Ui_MainWindow(object):
         self.log_dock = QDockWidget(MainWindow)
         self.log_dock.setObjectName(u"log_dock")
         self.log_dock.setEnabled(True)
+        self.log_dock.setFeatures(QDockWidget.DockWidgetFeature.NoDockWidgetFeatures)
         self.log_dock_contents = QWidget()
         self.log_dock_contents.setObjectName(u"log_dock_contents")
         self.log_dock_contents.setMinimumSize(QSize(0, 100))
@@ -137,6 +138,13 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.status_bar)
         self.toolBar = QToolBar(MainWindow)
         self.toolBar.setObjectName(u"toolBar")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.toolBar.sizePolicy().hasHeightForWidth())
+        self.toolBar.setSizePolicy(sizePolicy)
+        self.toolBar.setMovable(False)
+        self.toolBar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
         MainWindow.addToolBar(Qt.ToolBarArea.LeftToolBarArea, self.toolBar)
 
         self.menuBar.addAction(self.menuFile.menuAction())
@@ -159,6 +167,7 @@ class Ui_MainWindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.download_locations_fit_action)
         self.toolBar.addAction(self.upload_locations_fit_action)
+        self.toolBar.addSeparator()
 
         self.retranslateUi(MainWindow)
         self.toggle_debug_log_action.toggled.connect(self.log_dock.setVisible)
@@ -202,10 +211,10 @@ class Ui_MainWindow(object):
         self.save_file_action.setText(QCoreApplication.translate("MainWindow", u"Save File", None))
         self.delete_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"-", None))
         self.add_wpt_btn.setText(QCoreApplication.translate("MainWindow", u"+", None))
+        self.log_dock.setWindowTitle(QCoreApplication.translate("MainWindow", u"Debug Log", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuWaypoint.setTitle(QCoreApplication.translate("MainWindow", u"Waypoint", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
         self.menuDevice.setTitle(QCoreApplication.translate("MainWindow", u"Device", None))
-        self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 

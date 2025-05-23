@@ -18,17 +18,21 @@ from .gpx import GpxFileHandler
 from .logger import Logger
 from .mode_select_dialog import ModeSelectDialog
 from .mtp import MTPDeviceManager
+from .theme import ThemeManager
 from .ui.ui_main_window import Ui_MainWindow
 from .utils import colored_icon
 from .waypoints import WaypointTable
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    def __init__(self, appctxt: Any, parent: Optional[QWidget] = None) -> None:
+    def __init__(
+        self, appctxt: Any, theme_manager: ThemeManager, parent: Optional[QWidget] = None
+    ) -> None:
         super().__init__(parent)
         self.setupUi(self)
 
         self.appctxt = appctxt
+        self.theme_manager = theme_manager
         self.logger = Logger.get_logger(self.log_textedit)
 
         # Initialize core application state and handlers
@@ -48,6 +52,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Initialize actions and connect signals
         self._setup_actions_and_connections()
 
+        # Setup icons for actions
+        self._setup_icons()
+
         # Set initial UI states that depend on actions or other setup
         self.scan_for_devices_action.setChecked(True)
         self.log_dock.setVisible(False)
@@ -56,7 +63,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.logger.log("Application started.")
 
     def _setup_actions_and_connections(self):
-        """Sets up QActions, adds them to the window, and connects their signals."""
+        """Setup actions and connections with themed icons."""
+
         # Add all actions to the main window to enable shortcuts
         for action in self.findChildren(QAction):
             if isinstance(action, QAction):
@@ -79,9 +87,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mtp_device_manager.device_found.connect(self.slot_device_found)
         self.mtp_device_manager.device_error.connect(self.slot_device_error)
 
-        testicon = colored_icon(self.appctxt, "ui_icons/download.svg", (48, 48), "#7f7f7f")
+    def _setup_icons(self):
+        # Get the primary color for icons from theme manager
+        c = self.theme_manager.primary_color
+        s = (64, 64)
 
-        self.import_file_action.setIcon(testicon)
+        self.logger.log(f"Primary color for icons: {c}")
+
+        download_icon = colored_icon(self.appctxt, "ui_icons/download.svg", s, c)
+        self.download_locations_fit_action.setIcon(download_icon)
+
+        upload_icon = colored_icon(self.appctxt, "ui_icons/upload.svg", s, c)
+        self.upload_locations_fit_action.setIcon(upload_icon)
+
+        import_icon = colored_icon(self.appctxt, "ui_icons/import_locations.svg", s, c)
+        self.import_file_action.setIcon(import_icon)
+
+        save_icon = colored_icon(self.appctxt, "ui_icons/save_file.svg", s, c)
+        self.save_file_action.setIcon(save_icon)
+
+        add_icon = colored_icon(self.appctxt, "ui_icons/plus.svg", s, c)
+        self.add_wpt_btn.setIcon(add_icon)
+
+        delete_icon = colored_icon(self.appctxt, "ui_icons/minus.svg", s, c)
+        self.delete_wpt_btn.setIcon(delete_icon)
 
     @Slot()
     def slot_import_file(self) -> None:
