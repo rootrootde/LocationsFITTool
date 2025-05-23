@@ -32,9 +32,9 @@ from .utils import get_resource_path
 @dataclass
 class WaypointData:
     name: Optional[str] = "Waypoint"
-    latitude: float = 0.0  # Degrees
-    longitude: float = 0.0  # Degrees
-    altitude: Optional[float] = None  # Meters
+    latitude: float = 0.0
+    longitude: float = 0.0
+    altitude: Optional[float] = None
     timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     symbol: MapSymbol = MapSymbol.AIRPORT
     message_index: Optional[int] = None
@@ -55,6 +55,7 @@ class DateTimeDelegate(QStyledItemDelegate):
     def createEditor(
         self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
     ) -> QDateTimeEdit:
+        """Create a QDateTimeEdit editor."""
         editor = QDateTimeEdit(parent)
         editor.setDateTime(QDateTime.currentDateTimeUtc())
         editor.setCalendarPopup(True)
@@ -62,6 +63,7 @@ class DateTimeDelegate(QStyledItemDelegate):
         return editor
 
     def setEditorData(self, editor: QDateTimeEdit, index: QModelIndex) -> None:
+        """Set editor data from model."""
         value: Any = index.model().data(index, Qt.EditRole)
         if isinstance(value, QDateTime):
             editor.setDateTime(value)
@@ -97,40 +99,45 @@ class DateTimeDelegate(QStyledItemDelegate):
                 editor.setDateTime(QDateTime.currentDateTimeUtc())
 
     def setModelData(self, editor: QDateTimeEdit, model: Any, index: QModelIndex) -> None:
+        """Set model data from editor."""
         dt: datetime = editor.dateTime().toPython().replace(tzinfo=timezone.utc)
         model.setData(index, dt.strftime("%Y-%m-%d %H:%M:%S"), Qt.EditRole)
 
     def updateEditorGeometry(
         self, editor: QDateTimeEdit, option: QStyleOptionViewItem, index: QModelIndex
     ) -> None:
+        """Update editor geometry."""
         editor.setGeometry(option.rect)
 
 
 class FloatDelegate(QStyledItemDelegate):
     def __init__(self, decimals: int = 6, parent: Optional[QWidget] = None) -> None:
+        """Initialize float delegate."""
         super().__init__(parent)
         self.decimals: int = decimals
 
     def createEditor(
         self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
     ) -> QDoubleSpinBox:
+        """Create a QDoubleSpinBox editor."""
         editor = QDoubleSpinBox(parent)
         editor.setFrame(False)
-        if index.column() == 1:  # Latitude
+        if index.column() == 1:
             editor.setDecimals(self.decimals)
             editor.setRange(-90.0, 90.0)
-        elif index.column() == 2:  # Longitude
+        elif index.column() == 2:
             editor.setDecimals(self.decimals)
             editor.setRange(-180.0, 180.0)
-        elif index.column() == 3:  # Altitude
-            editor.setDecimals(0)  # Altitude as int, no decimals
+        elif index.column() == 3:
+            editor.setDecimals(0)
             editor.setRange(-500, 9200)
         return editor
 
     def setEditorData(self, editor: QDoubleSpinBox, index: QModelIndex) -> None:
+        """Set editor data from model."""
         value: Any = index.model().data(index, Qt.EditRole)
         try:
-            if index.column() == 3:  # Altitude
+            if index.column() == 3:
                 editor.setValue(int(float(value)))
             else:
                 editor.setValue(float(value))
@@ -138,7 +145,8 @@ class FloatDelegate(QStyledItemDelegate):
             editor.setValue(0.0)
 
     def setModelData(self, editor: QDoubleSpinBox, model: Any, index: QModelIndex) -> None:
-        if index.column() == 3:  # Altitude
+        """Set model data from editor."""
+        if index.column() == 3:
             model.setData(index, str(int(editor.value())), Qt.EditRole)
         else:
             model.setData(index, f"{editor.value():.{self.decimals}f}", Qt.EditRole)
@@ -146,11 +154,13 @@ class FloatDelegate(QStyledItemDelegate):
 
 class AltitudeDelegate(QStyledItemDelegate):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
+        """Initialize altitude delegate."""
         super().__init__(parent)
 
     def createEditor(
         self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
     ) -> QDoubleSpinBox:
+        """Create a QDoubleSpinBox editor for altitude."""
         editor = QDoubleSpinBox(parent)
         editor.setDecimals(0)
         editor.setRange(-500, 9200)
@@ -158,6 +168,7 @@ class AltitudeDelegate(QStyledItemDelegate):
         return editor
 
     def setEditorData(self, editor: QDoubleSpinBox, index: QModelIndex) -> None:
+        """Set editor data from model."""
         value: Any = index.model().data(index, Qt.EditRole)
         try:
             editor.setValue(int(float(value)))
@@ -165,11 +176,13 @@ class AltitudeDelegate(QStyledItemDelegate):
             editor.setValue(0)
 
     def setModelData(self, editor: QDoubleSpinBox, model: Any, index: QModelIndex) -> None:
+        """Set model data from editor."""
         model.setData(index, str(int(editor.value())), Qt.EditRole)
 
 
 class DescriptionDialog(QDialog):
     def __init__(self, parent: Optional[QWidget] = None, initial_text: str = ""):
+        """Dialog for editing waypoint description."""
         super().__init__(parent)
         self.setWindowTitle("Edit Description")
         self.setMinimumWidth(400)
@@ -183,36 +196,40 @@ class DescriptionDialog(QDialog):
         layout.addWidget(button_box)
 
     def get_text(self) -> str:
+        """Get the edited text."""
         return self.text_edit.toPlainText()
 
 
 class DescriptionDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
-        # Prevent inline editor
+        """Prevent inline editor for description."""
         return None
 
     def editorEvent(self, event, model, option, index):
-        # Only handle double-click events
+        """Handle double-click event for description editing."""
         if event.type() == QEvent.MouseButtonDblClick:
             current_text = index.model().data(index, Qt.EditRole)
             dialog = DescriptionDialog(option.widget, initial_text=current_text or "")
             if dialog.exec() == QDialog.Accepted:
                 new_text = dialog.get_text()
                 model.setData(index, new_text, Qt.EditRole)
-            return True  # Event handled
+            return True
         return super().editorEvent(event, model, option, index)
 
     def setEditorData(self, editor, index):
-        pass  # Not used
+        """Not used for description editing."""
+        pass
 
     def setModelData(self, editor, model, index):
-        pass  # Not used
+        """Not used for description editing."""
+        pass
 
 
 class SymbolPickerDialog(QDialog):
     def __init__(
         self, parent: Optional[QWidget], appctxt: Any, current_symbol: Optional[MapSymbol] = None
     ):
+        """Dialog for picking a waypoint symbol."""
         super().__init__(parent)
         self.setWindowTitle("Select Symbol")
         self.setMinimumWidth(700)
@@ -244,23 +261,27 @@ class SymbolPickerDialog(QDialog):
         grid_layout.addWidget(button_box)
 
     def _select_symbol(self, symbol):
+        """Select a symbol and accept the dialog."""
         self.selected_symbol = symbol
         self.accept()
 
     def get_selected_symbol(self):
+        """Get the selected symbol."""
         return self.selected_symbol
 
 
 class SymbolDelegate(QStyledItemDelegate):
     def __init__(self, appctxt: Any, parent: Optional[QWidget] = None):
+        """Initialize symbol delegate."""
         super().__init__(parent)
         self.appctxt = appctxt
 
     def createEditor(self, parent, option, index):
-        # Prevent inline editor
+        """Prevent inline editor for symbol."""
         return None
 
     def editorEvent(self, event, model, option, index):
+        """Handle double-click event for symbol selection."""
         if event.type() == QEvent.MouseButtonDblClick:
             current_value = index.model().data(index, Qt.EditRole)
             try:
@@ -276,14 +297,17 @@ class SymbolDelegate(QStyledItemDelegate):
         return super().editorEvent(event, model, option, index)
 
     def setEditorData(self, editor, index):
+        """Not used for symbol editing."""
         pass
 
     def setModelData(self, editor, model, index):
+        """Not used for symbol editing."""
         pass
 
 
 class WaypointTable(QWidget):
     def __init__(self, appctxt: Any, waypoint_table: QTableWidget, parent: QWidget) -> None:
+        """Initialize the waypoint table."""
         super().__init__(parent)
         self.waypoint_table: QTableWidget = waypoint_table
         self.parent_widget: QWidget = parent
@@ -296,57 +320,55 @@ class WaypointTable(QWidget):
 
     @property
     def waypoints(self) -> List[WaypointData]:
+        """Get the list of waypoints."""
         return self._waypoints
 
     @waypoints.setter
     def waypoints(self, new_waypoints: List[WaypointData]) -> None:
+        """Set and reindex the list of waypoints."""
         self._waypoints = self.reindex_waypoints(new_waypoints)
         self.refresh_waypoint_table()
 
     def setup_waypoint_table(self) -> None:
+        """Setup the waypoint table columns and delegates."""
         headers: List[str] = [name for name in TableColumn.__members__.keys()]
         self.waypoint_table.setHorizontalHeaderLabels(headers)
-        self.waypoint_table.setItemDelegateForColumn(  # Name
+        self.waypoint_table.setItemDelegateForColumn(
             TableColumn.LATITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(  # Longitude
+        self.waypoint_table.setItemDelegateForColumn(
             TableColumn.LONGITUDE.value, FloatDelegate(decimals=6, parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(  # Altitude
+        self.waypoint_table.setItemDelegateForColumn(
             TableColumn.ALTITUDE.value, AltitudeDelegate(parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(  # Timestamp
+        self.waypoint_table.setItemDelegateForColumn(
             TableColumn.TIMESTAMP.value, DateTimeDelegate(parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(  # Symbol
+        self.waypoint_table.setItemDelegateForColumn(
             TableColumn.SYMBOL.value, SymbolDelegate(self.appctxt, parent=self)
         )
-        self.waypoint_table.setItemDelegateForColumn(  # Description
+        self.waypoint_table.setItemDelegateForColumn(
             TableColumn.DESCRIPTION.value, DescriptionDelegate(parent=self)
         )
-
         header: QHeaderView = self.waypoint_table.horizontalHeader()
         for i in range(self.waypoint_table.columnCount()):
             header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(
-            TableColumn.DESCRIPTION.value, QHeaderView.Stretch
-        )  # Description
+        header.setSectionResizeMode(TableColumn.DESCRIPTION.value, QHeaderView.Stretch)
         self.waypoint_table.horizontalHeader().setStretchLastSection(True)
         self.waypoint_table.cellChanged.connect(self.slot_waypoint_data_changed)
 
     def refresh_waypoint_table(self) -> None:
+        """Refresh the waypoint table with current data."""
         self.waypoint_table.blockSignals(True)
-        self.waypoint_table.setRowCount(0)  # Clear existing rows
+        self.waypoint_table.setRowCount(0)
         self.waypoint_table.setRowCount(len(self._waypoints))
         for row_idx, wp_data in enumerate(self._waypoints):
             self.set_table_row_from_wp_data(row_idx, wp_data)
         self.waypoint_table.blockSignals(False)
 
-    def set_table_row_from_wp_data(
-        self,
-        row_idx: int,
-        wp_data: WaypointData,
-    ) -> None:
+    def set_table_row_from_wp_data(self, row_idx: int, wp_data: WaypointData) -> None:
+        """Set a table row from waypoint data."""
         self.waypoint_table.setItem(row_idx, 0, QTableWidgetItem(wp_data.name or ""))
         self.waypoint_table.setItem(
             row_idx,
@@ -366,10 +388,9 @@ class WaypointTable(QWidget):
         if wp_data.altitude is not None:
             alt_item.setData(Qt.EditRole, int(wp_data.altitude))
         else:
-            alt_item.setData(Qt.EditRole, 0)  # Or some placeholder for None
+            alt_item.setData(Qt.EditRole, 0)
         alt_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.waypoint_table.setItem(row_idx, TableColumn.ALTITUDE.value, alt_item)
-
         ts_str: str = (
             wp_data.timestamp.strftime("%Y-%m-%d %H:%M:%S")
             if wp_data.timestamp
@@ -380,7 +401,6 @@ class WaypointTable(QWidget):
         symbol_display_text: str = "N/A"
         symbol_display_tooltip: str = "N/A"
         icon_path: Optional[str] = None
-
         if wp_data.symbol is not None:
             try:
                 symbol_enum: MapSymbol = MapSymbol(wp_data.symbol)
@@ -390,7 +410,6 @@ class WaypointTable(QWidget):
                 icon_path = str(Path("wpt_icons") / icon_file_name)
             except ValueError:
                 symbol_display_text = f"{wp_data.symbol} (Unknown)"
-
         symbol_item.setText(symbol_display_text)
         symbol_item.setToolTip(symbol_display_tooltip)
         if icon_path:
@@ -408,15 +427,18 @@ class WaypointTable(QWidget):
         )
 
     def _get_selected_table_rows(self) -> List[int]:
+        """Get selected table row indices."""
         return sorted(set(item.row() for item in self.waypoint_table.selectedItems()), reverse=True)
 
     def reindex_waypoints(self, waypoints_data: List[WaypointData]) -> List[WaypointData]:
+        """Reindex waypoints after changes."""
         for idx, wp in enumerate(waypoints_data):
             wp.message_index = idx
         return waypoints_data
 
     @Slot()
     def slot_add_waypoint(self) -> None:
+        """Add a new waypoint."""
         new_wp = WaypointData(message_index=len(self._waypoints))
         self._waypoints.append(new_wp)
         self.refresh_waypoint_table()
@@ -427,11 +449,11 @@ class WaypointTable(QWidget):
 
     @Slot()
     def slot_delete_selected_waypoints(self) -> None:
+        """Delete selected waypoints."""
         selected_rows: List[int] = self._get_selected_table_rows()
         if not selected_rows:
             QMessageBox.information(self, "No Selection", "Please select waypoint(s) to delete.")
             return
-
         reply = QMessageBox.question(
             self,
             "Confirm Delete",
@@ -439,7 +461,6 @@ class WaypointTable(QWidget):
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             QMessageBox.StandardButton.Yes,
         )
-
         if reply == QMessageBox.StandardButton.Yes:
             rows_to_delete = sorted(set(selected_rows), reverse=True)
             num_deleted = 0
@@ -447,24 +468,21 @@ class WaypointTable(QWidget):
                 if 0 <= row_idx < len(self._waypoints):
                     del self._waypoints[row_idx]
                     num_deleted += 1
-
             self.waypoints = self.waypoints
-
             if num_deleted > 0:
                 self.logger.log(f"Deleted {num_deleted} waypoint(s).")
 
     @Slot(int, int)
     def slot_waypoint_data_changed(self, row: int, column: int) -> None:
+        """Handle changes to waypoint data."""
         self.logger.log(f"Waypoint data changed at row {row}, column {column}.")
         if row < 0 or row >= len(self._waypoints):
             self.logger.error(f"Waypoint data change for invalid row: {row}")
             return
-
         wp_data: WaypointData = self._waypoints[row]
         item: Optional[QTableWidgetItem] = self.waypoint_table.item(row, column)
         if not item:
             return
-
         new_value: Any = None
         try:
             if column == TableColumn.NAME.value:
@@ -494,7 +512,6 @@ class WaypointTable(QWidget):
             elif column == TableColumn.SYMBOL.value:
                 new_value = int(item.text())
                 wp_data.symbol = new_value
-
                 self.waypoint_table.blockSignals(True)
                 symbol_item = self.waypoint_table.item(row, TableColumn.SYMBOL.value)
                 if symbol_item:
@@ -518,17 +535,14 @@ class WaypointTable(QWidget):
                         symbol_item.setText(f"{wp_data.symbol} (Unknown)")
                         symbol_item.setToolTip("N/A")
                 self.waypoint_table.blockSignals(False)
-
             elif column == TableColumn.DESCRIPTION.value:
                 new_value = item.text()
                 wp_data.description = new_value
             else:
                 return
-
             self.logger.log(
                 f"Waypoint '{wp_data.name}' (idx {row}), field '{self.waypoint_table.horizontalHeaderItem(column).text()}' changed to: {new_value}"
             )
-
         except ValueError as e:
             self.logger.error(
                 f"Invalid data for row {row}, col {column}: {item.text()}. Error: {e}"

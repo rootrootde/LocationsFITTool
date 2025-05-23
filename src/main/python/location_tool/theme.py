@@ -15,6 +15,7 @@ class ThemeManager:
     """Centralized theme management for the application."""
 
     def __init__(self, appctxt: Any = None):
+        """Initialize the theme manager."""
         self.appctxt = appctxt
         self._is_dark_mode = None
         self._current_theme = None

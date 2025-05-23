@@ -17,13 +17,13 @@ from fit_tool.profile.profile_type import (
 )
 
 from . import logger
-from .waypoints import WaypointData
 from .fit_data import (
     FileCreatorMessageData,
     FileIdMessageData,
     LocationSettingsMessageData,
     LocationsFitFileData,
 )
+from .waypoints import WaypointData
 
 # Define conservative maximum character lengths for truncation
 MAX_NAME_CHARS = 50
@@ -32,19 +32,19 @@ MAX_DESC_CHARS = 50
 
 class FitFileHandler:
     def __init__(self, appctxt):
+        """Initialize the FIT file handler."""
         self.appctxt = appctxt
         self.logger = logger.Logger.get_logger()
-
-    # Parse Logic
 
     def parse_fit_file(
         self, file_path: str, logger: Optional[Callable[[str], None]] = None
     ) -> LocationsFitFileData:
-        fit_data: LocationsFitFileData = LocationsFitFileData()
-        parsed_waypoints: List[WaypointData] = []
+        """Parse a FIT file and return LocationsFitFileData."""
+        fit_data = LocationsFitFileData()
+        parsed_waypoints = []
 
         try:
-            fit_file: FitFile = FitFile.from_file(file_path)
+            fit_file = FitFile.from_file(file_path)
         except Exception as e:
             self.logger.error(f"Error opening or parsing FIT file: {e}")
             return fit_data
@@ -55,16 +55,14 @@ class FitFileHandler:
             if not isinstance(actual_message, DataMessage):
                 continue
 
-            global_id: int = actual_message.definition_message.global_id
+            global_id = actual_message.definition_message.global_id
 
             try:
-                # process FileIdMessage
-
                 if global_id == FileIdMessage.ID:
-                    msg: DataMessage = actual_message
+                    msg = actual_message
 
-                    file_type_val: Optional[int] = getattr(msg, "type", None)
-                    file_type_enum: Optional[FileType] = None
+                    file_type_val = getattr(msg, "type", None)
+                    file_type_enum = None
                     if file_type_val is not None:
                         try:
                             file_type_enum = FileType(file_type_val)
@@ -73,8 +71,8 @@ class FitFileHandler:
                                 f"Invalid FileType value encountered: {file_type_val}"
                             )
 
-                    manufacturer_val: Optional[int] = getattr(msg, "manufacturer", None)
-                    manufacturer_enum: Optional[Manufacturer] = None
+                    manufacturer_val = getattr(msg, "manufacturer", None)
+                    manufacturer_enum = None
                     if manufacturer_val is not None:
                         try:
                             manufacturer_enum = Manufacturer(manufacturer_val)
@@ -83,8 +81,8 @@ class FitFileHandler:
                                 f"Invalid Manufacturer value encountered: {manufacturer_val}"
                             )
 
-                    product_id_val: Optional[int] = getattr(msg, "product", None)
-                    garmin_product_enum: Optional[GarminProduct] = None
+                    product_id_val = getattr(msg, "product", None)
+                    garmin_product_enum = None
                     if manufacturer_enum == Manufacturer.GARMIN and product_id_val is not None:
                         try:
                             garmin_product_enum = GarminProduct(product_id_val)
@@ -95,7 +93,7 @@ class FitFileHandler:
                     elif product_id_val is not None and manufacturer_enum != Manufacturer.GARMIN:
                         pass
 
-                    time_created: Optional[datetime] = getattr(msg, "time_created", None)
+                    time_created = getattr(msg, "time_created", None)
 
                     fit_data.file_id = FileIdMessageData(
                         file_type=file_type_enum,
@@ -106,23 +104,18 @@ class FitFileHandler:
                         product_name=getattr(msg, "product_name", None),
                     )
 
-                # process FileCreatorMessage
                 elif global_id == FileCreatorMessage.ID:
-                    msg: DataMessage = actual_message
+                    msg = actual_message
                     fit_data.creator = FileCreatorMessageData(
                         software_version=getattr(msg, "software_version", None),
                         hardware_version=getattr(msg, "hardware_version", None),
                     )
 
-                # process LocationSettingsMessage
                 elif global_id == LocationSettingsMessage.ID:
-                    msg: DataMessage = actual_message
-                    # The LocationSettingsMessage has a 'location_settings' property which returns an int value
-                    # that needs to be converted to a LocationSettings enum
-                    location_settings_raw: Optional[int] = getattr(msg, "location_settings", None)
+                    msg = actual_message
+                    location_settings_raw = getattr(msg, "location_settings", None)
 
-                    # Convert the int value to the LocationSettings enum
-                    location_settings_enum: Optional[LocationSettings] = None
+                    location_settings_enum = None
                     if location_settings_raw is not None:
                         try:
                             location_settings_enum = LocationSettings(location_settings_raw)
@@ -135,15 +128,14 @@ class FitFileHandler:
                         location_settings_enum=location_settings_enum
                     )
 
-                # process LocationMessage
                 elif global_id == LocationMessage.ID:
-                    msg: DataMessage = actual_message
-                    lat_degrees: Optional[float] = getattr(msg, "position_lat", None)
-                    lon_degrees: Optional[float] = getattr(msg, "position_long", None)
-                    location_datetime_object: Optional[datetime] = getattr(msg, "timestamp", None)
+                    msg = actual_message
+                    lat_degrees = getattr(msg, "position_lat", None)
+                    lon_degrees = getattr(msg, "position_long", None)
+                    location_datetime_object = getattr(msg, "timestamp", None)
 
-                    symbol_val: Optional[int] = getattr(msg, "symbol", None)
-                    symbol_enum: MapSymbol = MapSymbol.AIRPORT  # Default
+                    symbol_val = getattr(msg, "symbol", None)
+                    symbol_enum = MapSymbol.AIRPORT
                     if symbol_val is not None:
                         try:
                             symbol_enum = MapSymbol(symbol_val)
@@ -177,9 +169,8 @@ class FitFileHandler:
         fit_data.locations = parsed_waypoints
         return fit_data
 
-    # Write Logic
-
     def _build_file_id_message(self, file_id):
+        """Build a FileIdMessage from data."""
         fid_msg = FileIdMessage()
 
         fid_msg.type = file_id.file_type if file_id.file_type is not None else FileType.LOCATIONS
@@ -187,13 +178,11 @@ class FitFileHandler:
             file_id.manufacturer if file_id.manufacturer is not None else Manufacturer.DEVELOPMENT
         )
         if file_id.product is not None:
-            # Check if product is an enum (like GarminProduct) or a raw int
             if isinstance(file_id.product, GarminProduct):
                 fid_msg.product = file_id.product.value
             else:
                 fid_msg.product = file_id.product
         else:
-            # Default product ID, aligns with FileIdMessageData default if manufacturer is DEVELOPMENT
             fid_msg.product = 0 if file_id.manufacturer == Manufacturer.DEVELOPMENT else 1
 
         fid_msg.serial_number = file_id.serial_number if file_id.serial_number is not None else 0
@@ -202,12 +191,12 @@ class FitFileHandler:
         )
         if file_id.product_name is not None:
             fid_msg.product_name = file_id.product_name
-        # No else needed here, if product_name is None, it remains unset in fid_msg
 
         return fid_msg
 
     def _build_file_creator_message(self, creator):
-        creator_msg: FileCreatorMessage = FileCreatorMessage()
+        """Build a FileCreatorMessage from data."""
+        creator_msg = FileCreatorMessage()
         creator_msg.software_version = (
             creator.software_version if creator.software_version is not None else 0
         )
@@ -217,13 +206,14 @@ class FitFileHandler:
         return creator_msg
 
     def _build_location_settings_message(self, location_settings):
-        ls_msg: LocationSettingsMessage = LocationSettingsMessage()
-        # enum to int
+        """Build a LocationSettingsMessage from data."""
+        ls_msg = LocationSettingsMessage()
         ls_msg.location_settings = location_settings.location_settings_enum.value
         return ls_msg
 
     def _build_location_message(self, index, wp_data: WaypointData):
-        loc_msg: LocationMessage = LocationMessage()
+        """Build a LocationMessage from waypoint data."""
+        loc_msg = LocationMessage()
 
         if wp_data.name and len(wp_data.name) > MAX_NAME_CHARS:
             self.logger.warning(
@@ -242,9 +232,6 @@ class FitFileHandler:
             loc_msg.position_lat = wp_data.latitude
             loc_msg.position_long = wp_data.longitude
         else:
-            # errors.append(
-            #     f"Waypoint '{wp_data.name or f'index: {index}'}' skipped due to missing latitude/longitude."
-            # )
             return None
 
         if wp_data.altitude is not None:
@@ -259,14 +246,8 @@ class FitFileHandler:
                 MapSymbol(wp_data.symbol)
                 loc_msg.symbol = wp_data.symbol
             except ValueError:
-                # warnings.append(
-                #     f"Waypoint '{wp_data.name}' had an invalid integer symbol '{wp_data.symbol}'. Defaulted to FLAG_BLUE."
-                # )
                 loc_msg.symbol = MapSymbol.FLAG_BLUE.value
         else:
-            # warnings.append(
-            #     f"Waypoint '{wp_data.name}' had an invalid symbol type '{type(wp_data.symbol)}'. Defaulted to FLAG_BLUE."
-            # )
             loc_msg.symbol = MapSymbol.FLAG_BLUE.value
 
         loc_msg.message_index = (
@@ -278,26 +259,19 @@ class FitFileHandler:
     def write_fit_file(
         self, file_path: str, fit_data: LocationsFitFileData
     ) -> Tuple[bool, List[str], List[str]]:
-        """Writes the provided LocationsFitFileData to a .fit file."""
+        """Write LocationsFitFileData to a .fit file."""
+        errors = []
+        builder = FitFileBuilder(auto_define=True, min_string_size=50)
 
-        errors: List[str] = []
-        builder: FitFileBuilder = FitFileBuilder(auto_define=True, min_string_size=50)
-
-        # 1. FileIdMessage
-        fid_msg: FileIdMessage = self._build_file_id_message(fit_data.file_id)
+        fid_msg = self._build_file_id_message(fit_data.file_id)
         builder.add(fid_msg)
 
-        # 2. FileCreatorMessage
-        creator_msg: FileCreatorMessage = self._build_file_creator_message(fit_data.creator)
+        creator_msg = self._build_file_creator_message(fit_data.creator)
         builder.add(creator_msg)
 
-        # 3. LocationSettingsMessage
-        ls_msg: LocationSettingsMessage = self._build_location_settings_message(
-            fit_data.location_settings
-        )
+        ls_msg = self._build_location_settings_message(fit_data.location_settings)
         builder.add(ls_msg)
 
-        # 4. LocationMessage
         for index, wp_data in enumerate(fit_data.locations):
             loc_msg = self._build_location_message(index, wp_data)
             if loc_msg:
@@ -309,13 +283,13 @@ class FitFileHandler:
             return False, errors
 
         try:
-            fit_file_result: FitFile = builder.build()
+            fit_file_result = builder.build()
             fit_file_result.to_file(file_path)
             self.logger.log(f"Successfully wrote FIT file to: {file_path}")
             return True, errors
 
         except Exception as e:
-            err_msg: str = f"Failed to build or write FIT file: {e}"
+            err_msg = f"Failed to build or write FIT file: {e}"
             self.logger.error(err_msg)
             errors.append(err_msg)
             return False, errors

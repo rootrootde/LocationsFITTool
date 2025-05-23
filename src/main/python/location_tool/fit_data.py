@@ -12,38 +12,34 @@ from fit_tool.profile.profile_type import (
 
 @dataclass
 class FileIdMessageData:
-    file_type: Optional[FileType] = FileType.LOCATIONS  # Allow None initially if read from FIT
-    manufacturer: Optional[Manufacturer] = Manufacturer.DEVELOPMENT  # Allow None initially
-    product: Optional[Any] = 0  # Can be int or GarminProduct enum
+    file_type: Optional[FileType] = FileType.LOCATIONS
+    manufacturer: Optional[Manufacturer] = Manufacturer.DEVELOPMENT
+    product: Optional[Any] = 0
     serial_number: Optional[int] = None
-    time_created: Optional[datetime] = field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )  # Allow None initially
-    number: int = 0  # File number / part number
-    product_name: Optional[str] = None  # Max 20 chars for .FIT
+    time_created: Optional[datetime] = field(default_factory=lambda: datetime.now(timezone.utc))
+    number: int = 0
+    product_name: Optional[str] = None
 
 
 @dataclass
 class FileCreatorMessageData:
-    software_version: Optional[int] = 0  # e.g. 100 for 1.00
+    software_version: Optional[int] = 0
     hardware_version: Optional[int] = 0
 
 
 @dataclass
 class LocationSettingsMessageData:
-    location_settings_enum: Optional[LocationSettings] = (
-        None  # Stores the LocationSettings enum value
-    )
-    name: Optional[str] = None  # Max 16 chars for .FIT
+    location_settings_enum: Optional[LocationSettings] = None
+    name: Optional[str] = None
     message_index: Optional[int] = None
 
 
 @dataclass
 class LocationMessageData:
     name: Optional[str] = "Waypoint"
-    latitude: float = 0.0  # Degrees
-    longitude: float = 0.0  # Degrees
-    altitude: float = 0.0  # Meters
+    latitude: float = 0.0
+    longitude: float = 0.0
+    altitude: float = 0.0
     timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     symbol: MapSymbol = MapSymbol.AIRPORT
     message_index: Optional[int] = None

@@ -28,6 +28,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(
         self, appctxt: Any, theme_manager: ThemeManager, parent: Optional[QWidget] = None
     ) -> None:
+        """Initialize the main window."""
         super().__init__(parent)
         self.setupUi(self)
 
@@ -35,42 +36,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.theme_manager = theme_manager
         self.logger = Logger.get_logger(self.log_textedit)
 
-        # Initialize core application state and handlers
         self.current_file_path: Optional[str] = None
 
-        # Initialize file handlers
         self.fit_handler = FitFileHandler(self.appctxt)
         self.gpx_handler = GpxFileHandler(self.appctxt)
 
-        # Initialize MTP device management
         self.mtp_device_manager = MTPDeviceManager(self.appctxt, self)
 
-        # Initialize UI elements and their specific configurations
         self.waypoint_table = WaypointTable(self.appctxt, self.waypoint_table, self)
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
-        # Initialize actions and connect signals
         self._setup_actions_and_connections()
-
-        # Setup icons for actions
         self._setup_icons()
 
-        # Set initial UI states that depend on actions or other setup
         self.scan_for_devices_action.setChecked(True)
         self.log_dock.setVisible(False)
         self.toggle_debug_log_action.setChecked(self.log_dock.isVisible())
 
         self.logger.log("Application started.")
 
-    def _setup_actions_and_connections(self):
-        """Setup actions and connections with themed icons."""
-
-        # Add all actions to the main window to enable shortcuts
+    def _setup_actions_and_connections(self) -> None:
+        """Set up actions, signals, and shortcuts."""
         for action in self.findChildren(QAction):
             if isinstance(action, QAction):
                 self.addAction(action)
 
-        # Connect actions to slots
         self.import_file_action.triggered.connect(self.slot_import_file)
         self.save_file_action.triggered.connect(self.slot_save_file)
         self.add_wpt_action.triggered.connect(self.waypoint_table.slot_add_waypoint)
@@ -87,8 +77,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mtp_device_manager.device_found.connect(self.slot_device_found)
         self.mtp_device_manager.device_error.connect(self.slot_device_error)
 
-    def _setup_icons(self):
-        # Get the primary color for icons from theme manager
+    def _setup_icons(self) -> None:
+        """Set up themed icons for actions and buttons."""
         c = self.theme_manager.primary_color
         s = (64, 64)
 
@@ -114,6 +104,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def slot_import_file(self) -> None:
+        """Open file dialog and import FIT or GPX file."""
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Import File", "", "FIT Files (*.fit);;GPX Files (*.gpx)"
         )
@@ -130,7 +121,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             QMessageBox.critical(self, "Import Error", "Unsupported file type.")
 
-    def _import_locations_fit(self, file_path) -> None:
+    def _import_locations_fit(self, file_path: str) -> None:
+        """Import waypoints from a FIT file."""
         try:
             fit_file_data_container = self.fit_handler.parse_fit_file(
                 file_path, logger=self.logger.log
@@ -151,7 +143,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.error(f"Failed to import FIT file: {e}")
             QMessageBox.critical(self, "Import Error", f"Could not import FIT file: {e}")
 
-    def _import_gpx(self, file_path) -> None:
+    def _import_gpx(self, file_path: str) -> None:
+        """Import waypoints from a GPX file."""
         try:
             waypoints, errors = self.gpx_handler.parse_gpx_file(file_path)
             if errors:
@@ -171,14 +164,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def download_locations_fit(self) -> None:
+        """Download locations FIT file from device."""
         self.logger.log("Downloading locations from FIT file.")
 
         if self.mtp_device_manager.device_connected is False:
             QMessageBox.critical(self, "No Device", "No MTP device connected.")
             return
-        # Temporarily stop scanning
         self.mtp_device_manager.stop_scanning()
-        # Use a temporary directory for the download
         temp_dir = tempfile.TemporaryDirectory()
         target_path = Path(temp_dir.name)
         fit_filename = "Locations.fit"
@@ -201,16 +193,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def upload_locations_fit(self) -> None:
+        """Upload locations FIT file to device."""
         self.logger.log("Uploading locations to FIT file.")
 
-        # Set the target path for the upload
         target_path = "Garmin/NewFiles/"
 
         if self.mtp_device_manager.device_connected is False:
             QMessageBox.critical(self, "No Device", "No MTP device connected.")
             return
         self.mtp_device_manager.stop_scanning()
-        # Use a temporary file for the upload
         with tempfile.NamedTemporaryFile(delete=False, suffix=".fit") as temp_file:
             temp_file_path = Path(temp_file.name)
         success = self._save_locations_fit(self.waypoint_table.waypoints, str(temp_file_path))
@@ -238,12 +229,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(str)
     def slot_save_file(self) -> None:
+        """Save waypoints to a file."""
         current_waypoints = self.waypoint_table.waypoints
         if not current_waypoints:
             QMessageBox.information(self, "No Data", "There are no waypoints to save.")
             return
 
-        # Allow user to choose either .fit or .gpx file
         file_path, selected_filter = QFileDialog.getSaveFileName(
             self, "Save Locations File", "", "FIT Files (*.fit);;GPX Files (*.gpx)"
         )
@@ -251,7 +242,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, "No Path", "Please select a save path.")
             return
 
-        # Determine file type based on extension or selected filter
         if file_path.endswith(".fit") or "FIT" in selected_filter:
             self._save_locations_fit(current_waypoints, file_path)
         elif file_path.endswith(".gpx") or "GPX" in selected_filter:
@@ -259,7 +249,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             QMessageBox.warning(self, "Unsupported File Type", "Please select a valid file type.")
 
-    def _save_locations_fit(self, current_waypoints, file_path) -> None:
+    def _save_locations_fit(self, current_waypoints: List[Any], file_path: str) -> Optional[bool]:
+        """Save waypoints to a FIT file."""
         mode_str = ModeSelectDialog.get_mode(self.appctxt, parent=self)
         if not mode_str:
             QMessageBox.warning(self, "No Mode", "Please select a save mode.")
@@ -292,7 +283,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.logger.error(f"Failed to save FIT file: {e}")
             QMessageBox.critical(self, "Save Error", f"Could not save FIT file: {e}")
 
-    def _save_gpx(self, current_waypoints, file_path) -> None:
+    def _save_gpx(self, current_waypoints: List[Any], file_path: str) -> Optional[bool]:
+        """Save waypoints to a GPX file."""
         file_path, _ = QFileDialog.getSaveFileName(self, "Save GPX File", "", "GPX Files (*.gpx)")
         if not file_path:
             QMessageBox.warning(self, "No Path", "Please select a save path.")
@@ -326,8 +318,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(dict)
     def slot_device_found(self, device_info: dict) -> None:
+        """Handle device found event."""
         if self.mtp_device_manager.device_connected is True:
-            return  # No change, already connected
+            return
         self.mtp_device_manager.device_connected = True
         self.logger.log(f"Device found: {device_info['manufacturer']} {device_info['model']}")
         msg = f"Device found: {device_info['manufacturer']} {device_info['model']}"
@@ -337,8 +330,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(str)
     def slot_device_error(self, error: str) -> None:
+        """Handle device error event."""
         if self.mtp_device_manager.device_connected is False:
-            return  # No change, already disconnected
+            return
         self.mtp_device_manager.device_connected = False
         self.logger.error(f"Device error: {error}")
         msg = "No MTP device found"
@@ -348,6 +342,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(bool)
     def slot_toggle_device_scan(self, checked: bool) -> None:
+        """Toggle device scanning."""
         if checked:
             self.mtp_device_manager.start_scanning()
             self.logger.log("Device scanning started.")
@@ -358,14 +353,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot(bool)
     def slot_toggle_log_dock(self, checked: bool) -> None:
+        """Toggle log dock visibility."""
         if checked:
             self.log_dock.show()
         else:
             self.log_dock.hide()
         self.logger.log(f"Log window {'shown' if checked else 'hidden'}.")
 
-    def closeEvent(
-        self, event: Any
-    ) -> None:  # Consider using QCloseEvent if available and appropriate
+    def closeEvent(self, event: Any) -> None:
+        """Handle window close event."""
         self.logger.log("Application closing.")
         super().closeEvent(event)
