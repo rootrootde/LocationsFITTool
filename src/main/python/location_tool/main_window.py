@@ -1,7 +1,9 @@
+import os
 import tempfile
 from pathlib import Path
 from typing import Any, List, Optional
 
+from fit_tool.profile.profile_type import FileType
 from fit_tool.profile.profile_type import LocationSettings as FitLocationSettingsEnum
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QAction
@@ -14,9 +16,9 @@ from .fit_data import (
     LocationSettingsMessageData,
     LocationsFitFileData,
 )
+from .geodata_model import GeoDataItem, GeoDataModel
 from .gpx import GpxFileHandler
 from .logger import Logger
-from .mode_select_dialog import ModeSelectDialog
 from .mtp import MTPDeviceManager
 from .theme import ThemeManager
 from .ui.ui_main_window import Ui_MainWindow
@@ -46,6 +48,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.waypoint_table = WaypointTable(self.appctxt, self.waypoint_table, self)
         self.resizeDocks([self.log_dock], [150], Qt.Vertical)
 
+        self.geodata_model = GeoDataModel(self)
+        self.geodata_view.setModel(self.geodata_model)
+
         self._setup_actions_and_connections()
         self._setup_icons()
 
@@ -63,16 +68,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.import_file_action.triggered.connect(self.slot_import_file)
         self.save_file_action.triggered.connect(self.slot_save_file)
-        self.add_wpt_action.triggered.connect(self.waypoint_table.slot_add_waypoint)
-        self.delete_wpt_action.triggered.connect(self.waypoint_table.slot_delete_selected_waypoints)
         self.toggle_debug_log_action.toggled.connect(self.slot_toggle_log_dock)
         self.log_dock.visibilityChanged.connect(self.toggle_debug_log_action.setChecked)
         self.scan_for_devices_action.toggled.connect(self.slot_toggle_device_scan)
         self.download_locations_fit_action.triggered.connect(self.download_locations_fit)
         self.upload_locations_fit_action.triggered.connect(self.upload_locations_fit)
-
-        self.add_wpt_btn.clicked.connect(self.add_wpt_action.trigger)
-        self.delete_wpt_btn.clicked.connect(self.delete_wpt_action.trigger)
 
         self.mtp_device_manager.device_found.connect(self.slot_device_found)
         self.mtp_device_manager.device_error.connect(self.slot_device_error)
@@ -96,225 +96,383 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         save_icon = colored_icon(self.appctxt, "ui_icons/save_file.svg", s, c)
         self.save_file_action.setIcon(save_icon)
 
-        add_icon = colored_icon(self.appctxt, "ui_icons/plus.svg", s, c)
-        self.add_wpt_btn.setIcon(add_icon)
-
-        delete_icon = colored_icon(self.appctxt, "ui_icons/minus.svg", s, c)
-        self.delete_wpt_btn.setIcon(delete_icon)
-
     @Slot()
     def slot_import_file(self) -> None:
         """Open file dialog and import FIT or GPX file."""
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, "Import File", "", "FIT Files (*.fit);;GPX Files (*.gpx)"
+        file_path, selected_filter = QFileDialog.getOpenFileName(
+            self, "Import File", "", "FIT files (*.fit);;GPX files (*.gpx)"
         )
         if not file_path:
             return
 
-        if file_path.endswith(".fit"):
-            self.current_file_path = file_path
-            self._import_locations_fit(file_path)
+        if selected_filter == "FIT files (*.fit)":
+            fit_data = self.fit_handler.parse_fit_file(file_path)
+            if fit_data:
+                self.geodata_model.add_file_data(Path(file_path).name, fit_data, file_path)
+                self.current_file_path = file_path
+                self.update_window_title()
+                self.logger.log(f"Successfully imported FIT file: {file_path}")
+                self.tabWidget.setCurrentWidget(self.tab_geodata_explorer)
+            else:
+                QMessageBox.warning(self, "Import Error", f"Could not parse FIT file: {file_path}")
+                self.logger.error(f"Could not parse FIT file: {file_path}")
 
-        elif file_path.endswith(".gpx"):
-            self.current_file_path = file_path
+        elif selected_filter == "GPX files (*.gpx)":
             self._import_gpx(file_path)
         else:
             QMessageBox.critical(self, "Import Error", "Unsupported file type.")
 
     def _import_locations_fit(self, file_path: str) -> None:
-        """Import waypoints from a FIT file."""
-        try:
-            fit_file_data_container = self.fit_handler.parse_fit_file(
-                file_path, logger=self.logger.log
-            )
-            if fit_file_data_container.errors:
-                for error in fit_file_data_container.errors:
-                    self.logger.warning(f"FIT Read Warning: {error}")
-                    QMessageBox.warning(self, "FIT Read Warning", str(error))
+        """Import waypoints from a Locations.FIT file into the GeoDataView."""
+        self.logger.log(f"Importing Locations.FIT: {file_path}")
+        fit_file_data_container = self.fit_handler.parse_fit_file(file_path)
 
-            self.waypoint_table.waypoints = (
-                self.waypoint_table.waypoints + fit_file_data_container.locations
+        if isinstance(fit_file_data_container, LocationsFitFileData):
+            self.geodata_model.add_file_data(
+                Path(file_path).name, fit_file_data_container, file_path
             )
-
+            self.current_file_path = file_path
             self.logger.log(
-                f"Successfully imported and appended from FIT file: {file_path}. Waypoints added: {len(fit_file_data_container.locations)}"
+                f"Imported {len(fit_file_data_container.locations)} waypoints from {Path(file_path).name}"
             )
-        except Exception as e:
-            self.logger.error(f"Failed to import FIT file: {e}")
-            QMessageBox.critical(self, "Import Error", f"Could not import FIT file: {e}")
+            self.update_window_title()
+            self.tabWidget.setCurrentWidget(self.tab_geodata_explorer)
+        elif fit_file_data_container:
+            QMessageBox.warning(
+                self,
+                "Import Error",
+                f"File {Path(file_path).name} is not a valid Locations FIT file. Contained: {type(fit_file_data_container).__name__}",
+            )
+            self.logger.error(
+                f"File {Path(file_path).name} is not a valid Locations FIT file. Contained: {type(fit_file_data_container).__name__}"
+            )
+        else:
+            QMessageBox.warning(
+                self, "Import Error", f"Could not parse FIT file: {Path(file_path).name}"
+            )
+            self.logger.error(f"Could not parse FIT file: {Path(file_path).name}")
 
     def _import_gpx(self, file_path: str) -> None:
-        """Import waypoints from a GPX file."""
-        try:
-            waypoints, errors = self.gpx_handler.parse_gpx_file(file_path)
-            if errors:
-                for error in errors:
-                    self.logger.warning(f"GPX Read Error/Warning: {error}")
-                    QMessageBox.warning(self, "GPX Read Warning", str(error))
+        """Import data from a GPX file into the GeoDataView."""
+        self.logger.log(f"Importing GPX: {file_path}")
+        gpx_data = self.gpx_handler.parse_gpx_file(file_path)
 
-            self.waypoint_table.waypoints = self.waypoint_table.waypoints + waypoints
-
+        if gpx_data:
+            self.geodata_model.add_file_data(Path(file_path).name, gpx_data, file_path)
+            self.current_file_path = file_path
+            count_str = []
+            if gpx_data.waypoints:
+                count_str.append(f"{len(gpx_data.waypoints)} waypoints")
+            if gpx_data.tracks:
+                count_str.append(f"{len(gpx_data.tracks)} tracks")
+            if gpx_data.routes:
+                count_str.append(f"{len(gpx_data.routes)} routes")
             self.logger.log(
-                f"Successfully imported and appended from GPX file: {file_path}. Waypoints added: {len(waypoints)}"
+                f"Imported {', '.join(count_str) if count_str else 'empty GPX'} from {Path(file_path).name}"
             )
-
-        except Exception as e:
-            self.logger.error(f"Failed to import GPX file: {e}")
-            QMessageBox.critical(self, "Import Error", f"Could not import GPX file: {e}")
+            self.update_window_title()
+            self.tabWidget.setCurrentWidget(self.tab_geodata_explorer)
+        else:
+            QMessageBox.warning(self, "Import Error", f"Could not parse GPX file: {file_path}")
+            self.logger.error(f"Could not parse GPX file: {file_path}")
 
     @Slot()
-    def download_locations_fit(self) -> None:
-        """Download locations FIT file from device."""
-        self.logger.log("Downloading locations from FIT file.")
-
-        if self.mtp_device_manager.device_connected is False:
-            QMessageBox.critical(self, "No Device", "No MTP device connected.")
+    def slot_save_file(self) -> None:
+        """Save the currently active data to a GPX or FIT file based on selection in GeoDataView."""
+        if not self.geodata_model.hasChildren():
+            QMessageBox.information(self, "Nothing to Save", "There is no data to save.")
             return
-        self.mtp_device_manager.stop_scanning()
-        temp_dir = tempfile.TemporaryDirectory()
-        target_path = Path(temp_dir.name)
-        fit_filename = "Locations.fit"
-        fit_file_path = target_path / fit_filename
 
-        def on_done():
-            self.logger.log("Download finished. Importing Locations.fit...")
-            self._import_locations_fit(str(fit_file_path))
-            self.mtp_device_manager.start_scanning()
-            temp_dir.cleanup()
+        first_file_item_index = self.geodata_model.index(0, 0)
+        if not first_file_item_index.isValid():
+            QMessageBox.information(self, "Nothing to Save", "No file loaded to save.")
+            return
 
-        def on_error(err):
-            self.logger.error(f"Download failed: {err}")
-            self.mtp_device_manager.start_scanning()
-            temp_dir.cleanup()
+        file_node = self.geodata_model.itemFromIndex(first_file_item_index)
+        if not isinstance(file_node, GeoDataItem) or not file_node.is_file_node():
+            QMessageBox.information(self, "Save Error", "Selected item is not a file node.")
+            return
 
-        self.mtp_device_manager.start_download(
-            "Garmin/Locations/Locations.fit", str(target_path), on_done, on_error
+        original_file_path = file_node.data_object().get("file_path", "")
+        original_file_name = Path(original_file_path).name if original_file_path else "geodata"
+        original_suffix = Path(original_file_path).suffix.lower() if original_file_path else ".gpx"
+
+        dialog = QFileDialog(self, "Save File", str(Path.home()))
+        dialog.setAcceptMode(QFileDialog.AcceptMode.AcceptSave)
+        dialog.setNameFilters(["GPX files (*.gpx)", "FIT files (*.fit)"])
+        if original_suffix == ".fit":
+            dialog.selectNameFilter("FIT files (*.fit)")
+        else:
+            dialog.selectNameFilter("GPX files (*.gpx)")
+        dialog.setDefaultSuffix(original_suffix.lstrip("."))
+        dialog.selectFile(original_file_name)
+
+        if dialog.exec():
+            save_file_path = dialog.selectedFiles()[0]
+            selected_filter = dialog.selectedNameFilter()
+            file_data_to_save = self.geodata_model.get_all_data_from_node(file_node)
+
+            if selected_filter == "GPX files (*.gpx)":
+                all_waypoints = file_data_to_save.get("waypoints", [])
+                all_tracks = file_data_to_save.get("tracks", [])
+                all_routes = file_data_to_save.get("routes", [])
+                success = self.gpx_handler.write_gpx_file(
+                    save_file_path, all_waypoints, all_tracks, all_routes
+                )
+                if success:
+                    self.logger.log(f"Data saved to GPX: {save_file_path}")
+                else:
+                    QMessageBox.warning(
+                        self, "Save Error", f"Could not save GPX to {save_file_path}"
+                    )
+                    self.logger.error(f"Could not save GPX to {save_file_path}")
+
+            elif selected_filter == "FIT files (*.fit)":
+                original_node_data = file_node.data_object()
+                fit_file_type_hint = original_node_data.get("fit_type_hint", None)
+
+                if file_data_to_save.get("waypoints") and (
+                    not file_data_to_save.get("tracks")
+                    and not file_data_to_save.get("routes")
+                    or fit_file_type_hint == "LocationsFitFileData"
+                ):
+                    fit_data = LocationsFitFileData(
+                        file_id=FileIdMessageData(file_type=FileType.LOCATIONS),
+                        creator=FileCreatorMessageData(),
+                        locations=self.geodata_model._convert_waypoints_to_location_messages(
+                            file_data_to_save.get("waypoints", [])
+                        ),
+                    )
+                    success, _ = self.fit_handler.write_fit_file(
+                        save_file_path, fit_data, data_type_hint="locations"
+                    )
+                elif file_data_to_save.get("routes") and (
+                    fit_file_type_hint == "CoursesFitFileData"
+                    or not file_data_to_save.get("tracks")
+                ):
+                    fit_data = self.fit_handler.convert_route_to_courses_fit_data(
+                        file_data_to_save.get("routes", []),
+                        file_id_data=FileIdMessageData(file_type=FileType.COURSES),
+                    )
+                    success, _ = self.fit_handler.write_fit_file(
+                        save_file_path, fit_data, data_type_hint="courses"
+                    )
+                elif file_data_to_save.get("tracks") and (
+                    fit_file_type_hint == "ActivityFitFileData"
+                ):
+                    fit_data = self.fit_handler.convert_track_to_activity_fit_data(
+                        file_data_to_save.get("tracks", []),
+                        file_id_data=FileIdMessageData(file_type=FileType.ACTIVITY),
+                    )
+                    success, _ = self.fit_handler.write_fit_file(
+                        save_file_path, fit_data, data_type_hint="activity"
+                    )
+                else:
+                    QMessageBox.warning(
+                        self,
+                        "Save Error",
+                        "Could not determine FIT file type to save. Data is mixed or empty.",
+                    )
+                    self.logger.error("Could not determine FIT file type for saving.")
+                    return
+
+                if success:
+                    self.logger.log(f"Data saved to FIT: {save_file_path}")
+                else:
+                    QMessageBox.warning(
+                        self, "Save Error", f"Could not save FIT to {save_file_path}"
+                    )
+                    self.logger.error(f"Could not save FIT to {save_file_path}")
+
+    @Slot(str)
+    def _save_locations_fit(self, current_waypoints: List[Any], file_path: str) -> Optional[bool]:
+        """Save current waypoints to a Locations.FIT file."""
+        self.logger.log(f"Saving {len(current_waypoints)} waypoints to Locations.FIT: {file_path}")
+        if not current_waypoints:
+            self.logger.warning("No waypoints to save.")
+            return False
+
+        file_id_data = FileIdMessageData(
+            file_type=FileType.LOCATIONS,
+            manufacturer=self.fit_handler.appctxt.build_settings.get("fit_manufacturer", 1),
+            product=self.fit_handler.appctxt.build_settings.get("fit_product_id", 0),
+            serial_number=12345,
+            product_name=self.fit_handler.appctxt.app.applicationName(),
         )
+
+        creator_data = FileCreatorMessageData(
+            software_version=100,
+            hardware_version=1,
+        )
+
+        location_settings_data = LocationSettingsMessageData(
+            location_settings_enum=FitLocationSettingsEnum.WAYPOINTS_ENABLED
+        )
+
+        location_messages = [
+            self.geodata_model._convert_waypoint_to_location_message(wp) for wp in current_waypoints
+        ]
+
+        fit_file_data = LocationsFitFileData(
+            file_id=file_id_data,
+            creator=creator_data,
+            location_settings=location_settings_data,
+            locations=location_messages,
+        )
+
+        success, errors = self.fit_handler.write_fit_file(
+            file_path, fit_file_data, data_type_hint="locations"
+        )
+        if success:
+            self.logger.log(f"Successfully saved Locations.FIT to {file_path}")
+            return True
+        else:
+            self.logger.error(f"Error saving Locations.FIT: {errors}")
+            QMessageBox.critical(self, "Save Error", f"Could not save Locations.FIT: {errors}")
+            return False
+
+    def _save_gpx(self, current_waypoints: List[Any], file_path: str) -> Optional[bool]:
+        """Save current waypoints to a GPX file."""
+        self.logger.log(f"Saving {len(current_waypoints)} waypoints to GPX: {file_path}")
+        if not current_waypoints:
+            self.logger.warning("No waypoints to save.")
+            return False
+
+        success = self.gpx_handler.write_gpx_file(
+            file_path, waypoints=current_waypoints, tracks=[], routes=[]
+        )
+        if success:
+            self.logger.log(f"Successfully saved GPX to {file_path}")
+            return True
+        else:
+            self.logger.error(f"Error saving GPX: {file_path}")
+            QMessageBox.critical(self, "Save Error", f"Could not save GPX: {file_path}")
+            return False
+
+    @Slot(dict)
+    def download_locations_fit(self) -> None:
+        """Download Locations.fit from the selected device and import it into the GeoDataView."""
+        selected_device_info = self.mtp_device_manager.get_selected_device()
+        if not selected_device_info:
+            QMessageBox.warning(self, "Device Error", "No MTP device selected.")
+            return
+
+        with tempfile.NamedTemporaryFile(suffix=".fit", delete=False) as tmp_file:
+            temp_file_path = tmp_file.name
+
+        self.logger.log(f"Attempting to download Locations.fit to {temp_file_path}")
+
+        success = self.mtp_device_manager.download_file_from_device(
+            selected_device_info["path"],
+            "Garmin/Locations/Locations.fit",
+            temp_file_path,
+        )
+
+        if success:
+            self.logger.log(f"Successfully downloaded Locations.fit to {temp_file_path}")
+            fit_file_data_container = self.fit_handler.parse_fit_file(temp_file_path)
+            if isinstance(fit_file_data_container, LocationsFitFileData):
+                self.geodata_model.add_file_data(
+                    "Locations.fit", fit_file_data_container, temp_file_path
+                )
+                self.current_file_path = temp_file_path
+                self.logger.log(
+                    f"Imported {len(fit_file_data_container.locations)} waypoints from downloaded Locations.fit"
+                )
+                self.update_window_title("Locations.fit (Device)")
+                self.tabWidget.setCurrentWidget(self.tab_geodata_explorer)
+            else:
+                QMessageBox.warning(
+                    self,
+                    "Import Error",
+                    "Downloaded Locations.fit is not a valid Locations FIT file or is empty.",
+                )
+                self.logger.error(
+                    "Downloaded Locations.fit is not a valid Locations FIT file or is empty."
+                )
+        else:
+            QMessageBox.critical(
+                self, "Download Error", "Failed to download Locations.fit from device."
+            )
+            self.logger.error("Failed to download Locations.fit from device.")
+            Path(temp_file_path).unlink(missing_ok=True)
 
     @Slot()
     def upload_locations_fit(self) -> None:
-        """Upload locations FIT file to device."""
-        self.logger.log("Uploading locations to FIT file.")
-
-        target_path = "Garmin/NewFiles/"
-
-        if self.mtp_device_manager.device_connected is False:
-            QMessageBox.critical(self, "No Device", "No MTP device connected.")
-            return
-        self.mtp_device_manager.stop_scanning()
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".fit") as temp_file:
-            temp_file_path = Path(temp_file.name)
-        success = self._save_locations_fit(self.waypoint_table.waypoints, str(temp_file_path))
-        if not success:
+        """Upload waypoints from the 'Locations.fit' node in GeoDataView to the device."""
+        selected_device_info = self.mtp_device_manager.get_selected_device()
+        if not selected_device_info:
+            QMessageBox.warning(self, "Device Error", "No MTP device selected.")
             return
 
-        def on_done():
-            QMessageBox.information(self, "Upload Successful", "Please disconnect device now.")
-            self.logger.log(f"File {temp_file_path} uploaded successfully to {target_path}")
-            self.mtp_device_manager.start_scanning()
-            try:
-                temp_file_path.unlink()
-            except Exception as e:
-                self.logger.warning(f"Could not remove temp file: {e}")
-
-        def on_error(err):
-            self.logger.error(f"Upload failed: {err}")
-            self.mtp_device_manager.start_scanning()
-            try:
-                temp_file_path.unlink()
-            except Exception as e:
-                self.logger.warning(f"Could not remove temp file: {e}")
-
-        self.mtp_device_manager.start_upload(str(temp_file_path), target_path, on_done, on_error)
-
-    @Slot(str)
-    def slot_save_file(self) -> None:
-        """Save waypoints to a file."""
-        current_waypoints = self.waypoint_table.waypoints
-        if not current_waypoints:
-            QMessageBox.information(self, "No Data", "There are no waypoints to save.")
+        locations_node = self.geodata_model._get_or_create_locations_fit_node()
+        if not locations_node or not locations_node.hasChildren():
+            QMessageBox.information(
+                self, "Upload Error", "No waypoints found in the 'Locations.fit' data to upload."
+            )
+            self.logger.warning("No 'Locations.fit' data to upload.")
             return
 
-        file_path, selected_filter = QFileDialog.getSaveFileName(
-            self, "Save Locations File", "", "FIT Files (*.fit);;GPX Files (*.gpx)"
-        )
-        if not file_path:
-            QMessageBox.warning(self, "No Path", "Please select a save path.")
+        waypoints_to_upload = self.geodata_model.get_all_waypoints_from_locations_node()
+        if not waypoints_to_upload:
+            QMessageBox.information(
+                self, "Upload Error", "No waypoints found in the 'Locations.fit' data to upload."
+            )
+            self.logger.warning("No waypoints in 'Locations.fit' node to upload.")
             return
 
-        if file_path.endswith(".fit") or "FIT" in selected_filter:
-            self._save_locations_fit(current_waypoints, file_path)
-        elif file_path.endswith(".gpx") or "GPX" in selected_filter:
-            self._save_gpx(current_waypoints, file_path)
-        else:
-            QMessageBox.warning(self, "Unsupported File Type", "Please select a valid file type.")
+        with tempfile.NamedTemporaryFile(suffix=".fit", delete=False) as tmp_file:
+            temp_fit_path = tmp_file.name
 
-    def _save_locations_fit(self, current_waypoints: List[Any], file_path: str) -> Optional[bool]:
-        """Save waypoints to a FIT file."""
-        mode_str = ModeSelectDialog.get_mode(self.appctxt, parent=self)
-        if not mode_str:
-            QMessageBox.warning(self, "No Mode", "Please select a save mode.")
-            return False
-        else:
-            mode_enum = FitLocationSettingsEnum[mode_str]
+        self.logger.log(f"Preparing temporary Locations.fit for upload at: {temp_fit_path}")
 
-        fit_data_container = LocationsFitFileData(
-            file_id=FileIdMessageData(),
-            creator=FileCreatorMessageData(),
-            location_settings=LocationSettingsMessageData(location_settings_enum=mode_enum),
-            locations=current_waypoints,
+        save_success = self._save_locations_fit(waypoints_to_upload, temp_fit_path)
+
+        if not save_success:
+            QMessageBox.critical(
+                self, "Upload Error", "Failed to create temporary Locations.fit for upload."
+            )
+            self.logger.error("Failed to create temporary Locations.fit for upload.")
+            Path(temp_fit_path).unlink(missing_ok=True)
+            return
+
+        self.logger.log(f"Attempting to upload {temp_fit_path} to device.")
+        upload_success = self.mtp_device_manager.upload_file_to_device(
+            selected_device_info["path"], temp_fit_path, "Garmin/NewFiles/Locations.fit"
         )
 
-        try:
-            success: bool
-            errors: List[str]
+        if upload_success:
+            self.logger.log("Successfully uploaded Locations.fit to device's NewFiles directory.")
+            QMessageBox.information(
+                self,
+                "Upload Successful",
+                "Locations.fit uploaded to device. The device will process it shortly.",
+            )
+        else:
+            QMessageBox.critical(self, "Upload Error", "Failed to upload Locations.fit to device.")
+            self.logger.error("Failed to upload Locations.fit to device.")
 
-            success, errors = self.fit_handler.write_fit_file(file_path, fit_data_container)
+        Path(temp_fit_path).unlink(missing_ok=True)
 
-            if errors:
-                for error in errors:
-                    self.logger.error(f"Critical FIT Save Error: {error}")
-                    QMessageBox.critical(self, "FIT Save Error", str(error))
-                return False
+    @Slot(bool)
+    def slot_toggle_device_scan(self, checked: bool) -> None:
+        """Toggle device scanning."""
+        if checked:
+            self.mtp_device_manager.start_scanning()
+            self.logger.log("Device scanning started.")
 
-            return success
+        else:
+            self.mtp_device_manager.stop_scanning()
+            self.logger.log("Device scanning stopped.")
 
-        except Exception as e:
-            self.logger.error(f"Failed to save FIT file: {e}")
-            QMessageBox.critical(self, "Save Error", f"Could not save FIT file: {e}")
-
-    def _save_gpx(self, current_waypoints: List[Any], file_path: str) -> Optional[bool]:
-        """Save waypoints to a GPX file."""
-        file_path, _ = QFileDialog.getSaveFileName(self, "Save GPX File", "", "GPX Files (*.gpx)")
-        if not file_path:
-            QMessageBox.warning(self, "No Path", "Please select a save path.")
-            return
-
-        try:
-            success: bool
-            errors: List[str]
-
-            success, errors = self.gpx_handler.write_gpx_file(file_path, current_waypoints)
-
-            if errors:
-                for error in errors:
-                    self.logger.error(f"Critical GPX Save Error: {error}")
-                    QMessageBox.critical(self, "GPX Save Error", str(error))
-                return False
-
-            if success:
-                self.logger.log(f"File saved successfully to {file_path}")
-                QMessageBox.information(
-                    self,
-                    "Save Successful",
-                    f"File saved successfully to {file_path}",
-                )
-                self.current_file_path = file_path
-            return success
-
-        except Exception as e:
-            self.logger.error(f"Failed to save GPX file: {e}")
-            QMessageBox.critical(self, "Save Error", f"Could not save GPX file: {e}")
+    @Slot(bool)
+    def slot_toggle_log_dock(self, checked: bool) -> None:
+        """Toggle log dock visibility."""
+        if checked:
+            self.log_dock.show()
+        else:
+            self.log_dock.hide()
+        self.logger.log(f"Log window {'shown' if checked else 'hidden'}.")
 
     @Slot(dict)
     def slot_device_found(self, device_info: dict) -> None:
@@ -340,25 +498,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_locations_fit_action.setEnabled(False)
         self.upload_locations_fit_action.setEnabled(False)
 
-    @Slot(bool)
-    def slot_toggle_device_scan(self, checked: bool) -> None:
-        """Toggle device scanning."""
-        if checked:
-            self.mtp_device_manager.start_scanning()
-            self.logger.log("Device scanning started.")
-
+    def update_window_title(self) -> None:
+        """Updates the main window title based on the current file."""
+        if self.model.gpx_file_path:
+            title = f"{os.path.basename(self.model.gpx_file_path)} - GPX Editor"
         else:
-            self.mtp_device_manager.stop_scanning()
-            self.logger.log("Device scanning stopped.")
-
-    @Slot(bool)
-    def slot_toggle_log_dock(self, checked: bool) -> None:
-        """Toggle log dock visibility."""
-        if checked:
-            self.log_dock.show()
-        else:
-            self.log_dock.hide()
-        self.logger.log(f"Log window {'shown' if checked else 'hidden'}.")
+            title = "GPX Editor"
+        self.setWindowTitle(title)
 
     def closeEvent(self, event: Any) -> None:
         """Handle window close event."""

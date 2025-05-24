@@ -22,86 +22,52 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QTableWidget" name="waypoint_table">
-        <property name="editTriggers">
-         <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed|QAbstractItemView::EditTrigger::SelectedClicked</set>
-        </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="showGrid">
-         <bool>false</bool>
-        </property>
-        <property name="cornerButtonEnabled">
-         <bool>false</bool>
-        </property>
-        <property name="columnCount">
-         <number>7</number>
-        </property>
-        <attribute name="horizontalHeaderVisible">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="horizontalHeaderHighlightSections">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderStretchLastSection">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderMinimumSectionSize">
-         <number>40</number>
-        </attribute>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab_waypoints_table">
+       <attribute name="title">
+        <string>Waypoints (Legacy Table)</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QTableWidget" name="waypoint_table">
+            <property name="editTriggers">
+             <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed|QAbstractItemView::EditTrigger::SelectedClicked</set>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_geodata_explorer">
+       <attribute name="title">
+        <string>GeoData Explorer</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_geodata">
         <item>
-         <widget class="QToolButton" name="delete_wpt_btn">
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="add_wpt_btn">
-          <property name="text">
-           <string>+</string>
+         <widget class="QTreeView" name="geodata_view">
+          <property name="editTriggers">
+           <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed</set>
           </property>
          </widget>
         </item>
        </layout>
-      </item>
-     </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -110,24 +76,22 @@
     <bool>true</bool>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetFeature::NoDockWidgetFeatures</set>
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
-    <string>Debug Log</string>
+    <string>Log</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
    <widget class="QWidget" name="log_dock_contents">
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>100</height>
-     </size>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_log">
      <item>
-      <widget class="QTextEdit" name="log_textedit"/>
+      <widget class="QTextEdit" name="log_textedit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -138,7 +102,7 @@
      <x>0</x>
      <y>0</y>
      <width>1046</width>
-     <height>37</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -146,13 +110,11 @@
      <string>File</string>
     </property>
     <addaction name="import_file_action"/>
-    <addaction name="separator"/>
     <addaction name="save_file_action"/>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuWaypoint">
     <property name="title">
-     <string>Waypoint</string>
+     <string>Edit</string>
     </property>
     <addaction name="add_wpt_action"/>
     <addaction name="delete_wpt_action"/>
@@ -168,7 +130,6 @@
      <string>Device</string>
     </property>
     <addaction name="scan_for_devices_action"/>
-    <addaction name="separator"/>
     <addaction name="download_locations_fit_action"/>
     <addaction name="upload_locations_fit_action"/>
    </widget>
@@ -179,20 +140,17 @@
   </widget>
   <widget class="QStatusBar" name="status_bar"/>
   <widget class="QToolBar" name="toolBar">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
+   <property name="windowTitle">
+    <string>toolBar</string>
    </property>
    <property name="movable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
    <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
+    <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
@@ -200,30 +158,38 @@
    <addaction name="import_file_action"/>
    <addaction name="save_file_action"/>
    <addaction name="separator"/>
+   <addaction name="add_wpt_action"/>
+   <addaction name="delete_wpt_action"/>
+   <addaction name="separator"/>
    <addaction name="download_locations_fit_action"/>
    <addaction name="upload_locations_fit_action"/>
-   <addaction name="separator"/>
   </widget>
   <action name="add_wpt_action">
    <property name="text">
     <string>Add Waypoint</string>
    </property>
+   <property name="toolTip">
+    <string>Add a new waypoint</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="delete_wpt_action">
    <property name="text">
     <string>Delete Waypoint</string>
    </property>
+   <property name="toolTip">
+    <string>Delete selected waypoint(s)</string>
+   </property>
    <property name="shortcut">
-    <string>Ctrl+Backspace</string>
+    <string>Backspace</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="toggle_debug_log_action">
@@ -231,13 +197,16 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Toggle Debug Log</string>
+    <string>Show Log</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle the debug log panel</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+L</string>
+    <string>Ctrl+L</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="scan_for_devices_action">
@@ -245,24 +214,21 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Scan For Devices</string>
+    <string>Scan for Devices</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+   <property name="toolTip">
+    <string>Continuously scan for MTP devices</string>
    </property>
   </action>
   <action name="import_file_action">
    <property name="text">
     <string>Import File</string>
    </property>
+   <property name="toolTip">
+    <string>Import from GPX or FIT file</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="download_locations_fit_action">
@@ -270,13 +236,10 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Download</string>
+    <string>Download Locations.fit</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+D</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+   <property name="toolTip">
+    <string>Download Locations.fit from device</string>
    </property>
   </action>
   <action name="upload_locations_fit_action">
@@ -284,24 +247,21 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Upload</string>
-   </property>
-   <property name="toolTip">
     <string>Upload Locations.fit</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+U</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+   <property name="toolTip">
+    <string>Upload Locations.fit to device</string>
    </property>
   </action>
   <action name="save_file_action">
    <property name="text">
     <string>Save File</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+   <property name="toolTip">
+    <string>Save current data to GPX or FIT file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>
@@ -320,8 +280,24 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>399</x>
-     <y>480</y>
+     <x>522</x>
+     <y>608</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>log_dock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>toggle_debug_log_action</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>522</x>
+     <y>608</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
    </hints>
   </connection>
